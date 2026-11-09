@@ -1,0 +1,121 @@
+/* ============ FISCALIS (site des impôts fictif) ============ */
+.fx { font-family: Arial, Helvetica, sans-serif; color: #1e1e1e; background: #f4f3ee; font-size: 14px; }
+.fx a, .fx [data-go] { cursor: pointer; }
+.fx-util { background: #e7e5dc; font-size: 11.5px; color: #444; }
+.fx-util .in { max-width: 1180px; margin: 0 auto; display: flex; gap: 18px; padding: 5px 20px; }
+.fx-util .in span { cursor: pointer; } .fx-util .in span:hover { text-decoration: underline; }
+.fx-util .sp { flex: 1; cursor: default !important; }
+.fx-head { background: #fff; border-bottom: 1px solid #ddd; }
+.fx-head .in { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 22px; padding: 14px 20px; }
+.fx-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.fx-logo .em { width: 52px; height: 52px; border-radius: 50%; background: #1f4d3a; border: 3px solid #c99a2e; color: #e8c46a; font-family: Georgia, serif; font-weight: 700; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+.fx-logo .t { line-height: 1.1; } .fx-logo .t b { font-size: 26px; color: #1f4d3a; font-family: Georgia, serif; letter-spacing: -.01em; }
+.fx-logo .t small { display: block; font-size: 11px; color: #666; max-width: 210px; }
+.fx-search { flex: 1; display: flex; max-width: 420px; }
+.fx-search input { flex: 1; height: 36px; border: 1px solid #aaa; border-right: 0; padding: 0 10px; font-size: 13px; border-radius: 3px 0 0 3px; }
+.fx-search button { width: 42px; border: 0; background: #1f4d3a; color: #fff; border-radius: 0 3px 3px 0; cursor: pointer; font-size: 15px; }
+.fx-espaces { display: flex; gap: 6px; margin-left: auto; align-items: center; }
+.fx-espaces span { font-size: 11.5px; padding: 6px 9px; border: 1px solid #1f4d3a; color: #1f4d3a; border-radius: 3px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+.fx-espaces span:hover { background: #eef4f0; }
+.fx-espaces span.pro { border-color: #999; color: #555; }
+.fx-nav { background: #1f4d3a; }
+.fx-nav .in { max-width: 1180px; margin: 0 auto; display: flex; padding: 0 12px; flex-wrap: wrap; }
+.fx-nav span { color: #fff; padding: 12px 13px; font-size: 13.5px; cursor: pointer; border-bottom: 3px solid transparent; }
+.fx-nav span:hover { background: #2a5f49; border-bottom-color: #c99a2e; }
+.fx-alert { background: #fff4d6; border-bottom: 1px solid #e6cf8a; font-size: 13px; }
+.fx-alert .in { max-width: 1180px; margin: 0 auto; padding: 9px 20px; display: flex; gap: 10px; }
+.fx-wrap { max-width: 1180px; margin: 0 auto; padding: 20px; }
+.fx-hero { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; margin-bottom: 22px; }
+.fx-hero .main { background: linear-gradient(120deg, #1f4d3a 0%, #2f6b52 55%, #4f8a6c 100%); color: #fff; padding: 28px 30px; border-radius: 4px; position: relative; overflow: hidden; min-height: 210px; }
+.fx-hero .main::after { content: ""; position: absolute; right: -40px; bottom: -60px; width: 260px; height: 260px; border-radius: 50%; border: 36px solid rgba(255,255,255,.07); }
+.fx-hero .main .tag { display: inline-block; background: #c99a2e; color: #1e1e1e; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 2px; text-transform: uppercase; letter-spacing: .04em; }
+.fx-hero .main h1 { font-family: Georgia, serif; font-size: 27px; margin: 12px 0 10px; line-height: 1.2; max-width: 560px; }
+.fx-hero .main p { max-width: 540px; line-height: 1.5; opacity: .92; font-size: 14px; }
+.fx-hero .main .btn { display: inline-block; margin-top: 8px; background: #fff; color: #1f4d3a; padding: 8px 16px; font-weight: 700; font-size: 13px; border-radius: 2px; cursor: pointer; }
+.fx-hero .side { background: #fff; border: 1px solid #ddd; padding: 16px 18px; border-radius: 4px; }
+.fx-hero .side h3 { margin: 0 0 8px; font-size: 15px; color: #1f4d3a; border-bottom: 2px solid #c99a2e; padding-bottom: 6px; }
+.fx-cal { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+.fx-cal li { display: grid; grid-template-columns: 52px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px dotted #ccc; cursor: pointer; }
+.fx-cal li .d { background: #1f4d3a; color: #fff; text-align: center; border-radius: 3px; font-size: 11px; line-height: 1.2; padding: 3px 0; }
+.fx-cal li .d b { display: block; font-size: 17px; }
+.fx-h2 { font-family: Georgia, serif; font-size: 21px; color: #1f4d3a; margin: 6px 0 12px; display: flex; align-items: center; gap: 10px; }
+.fx-h2::after { content: ""; flex: 1; height: 1px; background: #cfcabb; }
+.fx-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 26px; }
+.fx-quick div { background: #fff; border: 1px solid #ddd; border-top: 3px solid #1f4d3a; padding: 14px; cursor: pointer; font-size: 13.5px; font-weight: 700; color: #1f4d3a; display: flex; gap: 10px; align-items: flex-start; }
+.fx-quick div:hover { box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.fx-quick div .ic { font-size: 22px; } .fx-quick div small { display: block; font-weight: 400; color: #555; font-size: 12px; margin-top: 3px; }
+.fx-cols { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.fx-news { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.fx-news .n { background: #fff; border: 1px solid #ddd; cursor: pointer; }
+.fx-news .n .img { height: 90px; }
+.fx-news .n .c { padding: 10px 12px 12px; }
+.fx-news .n .date { font-size: 11px; color: #777; text-transform: uppercase; }
+.fx-news .n h4 { margin: 4px 0 6px; font-size: 14.5px; color: #1e1e1e; line-height: 1.3; }
+.fx-news .n p { margin: 0; font-size: 12.5px; color: #555; line-height: 1.45; }
+.fx-news .n:hover h4 { text-decoration: underline; }
+.fx-box { background: #fff; border: 1px solid #ddd; padding: 14px 16px; margin-bottom: 16px; }
+.fx-box h3 { margin: 0 0 8px; font-size: 15px; color: #1f4d3a; }
+.fx-box ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; }
+.fx-box li { cursor: pointer; } .fx-box li:hover { text-decoration: underline; }
+.fx-life { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 6px 0 26px; }
+.fx-life div { background: #fff; border: 1px solid #ddd; text-align: center; padding: 14px 8px; font-size: 12.5px; cursor: pointer; }
+.fx-life div .ic { font-size: 26px; display: block; margin-bottom: 6px; }
+.fx-fraud { display: grid; grid-template-columns: 90px 1fr; gap: 18px; background: #fff; border-left: 5px solid #b3261e; padding: 16px 20px; margin-bottom: 26px; }
+.fx-fraud .ic { font-size: 54px; text-align: center; }
+.fx-fraud h3 { margin: 0 0 6px; color: #b3261e; }
+.fx-fraud p { margin: 4px 0; font-size: 13px; line-height: 1.5; }
+.fx-foot { background: #183d2e; color: #d6e2db; font-size: 12.5px; margin-top: 10px; }
+.fx-foot .in { max-width: 1180px; margin: 0 auto; padding: 26px 20px 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.fx-foot h4 { color: #fff; margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+.fx-foot div span { display: block; padding: 3px 0; cursor: pointer; } .fx-foot div span:hover { text-decoration: underline; }
+.fx-foot .legal { max-width: 1180px; margin: 0 auto; padding: 12px 20px 20px; border-top: 1px solid #2f5a48; font-size: 11.5px; display: flex; gap: 16px; flex-wrap: wrap; color: #a9bfb3; }
+.fx-crumb { font-size: 12px; color: #666; margin-bottom: 12px; } .fx-crumb span { cursor: pointer; text-decoration: underline; }
+.fx-article { display: grid; grid-template-columns: 1fr 280px; gap: 26px; }
+.fx-article h1 { font-family: Georgia, serif; color: #1f4d3a; font-size: 28px; margin: 0 0 14px; }
+.fx-article .body { background: #fff; padding: 22px 26px; border: 1px solid #ddd; line-height: 1.65; font-size: 14px; }
+.fx-article .chapo { font-size: 16px; color: #333; font-weight: 700; }
+
+/* Formulaires Fiscalis */
+.fx-card { background: #fff; border: 1px solid #d5d1c4; padding: 24px 28px; border-radius: 3px; }
+.fx-card h2 { margin: 0 0 6px; font-size: 19px; color: #1f4d3a; }
+.fx-card .sub { color: #555; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+.fx-field { margin-bottom: 15px; }
+.fx-field label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.fx-field label small { font-weight: 400; color: #666; }
+.fx-field input[type=text], .fx-field input[type=password], .fx-field input[type=email] { width: 100%; max-width: 380px; height: 38px; border: 1px solid #8a8a8a; border-radius: 2px; padding: 0 10px; font-size: 15px; }
+.fx-field input:focus { outline: 2px solid #c99a2e; outline-offset: 1px; }
+.fx-field .help { font-size: 12px; color: #555; margin-top: 4px; }
+.fx-field .qm { display: inline-flex; width: 17px; height: 17px; border-radius: 50%; background: #1f4d3a; color: #fff; font-size: 11px; align-items: center; justify-content: center; cursor: pointer; margin-left: 4px; vertical-align: 1px; }
+.fx-btn { background: #1f4d3a; color: #fff; border: 0; padding: 10px 22px; font-size: 14px; font-weight: 700; border-radius: 2px; cursor: pointer; }
+.fx-btn:hover { background: #163a2b; }
+.fx-btn.sec { background: #fff; color: #1f4d3a; border: 1px solid #1f4d3a; }
+.fx-link { color: #1f4d3a; text-decoration: underline; cursor: pointer; font-size: 13px; }
+.fx-err { background: #fdecea; border-left: 4px solid #b3261e; color: #7a1712; padding: 10px 14px; margin-bottom: 14px; font-size: 13.5px; line-height: 1.45; }
+.fx-ok { background: #e8f3ec; border-left: 4px solid #1f7a4a; color: #12482b; padding: 10px 14px; margin-bottom: 14px; font-size: 13.5px; line-height: 1.5; }
+.fx-info { background: #eef2f6; border-left: 4px solid #5b6f86; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.5; color: #2c3a4a; }
+.fx-steps { display: flex; gap: 0; margin: 4px 0 20px; font-size: 12.5px; }
+.fx-steps div { flex: 1; padding: 8px 10px; background: #e7e5dc; color: #666; border-right: 2px solid #fff; }
+.fx-steps div.on { background: #1f4d3a; color: #fff; font-weight: 700; }
+.fx-steps div.done { background: #b9cfc2; color: #1f4d3a; }
+.fx-gauge { height: 6px; background: #e3e3e3; max-width: 380px; margin-top: 6px; border-radius: 3px; overflow: hidden; }
+.fx-gauge i { display: block; height: 100%; width: 0; transition: width .2s, background .2s; }
+.fx-gaugelbl { font-size: 11.5px; color: #555; margin-top: 3px; }
+.fx-rules { list-style: none; padding: 8px 12px; margin: 8px 0 0; max-width: 380px; background: #f8f7f2; border: 1px solid #e0dccd; font-size: 12.5px; }
+.fx-rules li { padding: 2px 0; } .fx-rules li.ok { color: #1f7a4a; } .fx-rules li.ko { color: #b3261e; }
+.fx-code { display: flex; gap: 8px; margin: 10px 0 6px; }
+.fx-code input { width: 44px; height: 52px; text-align: center; font-size: 24px; border: 1px solid #8a8a8a; border-radius: 3px; }
+.fx-login { display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; max-width: 980px; margin: 0 auto; }
+.fx-espace-head { background: #fff; border-bottom: 1px solid #ddd; }
+.fx-espace-head .in { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 18px; }
+.fx-tabs { background: #2a5f49; }
+.fx-tabs .in { max-width: 1180px; margin: 0 auto; display: flex; padding: 0 12px; }
+.fx-tabs span { color: #fff; padding: 11px 14px; font-size: 13.5px; cursor: pointer; }
+.fx-tabs span.on { background: #f4f3ee; color: #1f4d3a; font-weight: 700; }
+.fx-dash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.fx-dash .fx-box { margin: 0; }
+.fx-dash .big { font-size: 26px; font-weight: 700; color: #1f4d3a; }
+.fx-pdf { background: #525659; border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+.fx-pdf .bar { display: flex; gap: 16px; align-items: center; background: #323639; color: #f1f1f1; padding: 8px 14px; font-size: 13px; }
+.fx-pdf .bar span[data-act] { cursor: pointer; }
+.fx-pdf .pages { padding: 20px; max-height: 70vh; overflow: auto; }
+.fx-doclist div { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dotted #ccc; font-size: 13px; cursor: pointer; }
