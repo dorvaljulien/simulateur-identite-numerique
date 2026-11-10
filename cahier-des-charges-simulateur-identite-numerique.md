@@ -178,3 +178,29 @@ Si le temps manque, la séance reste jouable avec P1 seul : l'étape IdentiPass 
 - Parcours « élève qui fait tout de travers » : mauvais avis, mauvaise adresse mail, mot de passe insistant, faux mail cliqué. Rien ne doit bloquer définitivement : chaque impasse a une sortie (ou un code de reprise).
 - Chaque code de passage remet bien dans l'état attendu.
 - Ouverture sur un poste du lycée sans connexion, dans Chrome et Edge.
+
+
+---
+
+## Évolution du 10/11/2026 : identité numérique vérifiée et IdentiPass+
+
+Objectif : faire vivre dans le simulateur ce que le cours explique sur FranceConnect+ et les identités numériques vérifiées.
+
+**Idée directrice.** IdentiPass est une porte, les comptes sont des clés. Un compte Fiscalis ou Santéa prouve qu'on a reçu un courrier. Une identité numérique vérifiée (NumérID, CartID) prouve que la pièce d'identité a été contrôlée, et elle est liée au téléphone de la personne. IdentiPass+ n'accepte que ces identités.
+
+**Ce qui change.**
+
+1. **NumérID devient une identité numérique vérifiée.** Plus de mot de passe ni de code par mail. On saisit son identifiant (adresse mail ou numéro de mobile), puis on confirme **sur le téléphone** : « Est-ce bien vous ? », puis code secret à 4 chiffres (sur le post-it, différent du code du téléphone). Trois codes faux annulent la demande ; on peut en renvoyer une.
+2. **Le téléphone devient un outil central.** Il s'agrandit quand une application attend une réponse.
+3. **Carte du personnage.** Le post-it ne dit plus que le compte a été créé par Gwenaëlle avec un mot de passe : Martine a créé son identité elle-même, avec l'aide de sa fille, au point d'accueil. Le code secret reste sur le post-it (mauvais réflexe à commenter). La carte précise que sa carte d'identité est l'ancien modèle.
+4. **IdentiPass propose 6 comptes** : Fiscalis, Santéa, NumérID, Agrimut, CartID (nouveau, équivalent de France Identité), IdNomade. CartID est une impasse : il faut scanner un code avec une application que Martine n'a pas.
+5. **Lien « Utiliser Aidants Relais »** sous les tuiles (équivalent d'Aidants Connect) : page d'information, pour annoncer la séance « Accompagner un tiers ».
+6. **Nouvelle étape 4, courte : FormaCompte** (équivalent de Mon Compte Formation). La connexion se fait uniquement avec **IdentiPass+**. Seuls NumérID et CartID sont proposés ; Fiscalis, Santéa, Agrimut et IdNomade sont affichés comme « non acceptés » et répondent « Niveau de garantie insuffisant ». Fin de l'étape : demande d'inscription envoyée pour la formation de Quimper.
+7. **Demande de connexion inattendue** (étape 4, réglable dans `CONFIG.fausseDemande`) : le téléphone affiche une demande pour un site que Martine n'a pas ouvert. Bonne réponse : refuser. Si elle confirme, un écran explique l'erreur, sans reproche.
+8. **Lien sponsorisé « Vos droits formation expirent bientôt ! »** dans Trouvo : même piège payant que pour les impôts et la santé.
+
+**Codes de passage.** 318 et 574 ne changent pas. **926** mène maintenant à l'étape 4 (au lieu du récapitulatif). **451** (nouveau) mène au récapitulatif ; on peut le donner dès la fin de l'étape 3 si le temps manque.
+
+**Récapitulatif et code de fin.** Quatre lignes ajoutées : code secret NumérID faux, compte refusé essayé sur IdentiPass+, demande inattendue (acceptée, refusée, sans réponse, pas reçue), étape 4 terminée. Le code de fin passe de 4 à **5 caractères** : la 4e position est une lettre qui code ces quatre informations ; le chiffre de contrôle passe en 5e position. La table de décodage est dans la fiche professeur (Ctrl+Alt+P).
+
+**Textes retirés.** Les cartouches ne renvoient plus à « votre fiche » : il n'y a plus de fiche à remplir pendant la séance.

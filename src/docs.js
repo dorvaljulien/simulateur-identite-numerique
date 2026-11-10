@@ -157,12 +157,12 @@ function carteHtml(compact) {
     ['Nom d\'usage', P.nomUsage.toUpperCase()], ['Nom de naissance', P.nomNaissance.toUpperCase()], ['Prénom', P.prenom],
     ['Née le', `${String(n.jour).padStart(2, '0')}/${String(n.mois).padStart(2, '0')}/${n.annee} à ${n.lieu}`],
     ['Adresse', P.adresse.join(', ')], ['Téléphone', P.telephone], ['Adresse mail', P.mail],
-    ['Situation', `Mariée à ${P.conjoint.prenom} ${P.conjoint.nom}`], ['Enfant', P.enfants], ['Métier', P.metier]
+    ['Situation', `Mariée à ${P.conjoint.prenom} ${P.conjoint.nom}`], ['Enfant', P.enfants], ['Métier', P.metier], ['Carte d\'identité', P.carteIdentite]
   ];
   const postit = `<div class="postit">📌 Mes codes (à ne pas laisser traîner !)<br>
     • MaBoîte : mot de passe <b>${h(P.maboite.motDePasse)}</b><br>
     • Code du téléphone : <b>${h(P.pinTelephone)}</b><br>
-    • NumérID : compte créé par ${h(P.numerid.creePar)}.<br>&nbsp;&nbsp;Identifiant = mon adresse mail, mot de passe <b>${h(P.numerid.motDePasse)}</b><br>
+    • NumérID (mon identité numérique, appli sur mon téléphone) :<br>&nbsp;&nbsp;créée en ${h(P.numerid.creeLe)} avec Gwenaëlle, au point d'accueil.<br>&nbsp;&nbsp;Identifiant = mon adresse mail. Code secret <b>${h(P.numerid.codeSecret)}</b><br>
     • Fiscalis : pas encore de compte.</div>`;
   return `<div class="idcard"><div class="photo"><svg width="96" height="118" viewBox="0 0 96 118"><circle cx="48" cy="42" r="24" fill="#f1d3b8"/><path d="M22 40c0-20 14-30 27-30s25 9 25 28c-6-8-14-12-26-12s-20 6-26 14z" fill="#b9b2ad"/><path d="M8 118c3-30 20-42 40-42s37 12 40 42z" fill="#7b4a8a"/></svg></div>
     <div><h3>${P.prenom} ${P.nomUsage}</h3><div class="sub">née ${P.nomNaissance} — ${P.age} ans</div>

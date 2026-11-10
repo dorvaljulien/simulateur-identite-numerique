@@ -12,7 +12,7 @@ body { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; color: #222;
 button { font-family: inherit; }
 .hidden { display: none !important; }
 
-#app { display: grid; grid-template-rows: 34px 1fr; height: 100vh; min-height: 600px; }
+#app { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 34px 1fr; height: 100vh; min-height: 600px; }
 
 /* --- Bandeau supérieur --- */
 #topbar { display: flex; align-items: center; gap: 12px; padding: 0 10px; background: #33363b; color: #c9ccd1; font-size: 12px; white-space: nowrap; }
@@ -25,8 +25,8 @@ button { font-family: inherit; }
 #topbar .codebox.err input { border-color: #e66; animation: shake .3s; }
 @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 
-#main { display: grid; grid-template-columns: 1fr 350px; min-height: 0; }
-#main.mailwide { grid-template-columns: 1fr 600px; }
+#main { display: grid; grid-template-columns: minmax(0, 1fr) 350px; min-height: 0; }
+#main.mailwide { grid-template-columns: minmax(0, 1fr) 600px; }
 
 /* --- Navigateur fictif --- */
 #browser { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #fff; border-right: 1px solid #aaa; position: relative; }
@@ -281,6 +281,22 @@ button { font-family: inherit; }
 .neterr .dino { font-size: 54px; margin-bottom: 20px; }
 .neterr h1 { font-weight: 400; font-size: 24px; color: #202124; margin: 0 0 14px; }
 .neterr code { font-size: 12px; color: #80868b; }
+
+/* Téléphone : demande d'une application (identité numérique) — il s'agrandit quand il attend une réponse */
+#phone { transition: transform .18s; transform-origin: left bottom; }
+#phone.active { transform: scale(1.75); z-index: 90; box-shadow: 0 0 0 3px #ffcf6e, 0 8px 26px rgba(0,0,0,.55); }
+#phone .pinpad .app { font-size: 9px; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-bottom: 5px; }
+#phone .pinpad .app i { width: 12px; height: 12px; border-radius: 3px; background: #00a3a5; display: inline-block; }
+#phone .pinpad .t.ask { font-size: 9.5px; line-height: 1.35; min-height: 74px; padding: 6px 8px; background: rgba(255,255,255,.1); border-radius: 8px; margin: 2px 6px 8px; }
+#phone .pinpad .yn { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 0 8px; }
+#phone .pinpad .yn span { border-radius: 12px; padding: 6px 4px; text-align: center; font-size: 9.5px; cursor: pointer; background: rgba(255,255,255,.16); user-select: none; }
+#phone .pinpad .yn span.y { background: #00a3a5; font-weight: 700; }
+#phone .pinpad .yn span:hover { filter: brightness(1.2); }
+#phone.active .pinpad { background: #0c0e14; padding-top: 6px; }
+#phone.active .pinpad .t { min-height: 24px; }
+#phone.active .pinpad .dots { margin: 4px 0 4px; }
+#phone.active .pinpad .keys { gap: 4px; }
+#phone.active .pinpad .keys span { height: 22px; }
 
 /* ============ FISCALIS (site des impôts fictif) ============ */
 .fx { font-family: Arial, Helvetica, sans-serif; color: #1e1e1e; background: #f4f3ee; font-size: 14px; }
@@ -571,6 +587,85 @@ button { font-family: inherit; }
 /* ============ Sites annexes ============ */
 .ad-banner { background: repeating-linear-gradient(45deg, #fff3bf, #fff3bf 10px, #ffec99 10px, #ffec99 20px); border: 1px solid #f0c36d; text-align: center; padding: 16px; font-weight: 700; color: #7a5600; font-family: Arial; }
 
+/* ============ IdentiPass+ ============ */
+.ip-button.plus .p { background: #f2a33a; color: #2b3440; font-weight: 900; font-size: 24px; width: 40px; display: flex; align-items: center; justify-content: center; }
+.ip-button.plus .l { padding-right: 12px; }
+.ip-logo .plus { background: #f2a33a; color: #2b3440; border-radius: 6px; padding: 0 7px; margin-left: 2px; font-weight: 900; }
+.ip-sub { font-size: 14px; margin: 26px 0 10px; color: #555; font-weight: 600; }
+.ip-grid.small .ip-acc { min-height: 84px; padding: 10px 8px; cursor: pointer; }
+.ip-grid.small { grid-template-columns: repeat(4, 1fr); }
+.ip-grid.small .ip-acc .lg { width: 32px; height: 32px; font-size: 14px; }
+.ip-aidant { margin-top: 22px; padding-top: 16px; border-top: 1px solid #e3e6ea; text-align: center; font-size: 13px; color: #444; }
+.ip-aidant span { display: inline-block; margin-left: 8px; border: 1px solid #2b3440; border-radius: 4px; padding: 6px 14px; font-weight: 700; cursor: pointer; }
+.ip-aidant span:hover { background: #f1f3f5; }
+
+/* ============ NumérID : attente de confirmation sur le téléphone ============ */
+.ni-wait { display: flex; gap: 14px; align-items: center; background: #e3f4f1; border-radius: 8px; padding: 14px; font-size: 13px; line-height: 1.45; color: #0b4c4a; }
+.ni-wait .spin { width: 28px; height: 28px; border-radius: 50%; border: 4px solid #b5dedb; border-top-color: #00787a; animation: nispin 1s linear infinite; flex-shrink: 0; }
+@keyframes nispin { to { transform: rotate(360deg); } }
+.ni-steps { font-size: 13px; line-height: 1.8; color: #355; margin: 14px 0 10px; padding-left: 22px; }
+
+/* ============ CartID ============ */
+.ci { font-family: "Trebuchet MS", Arial, sans-serif; min-height: 100%; background: #f6f1e7; color: #2e2616; }
+.ci-top { background: #7d5a1c; color: #fff; padding: 14px 26px; display: flex; align-items: center; gap: 12px; }
+.ci-top .lg { width: 36px; height: 36px; border-radius: 8px; background: #f3d9a4; color: #7d5a1c; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; }
+.ci-top b { font-size: 22px; } .ci-top small { opacity: .85; font-size: 12px; }
+.ci-box { max-width: 620px; margin: 30px auto 110px; background: #fff; border-radius: 10px; padding: 24px 30px; box-shadow: 0 3px 14px rgba(70,50,10,.14); }
+.ci-box h2 { margin: 0 0 16px; font-size: 19px; }
+.ci-flex { display: flex; gap: 26px; align-items: center; margin-bottom: 16px; } .ci-flex ol { font-size: 13.5px; line-height: 1.9; padding-left: 20px; margin: 0; }
+.ci-qr { display: grid; grid-template-columns: repeat(21, 8px); grid-auto-rows: 8px; padding: 10px; border: 1px solid #ddd; background: #fff; flex-shrink: 0; }
+.ci-qr i.b { background: #2e2616; }
+.ci-info { background: #fbf3e0; border-left: 4px solid #7d5a1c; padding: 12px 16px; font-size: 13px; line-height: 1.6; margin-bottom: 14px; } .ci-info ul { margin: 6px 0; padding-left: 20px; }
+
+/* ============ FormaCompte (droits à la formation, fictif) ============ */
+.fo { font-family: "Trebuchet MS", "Segoe UI", sans-serif; font-size: 13.5px; color: #2c2114; background: #fffdf8; }
+.fo [data-go], .fo [data-act] { cursor: pointer; }
+.fo h1 { font-size: 23px; color: #5a3005; } .fo h2 { font-size: 18px; color: #5a3005; margin: 22px 0 12px; }
+.fo-band { background: #4a2a06; color: #ecd9bd; font-size: 11.5px; display: flex; gap: 18px; padding: 6px 22px; } .fo-band .sp { flex: 1; }
+.fo-head { border-bottom: 3px solid #f0b429; background: #fff; }
+.fo-head .in { max-width: 1180px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 22px; }
+.fo-logo { display: flex; align-items: center; gap: 10px; } .fo-logo .m { width: 42px; height: 42px; border-radius: 50%; background: #8a4b08; color: #f0b429; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.fo-logo b { font-size: 22px; color: #8a4b08; display: block; line-height: 1; } .fo-logo small { font-size: 11px; color: #777; }
+.fo-head nav { display: flex; gap: 16px; font-size: 12.5px; font-weight: 700; color: #5a3005; flex: 1; flex-wrap: wrap; }
+.fo-head .acc { font-size: 11.5px; border: 1px solid #8a4b08; color: #8a4b08; border-radius: 4px; padding: 5px 10px; white-space: nowrap; }
+.fo-hero { background: linear-gradient(120deg, #8a4b08, #b86a12); color: #fff; }
+.fo-hero .in { max-width: 1180px; margin: 0 auto; padding: 30px 16px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; align-items: center; }
+.fo-hero h1 { color: #fff; font-size: 26px; margin: 0 0 10px; line-height: 1.25; } .fo-hero p { line-height: 1.6; opacity: .95; }
+.fo-hero .img { font-size: 90px; text-align: center; }
+.fo-search { display: flex; background: #fff; border-radius: 6px; overflow: hidden; border: 2px solid #f0b429; max-width: 640px; }
+.fo-search input { flex: 1; border: 0; height: 40px; padding: 0 12px; font-size: 14px; outline: none; font-family: inherit; }
+.fo-search button { border: 0; background: #f0b429; color: #3a2204; font-weight: 700; padding: 0 18px; cursor: pointer; font-family: inherit; }
+.fo-wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 30px; }
+.fo-alert { background: #fff4d6; border: 1px solid #f0b429; border-radius: 8px; padding: 12px 16px; line-height: 1.55; font-size: 13px; }
+.fo-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.fo-tiles div { border: 1px solid #e6d8c2; border-radius: 8px; padding: 14px; display: flex; gap: 12px; background: #fff; }
+.fo-tiles div:hover { border-color: #8a4b08; }
+.fo-tiles .ic { font-size: 24px; } .fo-tiles b { display: block; color: #5a3005; } .fo-tiles small { color: #776650; font-size: 12px; }
+.fo-two { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-top: 8px; }
+.fo-news { border-bottom: 1px solid #eee2cf; padding: 10px 0; } .fo-news b { color: #5a3005; } .fo-news p { margin: 4px 0 0; font-size: 12.5px; color: #555; line-height: 1.45; }
+.fo-side { background: #8a4b08; color: #fff; border-radius: 10px; padding: 18px 20px; margin-top: 22px; align-self: start; } .fo-side h3 { margin: 0 0 8px; } .fo-side p { line-height: 1.5; font-size: 13px; }
+.fo-btn { display: inline-block; background: #f0b429; color: #3a2204; font-weight: 700; padding: 10px 20px; border-radius: 6px; border: 0; font-size: 13.5px; cursor: pointer; font-family: inherit; }
+.fo-btn.ghost { background: #fff; border: 2px solid #8a4b08; color: #8a4b08; }
+.fo-card { background: #fff; border: 1px solid #e6d8c2; border-radius: 10px; padding: 20px 24px; } .fo-card h2 { margin-top: 0; } .fo-card .sub { line-height: 1.55; }
+.fo-card details { border-top: 1px solid #eee2cf; padding: 9px 0; font-size: 13px; } .fo-card summary { cursor: pointer; font-weight: 700; color: #5a3005; } .fo-card details p { line-height: 1.55; color: #444; }
+.fo-err { background: #fdecea; color: #8a1f17; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; margin-bottom: 12px; }
+.fo-ok { background: #eaf6ee; color: #1b5e20; border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 14px; line-height: 1.5; }
+.fo-welcome { background: linear-gradient(110deg, #8a4b08, #b86a12); color: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
+.fo-welcome .hi { font-size: 23px; font-weight: 700; } .fo-welcome .droits { background: #fff; color: #5a3005; border-radius: 10px; padding: 10px 18px; text-align: right; } .fo-welcome .droits small { display: block; font-size: 11px; } .fo-welcome .droits b { font-size: 22px; }
+.fo-res { display: flex; justify-content: space-between; gap: 16px; background: #fff; border: 1px solid #e6d8c2; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+.fo-res:hover { border-color: #8a4b08; box-shadow: 0 3px 10px rgba(138,75,8,.12); }
+.fo-res b { color: #5a3005; font-size: 15px; display: block; } .fo-res small { color: #776650; display: block; margin: 2px 0 6px; }
+.fo-res .tags i { font-style: normal; font-size: 11.5px; background: #f6ecdb; border-radius: 10px; padding: 2px 8px; margin-right: 6px; display: inline-block; }
+.fo-res .px { font-size: 18px; font-weight: 700; color: #5a3005; text-align: right; white-space: nowrap; } .fo-res .px small { font-weight: 400; font-size: 11px; }
+.fo-fiche { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; background: #fff; border: 1px solid #e6d8c2; border-radius: 10px; padding: 22px 24px; }
+.fo-fiche .org { color: #776650; margin-top: -8px; } .fo-fiche table { font-size: 13px; border-collapse: collapse; margin: 10px 0; } .fo-fiche td { padding: 4px 14px 4px 0; vertical-align: top; } .fo-fiche td:first-child { color: #776650; }
+.fo-prix { background: #fbf3e0; border-radius: 10px; padding: 16px; align-self: start; } .fo-prix .big { font-size: 26px; font-weight: 700; color: #5a3005; text-align: center; } .fo-prix table { width: 100%; } .fo-prix td:last-child { text-align: right; padding-right: 0; }
+.fo-recap { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px; } .fo-recap td { padding: 6px 4px; border-bottom: 1px solid #eee2cf; } .fo-recap td:first-child { color: #776650; width: 180px; }
+.fo-check { display: block; margin: 0 0 14px; line-height: 1.5; }
+.fo-foot { background: #3a2204; color: #e0cfb4; font-size: 12px; margin-top: 20px; }
+.fo-foot .in { max-width: 1180px; margin: 0 auto; padding: 22px 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; } .fo-foot h4 { color: #fff; margin: 0 0 8px; } .fo-foot span { display: block; padding: 2px 0; }
+.fo-foot .legal { max-width: 1180px; margin: 0 auto; padding: 10px 16px 18px; border-top: 1px solid #5a3a12; color: #b39a74; }
+
 </style>
 </head>
 <body>
@@ -606,8 +701,11 @@ const PERSONNAGES = {
     numeroSecu: '9 68 03 29 103 058 47', // commence par 9 : format invalide exprès
     // Comptes possédés au départ
     maboite: { identifiant: 'martine.legall@maboite.fr', motDePasse: 'Hortensia.29' },
-    numerid: { identifiant: 'martine.legall@maboite.fr', motDePasse: 'Gwen-Penhoat-2024', creePar: 'sa fille Gwenaëlle, en mars 2024' },
+    // NumérID : identité numérique vérifiée, liée au téléphone (pas de mot de passe).
+    // On se connecte en confirmant dans l'application, sur le téléphone, avec le code secret.
+    numerid: { identifiant: 'martine.legall@maboite.fr', codeSecret: '7295', creeLe: 'mars 2024' },
     pinTelephone: '4831',
+    carteIdentite: 'ancien modèle (grand format plastifié, sans puce), valable jusqu\'en 2031',
     santea: null,   // pas de compte Santéa
     fiscalis: null, // à créer pendant la séance
 
@@ -644,18 +742,27 @@ const CONFIG = {
     reinitialisation: '000', // remet tout à zéro (aussi Ctrl+Alt+R)
     etape2: '318',           // code n°1 : fin de l'étape 1 → début de l'étape 2
     etape3: '574',           // code n°2 : fin de l'étape 2 → début de l'étape 3
-    recap:  '926'            // code n°3 : fin de l'étape 3 → récapitulatif
+    etape4: '926',           // code n°3 : fin de l'étape 3 → début de l'étape 4 (IdentiPass+)
+    recap:  '451'            // code n°4 : fin de l'étape 4 → récapitulatif (peut aussi se donner dès la fin de l'étape 3)
   },
 
   // Durées, en secondes réelles
   durees: {
-    expirationCodeMail: 180,     // code à 6 chiffres (Fiscalis, NumérID)
+    expirationCodeMail: 180,     // code à 6 chiffres (Fiscalis)
     blocageCompte: 120,          // affiché « 15 minutes » à l'écran
     validiteLienReinit: 600,     // lien « mot de passe oublié »
     delaiMailMin: 2,             // délai d'arrivée des mails (aléatoire entre min et max)
     delaiMailMax: 8,
-    delaiFauxMail: 7             // le faux mail arrive après le vrai mail de réinitialisation
+    delaiFauxMail: 7,            // le faux mail arrive après le vrai mail de réinitialisation
+    delaiFausseDemande: 12       // étape 4 : la demande de connexion inattendue arrive sur le téléphone
   },
+
+  // Étape 4 : une demande de connexion que Martine n'a pas faite arrive sur son téléphone.
+  // Mettre « active: false » pour la supprimer.
+  fausseDemande: { active: true, service: 'Crédit Éclair' },
+
+  // Étape 4 : la formation à laquelle il faut s'inscrire (identifiant dans FORMATIONS, site-formacompte.js)
+  formationCible: 'asg-quimper',
 
   // Où arrive le mail de confirmation de création Fiscalis : 'toujours' | 'jamais' | 'aleatoire'
   confirmationDansIndesirables: 'toujours',
@@ -680,8 +787,13 @@ const CONFIG = {
     2: 'Connectez-vous à votre espace Fiscalis pour vérifier que tout fonctionne, puis déconnectez-vous.',
     '2b': 'Votre banque vous demande votre avis d\'impôt le plus récent. Connectez-vous à Fiscalis et ouvrez-le.',
     3: 'Le médecin vous demande une attestation de droits. Connectez-vous au site de Santéa (assurance maladie) et ouvrez-la.',
-    4: 'Séance terminée.'
+    4: 'Votre employeur vous propose une formation « Assistante de soins en gérontologie » à Quimper. Inscrivez-vous sur FormaCompte.',
+    5: 'Séance terminée.'
   },
+
+  // Mail reçu au début de l'étape 4
+  mailEtape4: { de: 'EHPAD Les Glycines', adresse: 'direction@ehpad-glycines.sim', objet: 'Formation « Assistante de soins en gérontologie » : inscription avant vendredi',
+    corps: '<p>Bonjour Martine,</p><p>Comme convenu à votre entretien, vous pouvez suivre la formation <b>« Assistante de soins en gérontologie »</b> à Quimper, session de février.</p><p>L\'inscription se fait par vous-même sur le site <b>FormaCompte</b>, avec vos droits à la formation : je ne peux pas la faire à votre place. Merci de vous inscrire avant vendredi.</p><p>Bien cordialement,<br>Mme Riou, cadre de santé</p>' },
 
   // Mails déjà présents dans MaBoîte au début de la séance
   mailsInitiaux: [
@@ -763,14 +875,16 @@ function freshState() {
       revealed: [],           // règles de mot de passe déjà révélées
       phishSent: false
     },
-    numerid: { code: null, stageUser: false, failures: 0 },
+    numerid: { status: null, authOk: null, session: false },
     santea: { loggedIn: false },
+    forma: { loggedIn: false, inscrit: false },
     idp: { service: 'santea' },
     maboite: { loggedIn: true, passkey: false, view: 'list', folder: 'inbox', openId: null, settings: null, search: '' },
     browser: { saved: {}, never: {}, cookies: {}, envraiClosed: {} },
     tabs: [], activeTab: null,
     mails: [], notifs: [],
-    incidents: { refus: 0, enregistre: null, codeExpire: false, bloque: false, fauxLu: false, fauxOuvert: false, fauxIdentifiants: false, avisAnDernier: false, avisConjoint: false }
+    incidents: { refus: 0, enregistre: null, codeExpire: false, bloque: false, fauxLu: false, fauxOuvert: false, fauxIdentifiants: false, avisAnDernier: false, avisConjoint: false,
+      codeSecretFaux: false, refusPlus: false, fausseDemande: null, etape4: false }
   };
 }
 
@@ -831,6 +945,9 @@ function mailTime(m) {
 }
 
 /* ---------- Téléphone ---------- */
+// pinRequest : demande affichée sur le téléphone.
+//   stage 'confirm' : une application demande « Est-ce bien vous ? » (Non / Oui)
+//   stage 'pin'     : saisie d'un code à 4 chiffres (code du téléphone, ou code secret d'une application)
 let pinRequest = null;
 function pushNotif(app, title, text) {
   S.notifs.unshift({ app, title, text, at: Date.now() });
@@ -843,28 +960,58 @@ function renderPhone() {
   const notifs = S.notifs.slice(0, 3).map(n =>
     `<div class="notif ${Date.now() - n.at < 6000 ? 'fresh' : ''}"><b>${h(n.app)} · maintenant</b>${h(n.title)}<br>${h(n.text).slice(0, 60)}</div>`).join('');
   let pin = '';
-  if (pinRequest) {
-    const dots = [0, 1, 2, 3].map(i => `<i class="${i < pinRequest.typed.length ? 'f' : ''}"></i>`).join('');
-    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => `<span data-k="${k}">${k}</span>`).join('');
-    pin = `<div class="pinpad"><div class="t">${h(pinRequest.text)}</div><div class="dots">${dots}</div><div class="err">${pinRequest.err || ''}</div><div class="keys">${keys}</div></div>`;
+  const R = pinRequest;
+  if (R) {
+    const app = R.app ? `<div class="app"><i></i>${h(R.app)}</div>` : '';
+    if (R.stage === 'confirm') {
+      pin = `<div class="pinpad">${app}<div class="t ask">${R.html}</div><div class="yn"><span data-pk="no">Non, refuser</span><span data-pk="yes" class="y">Oui, c'est moi</span></div></div>`;
+    } else {
+      const dots = [0, 1, 2, 3].map(i => `<i class="${i < R.typed.length ? 'f' : ''}"></i>`).join('');
+      const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', R.app ? '✕' : '', '0', '⌫'].map(k => `<span data-k="${k}">${k}</span>`).join('');
+      pin = `<div class="pinpad">${app}<div class="t">${h(R.text)}</div><div class="dots">${dots}</div><div class="err">${R.err || ''}</div><div class="keys">${keys}</div></div>`;
+    }
   }
+  $('#phone').classList.toggle('active', !!R);
   $('#phone').innerHTML = `<div class="scr"><div class="sbar"><span>${hhmm(d)}</span><span>📶 4G ▮▮▮▯</span></div>
     <div class="big">${hhmm(d)}</div><div class="date">${longDate(d)}</div>${notifs}${pin}</div>
     ${unread ? `<span class="badge">${unread}</span>` : ''}`;
   $('#deskclock').textContent = longDate(d) + ' — ' + hhmm(d);
 }
+function phoneShow(req) {
+  // Une demande inattendue en cours passe d'abord : il faut y répondre avant de voir la suivante
+  if (pinRequest && pinRequest.fake) { pinRequest.next = req; return; }
+  pinRequest = req; renderPhone();
+}
+function phoneDone() {
+  const next = pinRequest && pinRequest.next;
+  pinRequest = next || null; renderPhone();
+}
 function phoneAskPin(text, onOk, onCancel) {
-  pinRequest = { text, typed: '', onOk, onCancel, err: '' };
-  renderPhone();
+  phoneShow({ stage: 'pin', text, typed: '', onOk, onCancel, err: '', expect: P.pinTelephone });
+}
+/* Demande de confirmation d'une application (identité numérique) : « Est-ce bien vous ? » puis code secret */
+function phoneAskConfirm(o) {
+  phoneShow(Object.assign({ stage: 'confirm', typed: '', err: '', tries: 0 }, o));
+}
+function phoneCancel(id) { if (pinRequest && pinRequest.id === id) phoneDone(); else if (pinRequest && pinRequest.next && pinRequest.next.id === id) pinRequest.next = null; }
+function phoneChoice(v) {
+  const R = pinRequest;
+  if (!R || R.stage !== 'confirm') return;
+  if (v === 'yes') { R.stage = 'pin'; renderPhone(); return; }
+  phoneDone(); R.onRefuse && R.onRefuse();
 }
 function phoneKey(k) {
-  if (!pinRequest) return;
-  if (k === '⌫') pinRequest.typed = pinRequest.typed.slice(0, -1);
-  else if (k && pinRequest.typed.length < 4) pinRequest.typed += k;
-  pinRequest.err = '';
-  if (pinRequest.typed.length === 4) {
-    if (pinRequest.typed === P.pinTelephone) { const ok = pinRequest.onOk; pinRequest = null; renderPhone(); ok && ok(); return; }
-    pinRequest.typed = ''; pinRequest.err = 'Code incorrect';
+  const R = pinRequest;
+  if (!R || R.stage !== 'pin') return;
+  if (k === '✕') { phoneDone(); (R.onRefuse || R.onCancel || (() => {}))(); return; }
+  if (k === '⌫') R.typed = R.typed.slice(0, -1);
+  else if (k && R.typed.length < 4) R.typed += k;
+  R.err = '';
+  if (R.typed.length === 4) {
+    if (R.typed === R.expect) { phoneDone(); R.onOk && R.onOk(); return; }
+    R.typed = ''; R.err = 'Code incorrect'; R.tries = (R.tries || 0) + 1;
+    R.onWrong && R.onWrong(R);
+    if (R.maxTries && R.tries >= R.maxTries) { phoneDone(); R.onBlocked && R.onBlocked(); return; }
   }
   renderPhone();
 }
@@ -1003,7 +1150,8 @@ function cookieBar(host, style, policyName) {
 function setMission() {
   const key = S.step === 2 && S.phase2 === 'apres' ? '2b' : S.step;
   const txt = CONFIG.missions[key] || '';
-  $('#mission').innerHTML = S.step ? `<b>${S.step >= 4 ? 'Fin' : 'Étape ' + S.step}</b>${h(txt)}` : '';
+  $('#mission').title = txt;
+  $('#mission').innerHTML = S.step ? `<b>${S.step >= 5 ? 'Fin' : 'Étape ' + S.step}</b>${h(txt)}` : '';
 }
 function completeStep(n) {
   if (S.waitingCode >= n) return;
@@ -1028,12 +1176,14 @@ function enterCode(raw) {
   if (c === CONFIG.codes.reinitialisation) { if (confirm('Tout remettre à zéro ?')) resetAll(); return; }
   if (c === CONFIG.codes.etape2) return gotoStep(2);
   if (c === CONFIG.codes.etape3) return gotoStep(3);
-  if (c === CONFIG.codes.recap) return gotoStep(4);
+  if (c === CONFIG.codes.etape4) return gotoStep(4);
+  if (c === CONFIG.codes.recap) return gotoStep(5);
   fail();
 }
 
 /* Met le simulateur dans l'état attendu au début de l'étape n */
 function gotoStep(n) {
+  const prev = S.step;
   S.waitingCode = 0;
   $$('.overlay').forEach(o => o.remove());
   // On retire les mails produits pendant cette étape et les suivantes
@@ -1067,15 +1217,23 @@ function gotoStep(n) {
   if (n >= 3) {
     S.phase2 = 'apres';
     if (F.oldPasswords.length === 0) { F.oldPasswords.push(F.account.password); F.account.password = CONFIG.motDePasseChangeTelephone; }
-    setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 20 }));
+    if (n === 3 || prev < 3) setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 20 }));
     if (!S.mails.some(m => m.tag === 'inter')) addIntermediateMails(true);
-    S.santea.loggedIn = false; S.numerid = { code: null, stageUser: false, failures: 0 };
+    if (n < 5) { S.santea.loggedIn = false; S.numerid = { status: null, authOk: null, session: false }; S.forma = { loggedIn: false, inscrit: false }; }
   }
   if (n === 3) {
     S.step = 3;
     S.tabs = []; openTab('trouvo.sim');
   }
-  if (n === 4) { S.step = 4; showRecap(); }
+  if (n === 4) {
+    S.step = 4;
+    setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 45 }));
+    S.tabs = []; openTab('trouvo.sim');
+    const m = CONFIG.mailEtape4;
+    if (m) deliverMail({ fromName: m.de, fromAddr: m.adresse, subject: m.objet, html: m.corps, etape: 4 }, { delay: 1500 });
+    if (CONFIG.fausseDemande.active && !S.incidents.fausseDemande) later(fakeRequest, CONFIG.durees.delaiFausseDemande * 1000);
+  }
+  if (n === 5) { S.step = 5; showRecap(); }
   setMission(); renderMail(); renderPhone(); renderBrowser();
   if (notice) openModal('Reprise', `<div style="font-size:15px;line-height:1.6;max-width:420px">${notice}</div>`);
 }
@@ -1240,7 +1398,7 @@ function buildShell() {
   });
   vp.addEventListener('mouseleave', () => status.style.display = 'none');
 
-  $('#phone').addEventListener('click', e => { const k = e.target.closest('[data-k]'); if (k) phoneKey(k.dataset.k); });
+  $('#phone').addEventListener('click', e => { const k = e.target.closest('[data-k]'); if (k) { phoneKey(k.dataset.k); return; } const c = e.target.closest('[data-pk]'); if (c) phoneChoice(c.dataset.pk); });
   $('#btnpapiers').onclick = openTrieur;
   $('#btncarte').onclick = () => openModal('Ma carte', carteHtml(false), 'carte');
   // Fonctions professeur
@@ -1572,12 +1730,12 @@ function carteHtml(compact) {
     ['Nom d\'usage', P.nomUsage.toUpperCase()], ['Nom de naissance', P.nomNaissance.toUpperCase()], ['Prénom', P.prenom],
     ['Née le', `${String(n.jour).padStart(2, '0')}/${String(n.mois).padStart(2, '0')}/${n.annee} à ${n.lieu}`],
     ['Adresse', P.adresse.join(', ')], ['Téléphone', P.telephone], ['Adresse mail', P.mail],
-    ['Situation', `Mariée à ${P.conjoint.prenom} ${P.conjoint.nom}`], ['Enfant', P.enfants], ['Métier', P.metier]
+    ['Situation', `Mariée à ${P.conjoint.prenom} ${P.conjoint.nom}`], ['Enfant', P.enfants], ['Métier', P.metier], ['Carte d\'identité', P.carteIdentite]
   ];
   const postit = `<div class="postit">📌 Mes codes (à ne pas laisser traîner !)<br>
     • MaBoîte : mot de passe <b>${h(P.maboite.motDePasse)}</b><br>
     • Code du téléphone : <b>${h(P.pinTelephone)}</b><br>
-    • NumérID : compte créé par ${h(P.numerid.creePar)}.<br>&nbsp;&nbsp;Identifiant = mon adresse mail, mot de passe <b>${h(P.numerid.motDePasse)}</b><br>
+    • NumérID (mon identité numérique, appli sur mon téléphone) :<br>&nbsp;&nbsp;créée en ${h(P.numerid.creeLe)} avec Gwenaëlle, au point d'accueil.<br>&nbsp;&nbsp;Identifiant = mon adresse mail. Code secret <b>${h(P.numerid.codeSecret)}</b><br>
     • Fiscalis : pas encore de compte.</div>`;
   return `<div class="idcard"><div class="photo"><svg width="96" height="118" viewBox="0 0 96 118"><circle cx="48" cy="42" r="24" fill="#f1d3b8"/><path d="M22 40c0-20 14-30 27-30s25 9 25 28c-6-8-14-12-26-12s-20 6-26 14z" fill="#b9b2ad"/><path d="M8 118c3-30 20-42 40-42s37 12 40 42z" fill="#7b4a8a"/></svg></div>
     <div><h3>${P.prenom} ${P.nomUsage}</h3><div class="sub">née ${P.nomNaissance} — ${P.age} ans</div>
@@ -2182,7 +2340,7 @@ function showPhishLesson() {
 /* =====================================================================
    SANTÉA — santea.gouv.sim (rôle réel : ameli.fr)
    ===================================================================== */
-const ipButton = (go, sub = 'S\'identifier avec') => `<button type="button" class="ip-button" data-go="${go}"><span class="k">🔑</span><span class="l"><small>${sub}</small><b>IdentiPass</b></span></button>`;
+const ipButton = (go, sub = 'S\'identifier avec', plus = false) => `<button type="button" class="ip-button ${plus ? 'plus' : ''}" data-go="${go}"><span class="k">🔑</span><span class="l"><small>${sub}</small><b>IdentiPass</b></span>${plus ? '<span class="p">+</span>' : ''}</button>`;
 
 function saHeader() {
   return `<div class="sa-pub"><div class="in"><span class="on">Assuré</span><span>Professionnel de santé</span><span>Employeur</span><span class="sp"></span><span>Accessibilité</span><span>Aide</span></div></div>
@@ -2241,7 +2399,7 @@ SITES['santea.gouv.sim'] = {
         <div class="sa-login"><div class="sa-card"><h2>Avec IdentiPass</h2><p class="sub">Utilisez un compte que vous possédez déjà sur un autre service public pour vous connecter, sans créer de nouveau mot de passe.</p>
           <div style="text-align:center;margin:18px 0">${ipButton('identipass.sim/choix?service=santea')}</div>
           <p style="text-align:center;font-size:12px"><span data-go="identipass.sim" data-newtab style="text-decoration:underline;color:#5b2a6e">Qu'est-ce que IdentiPass ?</span></p>
-          <div class="envrai" style="margin-top:16px">Ce bouton s'appelle FranceConnect. Regardez sa forme sur votre fiche.</div></div>
+          <div class="envrai" style="margin-top:16px">Ce bouton s'appelle FranceConnect.</div></div>
         <div class="sa-card"><h2>Avec mes identifiants Santéa</h2><div id="sa-msg"></div>
           <form data-form="login" autocomplete="off"><div class="sa-field"><label>Numéro de sécurité sociale</label><input name="num" placeholder="13 chiffres"></div>
             <div class="sa-field"><label>Mot de passe</label><input name="pwd" type="password"></div>
@@ -2347,157 +2505,268 @@ SITES['santea.gouv.sim'] = {
 
 /* =====================================================================
    IdentiPass — identipass.sim (rôle réel : FranceConnect)
+   IdentiPass+ (rôle réel : FranceConnect+) : même site, pour les services
+   marqués « plus ». Seules les identités numériques vérifiées passent.
    ===================================================================== */
-const SERVICES = { santea: { nom: 'Santéa', host: 'santea.gouv.sim' } };
+const SERVICES = {
+  santea: { nom: 'Santéa', host: 'santea.gouv.sim', couleur: '#5b2a6e', login: () => { S.santea.loggedIn = true; } },
+  forma: { nom: 'FormaCompte', host: 'formacompte.gouv.sim', couleur: '#8a4b08', plus: true, login: () => { S.forma.loggedIn = true; } }
+};
+// verifie : identité numérique vérifiée (pièce d'identité contrôlée, liée au téléphone) → acceptée par IdentiPass+
 const IP_ACCOUNTS = [
-  { id: 'fiscalis', nom: 'Fiscalis', sous: 'impôts', bg: '#1f4d3a', t: 'F', off: true },
+  { id: 'fiscalis', nom: 'Fiscalis', sous: 'impôts', bg: '#1f4d3a', t: 'F', refuse: ['santea'] },
   { id: 'santea', nom: 'Santéa', sous: 'assurance maladie', bg: '#5b2a6e', t: 'S' },
-  { id: 'numerid', nom: 'NumérID', sous: 'identité numérique', bg: '#00787a', t: 'ID' },
+  { id: 'numerid', nom: 'NumérID', sous: 'identité numérique', bg: '#00787a', t: 'ID', verifie: true },
   { id: 'agrimut', nom: 'Agrimut', sous: 'mutualité agricole', bg: '#6a8a1f', t: 'A' },
+  { id: 'cartid', nom: 'CartID', sous: 'carte d\'identité sur mobile', bg: '#7d5a1c', t: 'C', verifie: true },
   { id: 'idnomade', nom: 'IdNomade', sous: 'identité sur mobile', bg: '#3c5aa6', t: 'N' }
 ];
-function ipTop() {
-  return `<div class="ip-top"><div class="in"><div class="ip-logo" data-go="identipass.sim"><span class="k">🔑</span>IdentiPass</div><span style="font-size:12px;opacity:.75">La connexion unique aux services publics (fictive)</span><span class="sp"></span><span class="lnk" data-go="identipass.sim/historique">Mon historique de connexions</span></div></div>`;
+const svcOf = ctx => SERVICES[ctx.params.service] || SERVICES.santea;
+const svcId = ctx => SERVICES[ctx.params.service] ? ctx.params.service : 'santea';
+function ipTop(plus) {
+  return `<div class="ip-top"><div class="in"><div class="ip-logo" data-go="identipass.sim"><span class="k">🔑</span>IdentiPass${plus ? '<span class="plus">+</span>' : ''}</div><span style="font-size:12px;opacity:.75">${plus ? 'La connexion renforcée aux démarches sensibles (fictive)' : 'La connexion unique aux services publics (fictive)'}</span><span class="sp"></span><span class="lnk" data-go="identipass.sim/historique">Mon historique de connexions</span></div></div>`;
 }
 SITES['identipass.sim'] = {
   name: 'IdentiPass', cls: 'ip', fav: { bg: '#2b3440', t: '🔑' },
-  envrai: ctx => ctx.path.startsWith('/consentement') ? null : 'ce bouton s\'appelle FranceConnect. Regardez sa forme sur votre fiche.',
+  envrai: ctx => ctx.path.startsWith('/consentement') ? null
+    : ctx.path.startsWith('/aidants') ? 'ce service s\'appelle Aidants Connect. Il est réservé aux aidants professionnels habilités.'
+    : (SERVICES[ctx.params.service] || {}).plus ? 'ce service s\'appelle FranceConnect+ : la version renforcée de FranceConnect, pour les démarches sensibles.'
+    : 'ce service s\'appelle FranceConnect.',
   render(ctx) {
-    const svc = SERVICES[ctx.params.service] || SERVICES.santea;
+    const svc = svcOf(ctx), sid = svcId(ctx), plus = !!svc.plus;
     const p = ctx.path.replace(/\/$/, '') || '/';
-    if (p === '/choix') return {
-      title: 'IdentiPass — Choix du compte',
-      html: ipTop() + `<div class="ip-main"><h1>Je choisis un compte pour me connecter</h1><div class="svc">Vous souhaitez accéder à : <b>${svc.nom}</b></div><div id="ip-msg"></div>
-        <div class="ip-grid">${IP_ACCOUNTS.map(a => `<div class="ip-acc ${a.off ? 'off' : ''}" ${a.off ? '' : `data-act="acc" data-id="${a.id}"`}><span class="lg" style="background:${a.bg}">${a.t}</span><b>${a.nom}</b><small>${a.sous}</small>
-          ${a.off ? '<span class="why">Ce compte ne peut pas être utilisé pour se connecter à ce service.</span>' : ''}</div>`).join('')}</div>
-        <p style="margin-top:22px;font-size:12.5px;color:#555">Vous n'avez aucun de ces comptes ? <span style="text-decoration:underline;cursor:pointer" data-go="identipass.sim">En savoir plus sur IdentiPass</span></p>
-        <p style="font-size:12.5px"><span style="text-decoration:underline;cursor:pointer" data-go="${svc.host}/connexion">← Revenir sur ${svc.nom}</span></p></div>`
-    };
+    if (p === '/choix') {
+      const tile = (a, off, why) => `<div class="ip-acc ${off ? 'off' : ''}" data-act="${off ? 'refus' : 'acc'}" data-id="${a.id}"><span class="lg" style="background:${a.bg}">${a.t}</span><b>${a.nom}</b><small>${a.sous}</small>${why ? `<span class="why">${why}</span>` : ''}</div>`;
+      const ok = IP_ACCOUNTS.filter(a => plus ? a.verifie : true);
+      const ko = plus ? IP_ACCOUNTS.filter(a => !a.verifie) : [];
+      return {
+        title: (plus ? 'IdentiPass+' : 'IdentiPass') + ' — Choix du compte',
+        html: ipTop(plus) + `<div class="ip-main"><h1>${plus ? 'Je choisis une identité numérique pour me connecter' : 'Je choisis un compte pour me connecter'}</h1><div class="svc">Vous souhaitez accéder à : <b style="color:${svc.couleur}">${svc.nom}</b></div><div id="ip-msg"></div>
+        <div class="ip-grid">${ok.map(a => { const off = (a.refuse || []).includes(sid); return tile(a, off, off ? 'Ce compte ne peut pas être utilisé pour se connecter à ce service.' : ''); }).join('')}</div>
+        ${plus ? `<h2 class="ip-sub">Comptes qui ne sont pas acceptés pour cette démarche</h2><div class="ip-grid small">${ko.map(a => tile(a, true, '')).join('')}</div>` : ''}
+        <p style="margin-top:22px;font-size:12.5px;color:#555">${plus ? 'Vous n\'avez aucune de ces identités numériques ?' : 'Vous n\'avez aucun de ces comptes ?'} <span style="text-decoration:underline;cursor:pointer" data-go="identipass.sim">En savoir plus sur IdentiPass</span></p>
+        <p style="font-size:12.5px"><span style="text-decoration:underline;cursor:pointer" data-go="${svc.host}/connexion">← Revenir sur ${svc.nom}</span></p>
+        <div class="ip-aidant">Vous êtes un aidant professionnel ? <span data-go="identipass.sim/aidants">Utiliser Aidants Relais</span></div></div>`
+      };
+    }
     if (p === '/consentement') {
-      if (!S.numerid.authOk) return SITES['identipass.sim'].render(Object.assign({}, ctx, { path: '/choix' }));
+      if (S.numerid.authOk !== sid) return SITES['identipass.sim'].render(Object.assign({}, ctx, { path: '/choix' }));
       const n = P.naissance;
       return {
-        title: 'IdentiPass — Autorisation',
-        html: ipTop() + `<div class="ip-main"><h1>Transmission de vos informations</h1><div class="svc">Vous êtes connectée avec <b style="color:#00787a">NumérID</b>.</div>
+        title: (plus ? 'IdentiPass+' : 'IdentiPass') + ' — Autorisation',
+        html: ipTop(plus) + `<div class="ip-main"><h1>Transmission de vos informations</h1><div class="svc">Vous êtes connectée avec <b style="color:#00787a">NumérID</b>.</div>
           <p><b>${svc.nom}</b> va recevoir les informations suivantes :</p>
           <ul class="ip-consent"><li><span>Nom de naissance</span><b>${P.nomNaissance}</b></li><li><span>Nom d'usage</span><b>${P.nomUsage}</b></li><li><span>Prénom</span><b>${P.prenom}</b></li>
             <li><span>Date de naissance</span><b>${String(n.jour).padStart(2, '0')}/${String(n.mois).padStart(2, '0')}/${n.annee}</b></li><li><span>Lieu de naissance</span><b>${n.lieu}</b></li><li><span>Sexe</span><b>${P.sexe === 'F' ? 'Féminin' : 'Masculin'}</b></li></ul>
-          <p style="font-size:12.5px;color:#555">Ces informations proviennent de votre compte NumérID. Elles servent uniquement à vous identifier auprès de ${svc.nom}.</p>
+          <p style="font-size:12.5px;color:#555">Ces informations proviennent de votre identité NumérID. Elles servent uniquement à vous identifier auprès de ${svc.nom}.</p>
           <div style="display:flex;gap:12px;margin-top:18px"><button class="ip-btn" data-act="consent">Continuer sur ${svc.nom}</button><button class="ip-btn ghost" data-act="cancel">Annuler</button></div></div>
           <div class="envrai" style="max-width:860px;margin:0 auto 30px">Cet écran existe aussi sur FranceConnect : il montre les informations que le site va recevoir. Vérifiez que ce sont bien les vôtres avant de continuer.</div>`
       };
     }
     if (p === '/historique') return { title: 'IdentiPass — Historique', html: ipTop() + `<div class="ip-main"><h1>Mon historique de connexions</h1><p>Pour consulter votre historique, connectez-vous d'abord à un service avec IdentiPass.</p></div>` };
+    if (p === '/aidants') return { title: 'Aidants Relais — IdentiPass', html: ipTop() + `<div class="ip-main ip-home"><h1>Aidants Relais</h1>
+        <p>Aidants Relais est <b>réservé aux aidants professionnels habilités</b> : agents des maisons de services au public, travailleurs sociaux, médiateurs numériques, secrétaires de mairie…</p>
+        <p>Il leur permet de faire une démarche en ligne <b>pour une personne qui le demande</b>, avec son accord écrit (un mandat, limité dans le temps), <b>sans jamais utiliser ses identifiants ni ses mots de passe</b>. Chaque action est enregistrée.</p>
+        <div id="ip-msg"></div><button class="ip-btn" data-act="aidant">Me connecter en tant qu'aidant habilité</button>
+        <p style="font-size:12.5px;margin-top:18px"><span style="text-decoration:underline;cursor:pointer" data-act="back">← Retour</span></p></div>` };
     return {
       title: 'IdentiPass — La connexion unique aux services publics',
       html: ipTop() + `<div class="ip-main ip-home"><h1 style="font-size:26px">Un seul identifiant pour plus de 1 400 services en ligne</h1>
         <p>IdentiPass vous permet de vous connecter à de nombreux services publics <b>avec un compte que vous possédez déjà</b> : celui des impôts, de l'assurance maladie, ou une identité numérique. Pas besoin de créer un nouveau mot de passe pour chaque site.</p>
         <div style="margin:18px 0">${ipButton('identipass.sim', 'Exemple du bouton :')}</div>
-        <h2>Comment ça marche ?</h2><ol><li>Sur le site où vous voulez aller, cliquez sur le bouton IdentiPass.</li><li>Choisissez un compte que vous possédez déjà.</li><li>Connectez-vous avec les identifiants de ce compte.</li><li>Vérifiez les informations transmises, puis continuez.</li></ol>
+        <h2>Comment ça marche ?</h2><ol><li>Sur le site où vous voulez aller, cliquez sur le bouton IdentiPass.</li><li>Choisissez un compte que vous possédez déjà.</li><li>Connectez-vous avec ce compte.</li><li>Vérifiez les informations transmises, puis continuez.</li></ol>
         <h2>Avec quels comptes ?</h2><div class="ip-logos">${IP_ACCOUNTS.map(a => `<span>${a.nom}</span>`).join('')}</div>
         <p style="font-size:12.5px;color:#555">Certains comptes ne permettent pas d'accéder à tous les services, pour des raisons de sécurité.</p>
-        <h2>Quelques services accessibles</h2><div class="ip-logos">${['Santéa', 'Retraite en ligne', 'Allocations familiales', 'Permis de conduire', 'Carte grise', 'Pôle Travail', 'Mutuelle étudiante', 'Mairies partenaires', 'Chèque énergie'].map(x => `<span>${x}</span>`).join('')}</div>
+        <h2>IdentiPass+ : pour les démarches sensibles</h2>
+        <div style="margin:10px 0 14px">${ipButton('identipass.sim', 'Exemple du bouton :', true)}</div>
+        <p>Certaines démarches engagent votre argent, votre santé ou votre vote. Elles demandent une garantie plus forte sur votre identité : c'est <b>IdentiPass+</b>.</p>
+        <p>Avec IdentiPass+, seules les <b>identités numériques vérifiées</b> sont acceptées : celles pour lesquelles votre pièce d'identité a été contrôlée, et qui se confirment sur votre téléphone. Les comptes protégés par un simple mot de passe ne suffisent pas.</p>
+        <div class="ip-logos">${IP_ACCOUNTS.filter(a => a.verifie).map(a => `<span>${a.nom}</span>`).join('')}</div>
+        <h2>Quelques services accessibles</h2><div class="ip-logos">${['Santéa', 'FormaCompte', 'Retraite en ligne', 'Allocations familiales', 'Permis de conduire', 'Carte grise', 'Pôle Travail', 'Procuration de vote', 'Mairies partenaires', 'Chèque énergie'].map(x => `<span>${x}</span>`).join('')}</div>
         <h2>Sécurité</h2><p>IdentiPass ne stocke pas vos mots de passe : ils restent chez le compte que vous choisissez. IdentiPass ne vous demandera jamais d'informations bancaires.</p></div>`
     };
   },
   action(name, el, ctx, root) {
-    const svc = SERVICES[ctx.params.service] || SERVICES.santea;
+    const svc = svcOf(ctx), sid = svcId(ctx);
+    const msg = t => { $('#ip-msg', root).innerHTML = `<div class="ip-alert">${t}</div>`; $('#viewport').scrollTop = 0; };
+    if (name === 'refus') {
+      const a = IP_ACCOUNTS.find(x => x.id === el.dataset.id);
+      if (!svc.plus) return msg(`<b>Le compte ${a.nom} ne peut pas être utilisé pour se connecter à ${svc.nom}.</b> Choisissez un autre compte.`);
+      S.incidents.refusPlus = true;
+      return msg(`<b>Niveau de garantie insuffisant.</b> Le compte ${a.nom} ne permet pas de se connecter avec IdentiPass+ : cette démarche demande une identité numérique vérifiée.`);
+    }
     if (name === 'acc') {
       const id = el.dataset.id;
-      if (id === 'santea') { $('#ip-msg', root).innerHTML = '<div class="ip-alert"><b>Vous n\'avez pas de compte Santéa.</b> Choisissez un autre compte.</div>'; return; }
-      if (id === 'numerid') { navigate('numerid.sim/connexion?service=' + (ctx.params.service || 'santea')); return; }
-      navigate(id + '.sim/?service=' + (ctx.params.service || 'santea'));
+      if (id === 'santea') return msg('<b>Vous n\'avez pas de compte Santéa.</b> Choisissez un autre compte.');
+      if (id === 'numerid') { navigate('numerid.sim/connexion?service=' + sid); return; }
+      navigate((id === 'cartid' ? 'cartid.gouv.sim' : id + '.sim') + '/?service=' + sid);
     }
-    if (name === 'consent') { S.santea.loggedIn = true; S.numerid.authOk = false; navigate(svc.host + '/espace'); }
-    if (name === 'cancel') { S.numerid.authOk = false; navigate(svc.host + '/connexion'); }
+    if (name === 'consent') { svc.login(); S.numerid.authOk = null; navigate(svc.host + '/espace'); }
+    if (name === 'cancel') { S.numerid.authOk = null; navigate(svc.host + '/connexion'); }
+    if (name === 'aidant') msg('<b>Aucune habilitation trouvée.</b> Aidants Relais est réservé aux professionnels dont la structure est habilitée.');
+    if (name === 'back') goBack();
   }
 };
 
 /* =====================================================================
    NumérID — numerid.sim (rôle réel : L'Identité Numérique La Poste)
+   Identité numérique vérifiée : pas de mot de passe. Chaque connexion se
+   confirme dans l'application, sur le téléphone, avec le code secret.
    ===================================================================== */
 function niTop() {
   return `<div class="ni-top"><div class="in"><div class="ni-logo" data-go="numerid.sim"><span class="d"></span><b>NumérID</b></div>
     <nav><span data-go="numerid.sim/page?t=Découvrir">Découvrir</span><span data-go="numerid.sim/page?t=Créer mon identité">Créer mon identité</span><span data-go="numerid.sim/page?t=Services partenaires">Services partenaires</span><span data-go="numerid.sim/page?t=Aide">Aide</span></nav>
     <span class="sp"></span><span class="conn" data-go="numerid.sim/connexion">Se connecter</span></div></div>`;
 }
-function sendNumeridCode() {
-  const N = S.numerid;
-  if (N.code) (N.oldCodes = N.oldCodes || []).push(N.code.value);
-  N.code = { value: rand6(), expires: Date.now() + CONFIG.durees.expirationCodeMail * 1000 };
-  deliverMail({ fromName: 'NumérID', fromAddr: 'securite@numerid.sim', subject: 'Votre code de vérification NumérID', tag: 'code',
-    html: `<div style="color:#00585a;font-weight:700;font-size:17px;border-bottom:3px solid #00787a;padding-bottom:5px;margin-bottom:10px">NumérID</div>
-      <p>Bonjour ${P.prenom},</p><p>Pour terminer votre connexion, saisissez ce code de vérification :</p><p style="font-size:28px;font-weight:700;letter-spacing:6px;color:#00585a">${N.code.value}</p>
-      <p>Ce code expire dans ${Math.round(CONFIG.durees.expirationCodeMail / 60)} minutes. Ne le communiquez jamais à personne.</p><p style="font-size:11px;color:#777">NumérID — identité numérique (service fictif)</p>` });
-}
+const telMasque = () => P.telephone.replace(/^(\d\d) \d\d \d\d \d\d (\d\d)$/, '$1 •• •• •• $2');
 function niErr(root, html, kind = 'err') { const z = $('#ni-msg', root); z.innerHTML = html ? `<div class="ni-${kind}">${html}</div>` : ''; }
+/* Envoie la demande de confirmation sur le téléphone */
+function numeridAsk(ctx) {
+  const N = S.numerid, sid = SERVICES[ctx.params.service] ? ctx.params.service : null, svc = sid && SERVICES[sid];
+  const tab = ctx.tab, url = tab.history[tab.idx];
+  const still = () => S.tabs.includes(tab) && tab.history[tab.idx] === url;
+  const end = st => { N.status = st; if (still() && tab.id === S.activeTab) renderBrowser(); };
+  N.status = 'wait'; N.reqId = token();
+  pushNotif('NumérID', 'Demande de connexion', svc ? svc.nom : 'Espace NumérID');
+  phoneAskConfirm({
+    id: N.reqId, app: 'NumérID', expect: P.numerid.codeSecret, maxTries: 3,
+    html: `Demande de connexion à <b>${svc ? svc.nom : 'votre espace NumérID'}</b>${svc ? ' via IdentiPass' + (svc.plus ? '+' : '') : ''}.<br>Est-ce bien vous ?`,
+    text: 'Saisissez votre code secret NumérID.',
+    onWrong: () => { S.incidents.codeSecretFaux = true; },
+    onBlocked: () => end('blocked'),
+    onRefuse: () => end('refused'),
+    onOk: () => {
+      N.status = null;
+      if (!still()) { toast('NumérID : la demande de connexion a expiré.'); return; }
+      if (sid) { N.authOk = sid; navigate('identipass.sim/consentement?service=' + sid, tab); }
+      else { N.session = true; navigate('numerid.sim/espace', tab); }
+    }
+  });
+}
 SITES['numerid.sim'] = {
   name: 'NumérID', cls: 'ni', fav: { bg: '#00787a', t: 'ID' },
-  envrai: 'L\'Identité Numérique La Poste',
+  envrai: 'L\'Identité Numérique La Poste. Pas de mot de passe : chaque connexion se confirme dans l\'application, sur le téléphone de la personne.',
   cookie: () => cookieBar('numerid.sim', 'background:#00585a;color:#fff', 'NumérID'),
   render(ctx) {
     const p = ctx.path.replace(/\/$/, '') || '/';
     const svc = SERVICES[ctx.params.service];
-    const from = svc ? `<div class="ni-from">🔑 Connexion demandée par <b>IdentiPass</b> pour accéder à <b>${svc.nom}</b></div>` : '';
-    const q = svc ? '?service=' + ctx.params.service : '';
+    const from = svc ? `<div class="ni-from">🔑 Connexion demandée par <b>IdentiPass${svc.plus ? '+' : ''}</b> pour accéder à <b>${svc.nom}</b></div>` : '';
+    const back = svc ? `<p style="font-size:12.5px;text-align:center;margin-top:14px"><span data-go="identipass.sim/choix?service=${ctx.params.service}" style="text-decoration:underline;cursor:pointer;color:#00585a">← Choisir un autre compte</span></p>` : '';
     if (p === '/connexion') return {
       title: 'Connexion | NumérID',
-      html: niTop() + `<div class="ni-card">${from}<h2>Connexion à NumérID</h2><p class="sub">Saisissez l'adresse mail et le mot de passe de votre identité numérique.</p><div id="ni-msg"></div>
-        <form data-form="login" autocomplete="off"><div class="ni-field"><label>Adresse mail</label><input name="u"></div><div class="ni-field"><label>Mot de passe</label><input name="p" type="password"></div>
-        <p style="font-size:12.5px;margin:-4px 0 14px"><span data-act="forgot" style="text-decoration:underline;cursor:pointer;color:#00585a">Mot de passe oublié ?</span></p><button class="ni-btn">Se connecter</button></form>
-        <p style="font-size:12.5px;text-align:center;margin-top:16px">Pas encore d'identité NumérID ? <span data-go="numerid.sim/page?t=Créer mon identité" style="text-decoration:underline;color:#00585a">Créer mon identité</span></p></div>`
+      html: niTop() + `<div class="ni-card">${from}<h2>Connexion avec NumérID</h2><p class="sub">Saisissez l'identifiant de votre identité numérique : votre adresse mail ou votre numéro de mobile.</p><div id="ni-msg"></div>
+        <form data-form="login" autocomplete="off"><div class="ni-field"><label>Identifiant</label><input name="u"></div><button class="ni-btn">Continuer</button></form>
+        <p style="font-size:12.5px;text-align:center;margin-top:16px">Pas encore d'identité NumérID ? <span data-go="numerid.sim/page?t=Créer mon identité" style="text-decoration:underline;color:#00585a">Créer mon identité</span></p>${back}</div>`
     };
-    if (p === '/code') {
-      if (!S.numerid.stageUser) return SITES['numerid.sim'].render(Object.assign({}, ctx, { path: '/connexion' }));
-      return {
-        title: 'Vérification | NumérID',
-        html: niTop() + `<div class="ni-card">${from}<h2>Vérification en deux étapes</h2><p class="sub">Un code à 6 chiffres vient d'être envoyé à <b>${P.mailMasque}</b>. Saisissez-le pour continuer.</p><div id="ni-msg"></div>
-          <form data-form="code" autocomplete="off"><div class="ni-field"><label>Code reçu par mail</label><input name="c" maxlength="6" inputmode="numeric" style="letter-spacing:8px;font-size:22px;text-align:center"></div><button class="ni-btn">Valider</button></form>
-          <p style="font-size:12.5px;text-align:center;margin-top:14px"><span data-act="newcode" style="text-decoration:underline;cursor:pointer;color:#00585a">Recevoir un nouveau code</span></p></div>`
-      };
+    if (p === '/confirmation') {
+      const st = S.numerid.status;
+      if (!S.numerid.user) return SITES['numerid.sim'].render(Object.assign({}, ctx, { path: '/connexion' }));
+      const again = '<span data-act="resend" style="text-decoration:underline;cursor:pointer">Envoyer une nouvelle demande</span>';
+      const body = st === 'refused' ? `<div class="ni-err">La connexion a été refusée depuis votre téléphone. ${again}</div>`
+        : st === 'blocked' ? `<div class="ni-err">Trop de codes incorrects : la demande a été annulée. ${again}</div>`
+        : `<div class="ni-wait"><span class="spin"></span><div><b>En attente de votre confirmation…</b><br>Une demande vient d'être envoyée à l'application NumérID de votre téléphone (${telMasque()}).</div></div>
+           <ol class="ni-steps"><li>Prenez votre téléphone.</li><li>Vérifiez la demande affichée par l'application NumérID.</li><li>Confirmez avec votre code secret.</li></ol>
+           <p style="font-size:12.5px;text-align:center"><span data-act="resend" style="text-decoration:underline;cursor:pointer;color:#00585a">Je n'ai rien reçu : envoyer une nouvelle demande</span></p>`;
+      return { title: 'Confirmation | NumérID', html: niTop() + `<div class="ni-card">${from}<h2>Confirmez sur votre téléphone</h2><p class="sub">NumérID ne vous demande pas de mot de passe sur ce site.</p>${body}${back}</div>` };
     }
     if (p === '/espace') {
       if (!S.numerid.session) return SITES['numerid.sim'].render(Object.assign({}, ctx, { path: '/connexion' }));
-      return { title: 'Mon espace | NumérID', html: niTop() + `<div class="ni-wrap"><h1 style="color:#00585a">Bonjour ${P.prenom}</h1><div class="ni-3"><div><h3>Mon identité</h3><p>${P.prenom} ${P.nomUsage.toUpperCase()}, née ${P.nomNaissance.toUpperCase()}<br>Identité vérifiée en mars 2024.</p></div><div><h3>Mes connexions</h3><p>Aucune connexion récente à un service partenaire.</p></div><div><h3>Sécurité</h3><p>Mot de passe et code par mail activés.</p></div></div></div>` };
+      return { title: 'Mon espace | NumérID', html: niTop() + `<div class="ni-wrap"><h1 style="color:#00585a">Bonjour ${P.prenom}</h1><div class="ni-3"><div><h3>Mon identité</h3><p>${P.prenom} ${P.nomUsage.toUpperCase()}, née ${P.nomNaissance.toUpperCase()}<br>Pièce d'identité vérifiée en ${P.numerid.creeLe}. Valable 5 ans.</p></div><div><h3>Mon téléphone</h3><p>Application NumérID installée sur le ${telMasque()}.<br>Un seul téléphone par identité.</p></div><div><h3>Sécurité</h3><p>Chaque connexion est confirmée dans l'application, avec votre code secret.</p></div></div></div>` };
     }
-    if (p === '/page') return { title: (ctx.params.t || 'NumérID') + ' | NumérID', html: niTop() + `<div class="ni-wrap" style="max-width:800px"><h1 style="color:#00585a">${h(ctx.params.t || '')}</h1><p style="line-height:1.7">Créer son identité NumérID est gratuit. La vérification de votre identité se fait en ligne avec une pièce d'identité et un selfie, ou au guichet d'un point d'accueil partenaire. Comptez quelques jours pour l'activation.</p><p style="line-height:1.7">Une fois créée, votre identité NumérID vous permet de vous connecter à de nombreux services via IdentiPass.</p></div>` };
+    if (p === '/page') return { title: (ctx.params.t || 'NumérID') + ' | NumérID', html: niTop() + `<div class="ni-wrap" style="max-width:800px"><h1 style="color:#00585a">${h(ctx.params.t || '')}</h1>
+      <p style="line-height:1.7">Créer son identité NumérID est gratuit. Il faut être <b>majeur</b>, avoir une pièce d'identité en cours de validité, un smartphone et un numéro de mobile. La vérification de votre pièce d'identité se fait en ligne, ou face à un agent dans un point d'accueil partenaire. Vous choisissez ensuite votre code secret.</p>
+      <p style="line-height:1.7">Votre identité NumérID est <b>liée à votre téléphone</b> : elle ne peut pas être utilisée depuis un autre appareil. À chaque connexion, vous recevez une demande dans l'application et vous la confirmez avec votre code secret. Si vous recevez une demande alors que vous n'êtes pas en train de vous connecter, refusez-la.</p>
+      <p style="line-height:1.7">Une fois créée, votre identité NumérID vous permet de vous connecter à de nombreux services via IdentiPass et IdentiPass+.</p></div>` };
     return {
       title: 'NumérID — Votre identité numérique',
-      html: niTop() + `<div class="ni-hero"><div class="in"><div><h1>Votre identité numérique, simple et sécurisée</h1><p>Avec NumérID, prouvez votre identité en ligne en quelques secondes. Connectez-vous à plus de 1 400 services publics et privés grâce à IdentiPass, sans multiplier les mots de passe.</p>
+      html: niTop() + `<div class="ni-hero"><div class="in"><div><h1>Votre identité numérique, simple et sécurisée</h1><p>Avec NumérID, prouvez votre identité en ligne en quelques secondes. Connectez-vous à plus de 1 400 services publics et privés grâce à IdentiPass et IdentiPass+, sans mot de passe.</p>
         <span class="sa-btn" style="background:#ff7a59;border-radius:6px" data-go="numerid.sim/page?t=Créer mon identité">Créer mon identité gratuitement</span></div><div class="phone">📱</div></div></div>
-        <div class="ni-wrap"><div class="ni-3"><div>🛡️<h3>Sécurisée</h3><p>Votre identité est vérifiée une fois pour toutes. Chaque connexion est confirmée par un code envoyé par mail.</p></div>
-          <div>⚡<h3>Rapide</h3><p>Plus besoin de chercher vos identifiants pour chaque site : un seul compte suffit pour de nombreux services.</p></div>
+        <div class="ni-wrap"><div class="ni-3"><div>🛡️<h3>Vérifiée</h3><p>Votre pièce d'identité est contrôlée une fois, à la création. Ensuite, chaque connexion se confirme sur votre téléphone, avec votre code secret.</p></div>
+          <div>⚡<h3>Sans mot de passe</h3><p>Plus besoin de retenir un mot de passe pour chaque site : votre téléphone et votre code secret suffisent.</p></div>
           <div>🤝<h3>Accompagnée</h3><p>Un conseiller peut vous aider à créer votre identité dans l'un de nos 7 000 points d'accueil (fictifs).</p></div></div>
-          <h2 style="color:#00585a">Questions fréquentes</h2><ul style="line-height:1.9">${['Comment créer mon identité NumérID ?', 'J\'ai oublié mon mot de passe', 'Je n\'ai pas reçu le code de vérification', 'Quels services puis-je utiliser ?', 'Mes données sont-elles protégées ?'].map(x => `<li data-go="numerid.sim/page?t=${encodeURIComponent(x)}" style="text-decoration:underline;color:#00585a">${x}</li>`).join('')}</ul></div>`
+          <h2 style="color:#00585a">Questions fréquentes</h2><ul style="line-height:1.9">${['Comment créer mon identité NumérID ?', 'J\'ai oublié mon code secret', 'Je n\'ai pas reçu la demande sur mon téléphone', 'J\'ai changé de téléphone', 'Quelqu\'un peut-il utiliser mon identité à ma place ?', 'Mes données sont-elles protégées ?'].map(x => `<li data-go="numerid.sim/page?t=${encodeURIComponent(x)}" style="text-decoration:underline;color:#00585a">${x}</li>`).join('')}</ul></div>`
     };
   },
+  after(root, ctx) {
+    // Arrivée sur l'écran d'attente : la demande part sur le téléphone (une seule fois)
+    if (ctx.path.replace(/\/$/, '') === '/confirmation' && S.numerid.user && !S.numerid.status) numeridAsk(ctx);
+  },
   action(name, el, ctx, root) {
-    if (name === 'forgot') niErr(root, 'Si un compte existe pour cette adresse, un lien de réinitialisation vous sera envoyé.', 'ok');
-    if (name === 'newcode') { sendNumeridCode(); niErr(root, 'Un nouveau code vous a été envoyé. Le code précédent n\'est plus valable.', 'ok'); }
+    if (name === 'resend') { phoneCancel(S.numerid.reqId); S.numerid.status = null; renderBrowser(); }
   },
   submit(name, f, ctx, root) {
     const N = S.numerid;
     const q = ctx.params.service ? '?service=' + ctx.params.service : '';
     if (name === 'login') {
-      if (f.u.value.trim().toLowerCase() === P.numerid.identifiant && f.p.value === P.numerid.motDePasse) {
-        N.stageUser = true; N.oldCodes = []; N.code = null; sendNumeridCode(); navigate('numerid.sim/code' + q); return;
+      const v = f.u.value.trim().toLowerCase();
+      if (v === P.numerid.identifiant || (digits(v).length === 10 && digits(v) === digits(P.telephone))) {
+        phoneCancel(N.reqId); N.user = true; N.status = null; navigate('numerid.sim/confirmation' + q); return;
       }
-      f.p.value = '';
-      return niErr(root, 'Identifiant ou mot de passe incorrect.');
+      return niErr(root, 'Aucune identité numérique ne correspond à cet identifiant.');
     }
-    if (name === 'code') {
-      const v = digits(f.c.value);
-      if (v.length !== 6) return niErr(root, 'Le code doit comporter 6 chiffres.');
-      if (N.code && v === N.code.value) {
-        if (Date.now() > N.code.expires) { S.incidents.codeExpire = true; return niErr(root, 'Ce code a expiré. <span data-act="newcode" style="text-decoration:underline;cursor:pointer">Recevoir un nouveau code</span>'); }
-        N.code = null; N.stageUser = false;
-        if (ctx.params.service) { N.authOk = true; navigate('identipass.sim/consentement' + q); }
-        else { N.session = true; navigate('numerid.sim/espace'); }
-        return;
-      }
-      if ((N.oldCodes || []).includes(v)) { S.incidents.codeExpire = true; return niErr(root, 'Ce code n\'est plus valide. <span data-act="newcode" style="text-decoration:underline;cursor:pointer">Recevoir un nouveau code</span>'); }
-      niErr(root, 'Code incorrect.');
-    }
+  }
+};
+
+/* Demande de connexion que Martine n'a pas faite (étape 4) */
+function fakeRequest() {
+  if (S.step !== 4 || S.waitingCode || S.incidents.fausseDemande) return;
+  if (pinRequest) { later(fakeRequest, 8000); return; }
+  const nom = CONFIG.fausseDemande.service;
+  S.incidents.fausseDemande = 'ignoree';
+  pushNotif('NumérID', 'Demande de connexion', nom);
+  phoneAskConfirm({
+    id: 'fake', fake: true, app: 'NumérID', expect: P.numerid.codeSecret, maxTries: 3,
+    html: `Demande de connexion à <b>${h(nom)}</b> via IdentiPass.<br>Est-ce bien vous ?`,
+    text: 'Saisissez votre code secret NumérID.',
+    onWrong: () => { S.incidents.codeSecretFaux = true; },
+    onRefuse: () => { S.incidents.fausseDemande = 'refusee'; pushNotif('NumérID', 'Connexion refusée', 'Personne ne s\'est connecté.'); },
+    onOk: () => { S.incidents.fausseDemande = 'acceptee'; showFakeRequestLesson(nom); }
+  });
+}
+function showFakeRequestLesson(nom) {
+  const el = document.createElement('div');
+  el.className = 'phishlesson';
+  el.innerHTML = `<div class="pl"><h2>📱 Stop ! Vous n'aviez rien demandé.</h2>
+    <p style="font-size:15px;line-height:1.55">Vous venez de confirmer une connexion à <b>${h(nom)}</b>. Pourtant, vous n'étiez pas en train de vous connecter à ce site. Ce n'est pas grave : c'est une simulation. En vrai, vous auriez ouvert la porte à quelqu'un d'autre.</p>
+    <div class="clue"><span class="n">1</span><div><b>Qui a demandé ?</b> Une demande de connexion arrive sur le téléphone seulement quand <b>vous</b> êtes en train de vous connecter. Si elle arrive toute seule, c'est que quelqu'un d'autre essaie.</div></div>
+    <div class="clue"><span class="n">2</span><div><b>Pour quel site ?</b> La demande donne toujours le nom du site. Ici : « ${h(nom)} ». Ce n'était pas le site de votre démarche.</div></div>
+    <div class="clue"><span class="n">3</span><div><b>Le bon réflexe :</b> lire la demande avant de répondre. Si je n'ai rien demandé : « Non, refuser ». Mon code secret ne sert que pour mes propres connexions.</div></div>
+    <div class="envrai" style="margin:16px 0">les identités numériques (L'Identité Numérique La Poste, France Identité) et les applications des banques fonctionnent ainsi. Des fraudeurs envoient des demandes en espérant qu'on valide sans lire.</div>
+    <button class="ip-btn" id="plclose">Reprendre là où j'en étais</button></div>`;
+  $('#browser').appendChild(el);
+  $('#plclose', el).onclick = () => el.remove();
+}
+
+/* =====================================================================
+   CartID — cartid.gouv.sim (rôle réel : France Identité)
+   Martine a une carte d'identité ancien modèle : elle ne peut pas s'en servir.
+   ===================================================================== */
+function fakeQr() {
+  let s = 7, cells = '';
+  for (let i = 0; i < 21 * 21; i++) {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    const x = i % 21, y = Math.floor(i / 21);
+    const corner = (x < 7 && y < 7) || (x > 13 && y < 7) || (x < 7 && y > 13);
+    const ring = corner && (() => { const cx = x > 13 ? x - 14 : x, cy = y > 13 ? y - 14 : y; return cx === 0 || cx === 6 || cy === 0 || cy === 6 || (cx > 1 && cx < 5 && cy > 1 && cy < 5); })();
+    cells += `<i class="${corner ? (ring ? 'b' : '') : ((s >> 8) % 2 ? 'b' : '')}"></i>`;
+  }
+  return `<div class="ci-qr">${cells}</div>`;
+}
+SITES['cartid.gouv.sim'] = {
+  name: 'CartID', cls: 'ci', fav: { bg: '#7d5a1c', t: 'C' },
+  envrai: 'France Identité, l\'application de l\'État. Elle fonctionne avec la nouvelle carte d\'identité (format carte bancaire, avec une puce).',
+  render(ctx) {
+    const svc = SERVICES[ctx.params.service];
+    return { title: 'Connexion — CartID', html: `<div class="ci-top"><span class="lg">C</span><b>CartID</b><small>Votre carte d'identité dans votre téléphone (service fictif)</small></div>
+      <div class="ci-box">${svc ? `<div class="ni-from">🔑 Connexion demandée par <b>IdentiPass${svc.plus ? '+' : ''}</b> pour accéder à <b>${svc.nom}</b></div>` : ''}
+        <h2>Scannez ce code avec l'application CartID</h2>
+        <div class="ci-flex">${fakeQr()}<ol><li>Ouvrez l'application <b>CartID</b> sur votre téléphone.</li><li>Touchez « Scanner un code ».</li><li>Visez le code affiché ici.</li><li>Confirmez avec votre code personnel ou votre empreinte.</li></ol></div>
+        <div id="ci-msg"></div>
+        <p style="font-size:12.5px"><span data-act="noapp" style="text-decoration:underline;cursor:pointer">Je n'ai pas l'application CartID</span></p>
+        ${svc ? `<p style="font-size:12.5px"><span data-go="identipass.sim/choix?service=${ctx.params.service}" style="text-decoration:underline;cursor:pointer">← Choisir un autre compte</span></p>` : ''}</div>` };
+  },
+  action(name, el, ctx, root) {
+    if (name === 'noapp') $('#ci-msg', root).innerHTML = `<div class="ci-info"><b>Pour utiliser CartID, il faut :</b><ul><li>être majeur ;</li><li>avoir la carte d'identité au <b>format carte bancaire</b>, avec une puce ;</li><li>un téléphone capable de lire cette puce sans contact ;</li><li>installer l'application et y enregistrer sa carte.</li></ul>Pour les démarches IdentiPass+, l'identité CartID doit en plus être <b>certifiée en mairie</b>.</div>`;
   }
 };
 
@@ -2518,12 +2787,165 @@ SITES['idnomade.sim'] = otherIdp('IdNomade', '#3c5aa6', 'Identité sur mobile (f
 
 
 /* =====================================================================
+   FORMACOMPTE — formacompte.gouv.sim (rôle réel : Mon Compte Formation)
+   Étape 4 : la connexion n'est possible qu'avec IdentiPass+.
+   ===================================================================== */
+const FORMATIONS = [
+  { id: 'asg-distance', titre: 'Assistant(e) de soins en gérontologie', org: 'FormaSanté Online (fictif)', lieu: 'À distance', duree: '140 h', prix: 2990, session: 'Entrée permanente', note: '4,1' },
+  { id: 'asg-quimper', titre: 'Assistant(e) de soins en gérontologie', org: 'Institut de formation du Finistère (fictif)', lieu: 'Quimper (29)', duree: '140 h', prix: 1680, session: 'Du 8 février au 26 mars 2027', note: '4,7' },
+  { id: 'asg-rennes', titre: 'Assistant(e) de soins en gérontologie', org: 'Campus Santé Bretagne (fictif)', lieu: 'Rennes (35)', duree: '140 h', prix: 1750, session: 'Du 11 janvier au 26 février 2027', note: '4,5', complet: true },
+  { id: 'fin-de-vie', titre: 'Accompagner la fin de vie en établissement', org: 'Institut de formation du Finistère (fictif)', lieu: 'Quimper (29)', duree: '21 h', prix: 540, session: 'Du 15 au 17 mars 2027', note: '4,6' },
+  { id: 'gestes', titre: 'Gestes et postures : manutention des personnes', org: 'Prévention Ouest (fictif)', lieu: 'Lorient (56)', duree: '14 h', prix: 390, session: 'Les 4 et 5 février 2027', note: '4,3' },
+  { id: 'anglais', titre: 'Anglais : remise à niveau', org: 'Langues Express (fictif)', lieu: 'À distance', duree: '30 h', prix: 1200, session: 'Entrée permanente', note: '3,9' }
+];
+const FO_DROITS = 2840;
+const foEur = n => n.toLocaleString('fr-FR') + ',00 €';
+function foHeader() {
+  const L = S.forma.loggedIn;
+  return `<div class="fo-band">Un site du service public de la formation (fictif)<span class="sp"></span><span>Organismes de formation</span><span>Employeurs</span><span>Aide</span></div>
+    <div class="fo-head"><div class="in"><div class="fo-logo" data-go="/"><span class="m">▲</span><div><b>FormaCompte</b><small>Mes droits à la formation</small></div></div>
+      <nav>${['Trouver une formation', 'Comprendre mes droits', 'Financer mon projet', 'Bilan de compétences', 'Actualités'].map(x => `<span data-go="/page?t=${encodeURIComponent(x)}">${x}</span>`).join('')}</nav>
+      <span class="acc" data-go="${L ? '/espace' : '/connexion'}">👤 ${L ? P.prenom + ' ' + P.nomUsage : 'Mon espace'}</span></div></div>`;
+}
+function foFooter() {
+  return `<div class="fo-foot"><div class="in">${[['Mes droits', ['Consulter mes droits', 'Comment sont-ils calculés ?', 'Abondements de l\'employeur', 'Mes droits à la retraite']], ['Me former', ['Rechercher une formation', 'Validation des acquis', 'Bilan de compétences', 'Permis de conduire']],
+    ['Sécurité', ['Reconnaître une arnaque', 'Signaler un démarchage', 'Protéger mon espace', 'IdentiPass+']], ['Nous contacter', ['Foire aux questions', '09 99 00 29 29 (fictif)', 'Trouver un conseiller', 'Accessibilité']]]
+    .map(c => `<div><h4>${c[0]}</h4>${c[1].map(x => `<span data-go="/page?t=${encodeURIComponent(x)}">${x}</span>`).join('')}</div>`).join('')}</div>
+    <div class="legal">© FormaCompte 2026 — site fictif à usage pédagogique · Mentions légales · Données personnelles · Cookies</div></div>`;
+}
+const foPage = inner => foHeader() + inner + foFooter();
+const foCard = f => `<div class="fo-res" data-go="/espace/formation?id=${f.id}"><div><b>${f.titre}</b><small>${f.org}</small><span class="tags"><i>📍 ${f.lieu}</i><i>⏱ ${f.duree}</i><i>📅 ${f.session}</i><i>★ ${f.note}/5</i></span></div><div class="px">${foEur(f.prix)}<small>${f.complet ? 'Session complète' : 'Places disponibles'}</small></div></div>`;
+
+SITES['formacompte.gouv.sim'] = {
+  name: 'FormaCompte', cls: 'fo', fav: { bg: '#8a4b08', t: '▲' },
+  envrai: ctx => ctx.path.startsWith('/connexion') ? 'Mon Compte Formation (le CPF). Depuis 2022, il faut FranceConnect+ pour s\'y inscrire à une formation : c\'est une protection contre les arnaques.' : 'Mon Compte Formation (moncompteformation.gouv.fr), le site du compte personnel de formation (CPF)',
+  cookie: () => cookieBar('formacompte.gouv.sim', 'background:#4a2a06;color:#fff', 'FormaCompte'),
+  render(ctx) {
+    const p = ctx.path.replace(/\/$/, '') || '/';
+    const self = SITES['formacompte.gouv.sim'];
+    if (p === '/') return {
+      title: 'FormaCompte — Mes droits à la formation',
+      html: foPage(`<div class="fo-hero"><div class="in"><div><h1>Vos droits à la formation vous suivent toute votre vie professionnelle</h1>
+          <p>Chaque année travaillée vous donne des droits, en euros, pour financer une formation. Consultez-les, choisissez votre formation et inscrivez-vous en ligne, sans intermédiaire.</p>
+          <form class="fo-search" data-form="search"><input name="q" placeholder="Métier, compétence, diplôme… Ex : aide-soignant, anglais, permis"><button>Rechercher</button></form></div><div class="img">🎓</div></div></div>
+        <div class="fo-wrap">
+          <div class="fo-alert"><b>⚠ Démarchage interdit.</b> Personne n'a le droit de vous appeler ou de vous écrire pour vous vendre une formation avec vos droits. FormaCompte ne vous demandera jamais vos identifiants par téléphone, SMS ou mail. Vos droits ne « s'expirent » pas à la fin de l'année.</div>
+          <h2>Les formations les plus recherchées</h2>
+          <div class="fo-tiles">${[['🚗', 'Permis de conduire', '12 480 formations'], ['💬', 'Langues étrangères', '9 215 formations'], ['🩺', 'Santé et aide à la personne', '4 630 formations'], ['💻', 'Bureautique et numérique', '7 902 formations'], ['🧾', 'Création d\'entreprise', '2 114 formations'], ['🧭', 'Bilan de compétences', '3 350 prestataires']]
+            .map(t => `<div data-go="/page?t=${encodeURIComponent(t[1])}"><span class="ic">${t[0]}</span><span><b>${t[1]}</b><small>${t[2]}</small></span></div>`).join('')}</div>
+          <div class="fo-two"><div><h2>Actualités</h2>${[['Reste à charge : ce qui change au 1er janvier', 'Une participation forfaitaire est demandée pour chaque formation, sauf si votre employeur complète le financement.'], ['Aides-soignants, auxiliaires de vie : des formations financées en priorité', 'Les métiers du soin et de l\'aide à la personne bénéficient d\'abondements de la région.'], ['Arnaques : 3 signes qui doivent vous alerter', 'Un appel pressant, une promesse de cadeau, une demande de codes : raccrochez.']]
+            .map(a => `<div class="fo-news" data-go="/page?t=${encodeURIComponent(a[0])}"><b>${a[0]}</b><p>${a[1]}</p></div>`).join('')}</div>
+            <div class="fo-side"><h3>Mon espace</h3><p>Consultez le montant de vos droits, suivez vos dossiers et inscrivez-vous à une formation.</p><span class="fo-btn" data-go="/connexion">Accéder à mon espace</span>
+              <p style="font-size:12px;margin-top:14px;opacity:.85">La connexion se fait avec IdentiPass+.</p></div></div></div>`)
+    };
+    if (p === '/page') {
+      const t = ctx.params.t || 'Information';
+      return { title: t + ' | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:860px"><p style="font-size:12px;color:#777"><span data-go="/" style="text-decoration:underline">Accueil</span> › ${h(t)}</p><h1>${h(t)}</h1>
+        <p style="line-height:1.7">Vos droits à la formation sont exprimés en euros. Ils sont alimentés chaque année en fonction de votre activité, et restent acquis même si vous changez d'employeur ou si vous êtes en recherche d'emploi.</p>
+        <p style="line-height:1.7">Pour consulter vos droits, rechercher une formation parmi les offres de votre région et vous inscrire, connectez-vous à votre espace. L'inscription se fait toujours par vous-même : personne ne peut la faire à votre place.</p>
+        <span class="fo-btn" data-go="/connexion">Accéder à mon espace</span></div>`) };
+    }
+    if (p === '/connexion') return {
+      title: 'Connexion à mon espace | FormaCompte',
+      html: foPage(`<div class="fo-wrap" style="max-width:760px"><h1 style="text-align:center">Me connecter à mon espace FormaCompte</h1>
+        <div class="fo-card" style="text-align:center"><p class="sub">Vos droits à la formation représentent de l'argent. Pour les protéger, la connexion à votre espace se fait <b>uniquement avec IdentiPass+</b>.</p>
+          <div style="margin:20px 0">${ipButton('identipass.sim/choix?service=forma', 'S\'identifier avec', true)}</div>
+          <p style="font-size:12.5px"><span data-go="identipass.sim" data-newtab style="text-decoration:underline">Qu'est-ce que IdentiPass+ ?</span></p></div>
+        <div class="fo-card" style="margin-top:16px"><h2>Vous n'arrivez pas à vous connecter ?</h2>
+          <details><summary>J'avais un identifiant et un mot de passe FormaCompte</summary><p>La connexion par identifiant et mot de passe n'existe plus. Utilisez le bouton IdentiPass+.</p></details>
+          <details><summary>Je n'ai pas d'identité numérique</summary><p>Vous devez d'abord en créer une auprès d'un service partenaire. C'est gratuit. Il faut être majeur et avoir une pièce d'identité en cours de validité et un smartphone.</p></details>
+          <details><summary>Quelqu'un peut-il se connecter pour moi ?</summary><p>Non. Votre espace est personnel : ni un proche, ni votre employeur, ni un organisme de formation ne doit s'y connecter à votre place.</p></details></div></div>`)
+    };
+    if (p.startsWith('/espace')) {
+      if (!S.forma.loggedIn) return self.render(Object.assign({}, ctx, { path: '/connexion' }));
+      const crumb = t => `<p style="font-size:12px;color:#777;margin:0 0 12px"><span data-go="/espace" style="text-decoration:underline">Mon espace</span> › ${t}</p>`;
+      const f = FORMATIONS.find(x => x.id === ctx.params.id);
+      if (p === '/espace/recherche') {
+        const q = norm(ctx.params.q || '');
+        const words = (ctx.params.q || '').split(/\s+/).map(norm).filter(w => w.length > 2);
+        const res = FORMATIONS.filter(x => !q || words.some(w => norm(x.titre + x.lieu + x.org).includes(w)));
+        return { title: 'Rechercher une formation | FormaCompte', html: foPage(`<div class="fo-wrap">${crumb('Rechercher une formation')}<h1>Rechercher une formation</h1>
+          <form class="fo-search" data-form="search2" style="margin-bottom:18px"><input name="q" value="${h(ctx.params.q || '')}" placeholder="Métier, compétence, diplôme…"><button>Rechercher</button></form>
+          <p style="font-size:12.5px;color:#666">${res.length} formation${res.length > 1 ? 's' : ''} — triées par pertinence · Vos droits : <b>${foEur(FO_DROITS)}</b></p>
+          ${res.map(foCard).join('') || '<div class="fo-card">Aucune formation ne correspond à votre recherche. Essayez d\'autres mots.</div>'}</div>`) };
+      }
+      if (p === '/espace/formation' && f) {
+        const reste = Math.max(0, f.prix - FO_DROITS);
+        return { title: f.titre + ' | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:900px">${crumb('<span data-go="/espace/recherche" style="text-decoration:underline">Rechercher une formation</span> › ' + f.titre)}<div id="fo-msg"></div>
+          <div class="fo-fiche"><div><h1 style="margin-top:0">${f.titre}</h1><p class="org">${f.org} · ★ ${f.note}/5</p>
+            <table><tr><td>Lieu</td><td><b>${f.lieu}</b></td></tr><tr><td>Durée</td><td>${f.duree}</td></tr><tr><td>Session</td><td>${f.session}</td></tr><tr><td>Certification</td><td>Attestation de formation reconnue par la branche</td></tr><tr><td>Public</td><td>Aides-soignants, aides médico-psychologiques, accompagnants éducatifs et sociaux en poste</td></tr></table>
+            <p style="line-height:1.6;font-size:13px">Objectifs : accompagner les personnes âgées atteintes de troubles cognitifs, adapter les soins quotidiens, travailler avec les familles et l'équipe. Alternance de cours et de mises en situation.</p></div>
+            <div class="fo-prix"><div class="big">${foEur(f.prix)}</div><table><tr><td>Vos droits</td><td>${foEur(FO_DROITS)}</td></tr><tr><td>Droits utilisés</td><td>− ${foEur(Math.min(f.prix, FO_DROITS))}</td></tr><tr><td><b>Reste à payer</b></td><td><b>${foEur(reste)}</b></td></tr></table>
+              <span class="fo-btn" style="display:block;text-align:center" data-act="inscrire" data-id="${f.id}">M'inscrire à cette formation</span></div></div></div>`) };
+      }
+      if (p === '/espace/inscription' && f) {
+        return { title: 'Mon inscription | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:680px">${crumb('Mon inscription')}<div class="fo-card"><h2>Vérifiez votre demande d'inscription</h2><div id="fo-msg"></div>
+          <table class="fo-recap"><tr><td>Formation</td><td><b>${f.titre}</b></td></tr><tr><td>Organisme</td><td>${f.org}</td></tr><tr><td>Lieu</td><td>${f.lieu}</td></tr><tr><td>Session</td><td>${f.session}</td></tr>
+            <tr><td>Prix</td><td>${foEur(f.prix)}</td></tr><tr><td>Payé avec vos droits</td><td>${foEur(Math.min(f.prix, FO_DROITS))}</td></tr><tr><td>Stagiaire</td><td>${P.prenom} ${P.nomUsage.toUpperCase()}, née ${P.nomNaissance.toUpperCase()}</td></tr></table>
+          <form data-form="valider" autocomplete="off"><input type="hidden" name="id" value="${f.id}"><label class="fo-check"><input type="checkbox" name="ok"> Je confirme ma demande : le montant sera réservé sur mes droits à la formation.</label>
+            <button class="fo-btn">Valider ma demande d'inscription</button> <span data-go="/espace/formation?id=${f.id}" style="margin-left:12px;text-decoration:underline;font-size:12.5px">Annuler</span></form></div></div>`) };
+      }
+      if (p === '/espace/confirmation' && f && S.forma.inscrit === f.id) {
+        return { title: 'Demande envoyée | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:680px"><div class="fo-card"><h2>✔ Votre demande d'inscription est envoyée</h2>
+          <div class="fo-ok">Votre demande pour la formation <b>${f.titre}</b> (${f.lieu}) a bien été transmise à l'organisme. Il a 2 jours ouvrés pour vous répondre.<br><br>Dossier n° FC-2026-1204-${f.prix}7 — ${foEur(Math.min(f.prix, FO_DROITS))} réservés sur vos droits.</div>
+          <span class="fo-btn ghost" data-go="/espace">Retour à mon espace</span></div></div>`) };
+      }
+      const dossier = FORMATIONS.find(x => x.id === S.forma.inscrit);
+      return { title: 'Mon espace | FormaCompte', html: foPage(`<div class="fo-wrap"><div id="fo-msg"></div>
+        <div class="fo-welcome"><div><div class="hi">Bonjour ${P.prenom} ${P.nomUsage}</div><div style="opacity:.85">Connectée avec IdentiPass+ · <span data-act="logout" style="text-decoration:underline">Me déconnecter</span></div></div>
+          <div class="droits"><small>Mes droits à la formation</small><b>${foEur(FO_DROITS)}</b></div></div>
+        <div class="fo-tiles">${[['🔎', 'Rechercher une formation', 'Parmi les offres de votre région ou à distance', '/espace/recherche'], ['📁', 'Mes dossiers', dossier ? '1 demande en attente de réponse' : 'Aucun dossier en cours'], ['💶', 'Le détail de mes droits', 'Droits acquis année par année'],
+          ['🧭', 'Mon projet professionnel', 'Faire le point avec un conseiller'], ['✉️', 'Ma messagerie', 'Aucun nouveau message'], ['👤', 'Mes informations', 'Coordonnées, situation professionnelle']]
+          .map(t => `<div ${t[3] ? `data-go="${t[3]}"` : 'data-act="nope"'}><span class="ic">${t[0]}</span><span><b>${t[1]}</b><small>${t[2]}</small></span></div>`).join('')}</div>
+        <h2>Suggestions pour vous</h2>${FORMATIONS.filter(x => ['fin-de-vie', 'gestes', 'anglais'].includes(x.id)).map(foCard).join('')}</div>`) };
+    }
+    return self.render(Object.assign({}, ctx, { path: '/page', params: { t: 'Page introuvable' } }));
+  },
+  after(root, ctx) {
+    // Fin de l'étape 4 : la demande d'inscription à la bonne formation est envoyée
+    if (ctx.path === '/espace/confirmation' && S.forma.inscrit === CONFIG.formationCible && S.step === 4 && !S.waitingCode) { S.incidents.etape4 = true; later(() => completeStep(4), 3500); }
+  },
+  action(name, el, ctx, root) {
+    const msg = t => { $('#fo-msg', root).innerHTML = `<div class="fo-err">${t}</div>`; $('#viewport').scrollTop = 0; };
+    if (name === 'nope') msg('Ce service est momentanément indisponible. Veuillez réessayer plus tard.');
+    if (name === 'logout') { S.forma.loggedIn = false; navigate('/'); }
+    if (name === 'inscrire') {
+      const f = FORMATIONS.find(x => x.id === el.dataset.id);
+      if (f.complet) return msg('Cette session est complète. Aucune autre date n\'est proposée pour le moment.');
+      if (f.prix > FO_DROITS) return msg('Vos droits ne couvrent pas le prix de cette formation. Le paiement du reste à payer par carte bancaire est momentanément indisponible.');
+      navigate('/espace/inscription?id=' + f.id);
+    }
+  },
+  submit(name, f, ctx, root) {
+    if (name === 'search') { navigate(S.forma.loggedIn ? '/espace/recherche?q=' + encodeURIComponent(f.q.value) : '/connexion'); return; }
+    if (name === 'search2') { navigate('/espace/recherche?q=' + encodeURIComponent(f.q.value)); return; }
+    if (name === 'valider') {
+      if (!f.ok.checked) { $('#fo-msg', root).innerHTML = '<div class="fo-err">Vous devez confirmer votre demande en cochant la case.</div>'; return; }
+      const id = f.id.value, fo = FORMATIONS.find(x => x.id === id);
+      S.forma.inscrit = id;
+      deliverMail({ fromName: 'FormaCompte', fromAddr: 'ne-pas-repondre@formacompte.gouv.sim', subject: 'Votre demande d\'inscription a bien été envoyée', tag: 'forma',
+        html: `<div style="color:#8a4b08;font-weight:700;font-size:17px;border-bottom:3px solid #f0b429;padding-bottom:5px;margin-bottom:10px">▲ FormaCompte</div><p>Bonjour ${P.prenom} ${P.nomUsage},</p><p>Votre demande d'inscription à la formation <b>${fo.titre}</b> (${fo.lieu}) a bien été transmise à l'organisme ${fo.org}.</p><p>Vous serez prévenue de sa réponse par mail. FormaCompte ne vous demandera jamais vos codes par mail ou par téléphone.</p>` });
+      navigate('/espace/confirmation?id=' + id);
+    }
+  }
+};
+
+
+/* =====================================================================
    TROUVO — moteur de recherche fictif (page de nouvel onglet)
    + sites annexes : info-pratique.sim, aide-demarches-express.sim
    ===================================================================== */
 const K_FISC = ['IMPOT', 'FISCALIS', 'FISC', 'TAXE', 'AVIS', 'DECLAR', 'PRELEVEMENT', 'FINANCESPUBLIQUES'];
 const K_SANTE = ['SANTE', 'SANTEA', 'ASSURANCEMALADIE', 'AMELI', 'CARTEVITALE', 'ATTESTATION', 'REMBOURSEMENT', 'SECU', 'MEDECIN', 'CPAM'];
+const K_FORM = ['FORMATION', 'FORMACOMPTE', 'FORMER', 'CPF', 'COMPTEFORMATION', 'GERONTOLOGIE', 'ASSISTANTEDESOINS', 'STAGE'];
 const TV_INDEX = [
+  { k: K_FORM, url: 'formacompte.gouv.sim', nm: 'FormaCompte', f: ['#8a4b08', '▲'], title: 'FormaCompte — Mes droits à la formation',
+    desc: 'Consultez vos droits à la formation, recherchez une formation et inscrivez-vous en ligne. Site officiel (fictif) du service public de la formation.',
+    links: [['Mon espace', 'formacompte.gouv.sim/connexion'], ['Comprendre mes droits', 'formacompte.gouv.sim/page?t=Comprendre mes droits'], ['Reconnaître une arnaque', 'formacompte.gouv.sim/page?t=Reconnaître une arnaque']] },
+  { k: K_FORM.concat(['METIER', 'SOIN']), url: 'info-pratique.sim/article?t=' + encodeURIComponent('Droits à la formation : attention aux démarcheurs'), nm: 'Info Pratique', f: ['#e8590c', 'iP'],
+    title: 'Droits à la formation : attention aux démarcheurs', desc: 'Appels, SMS, faux conseillers : les escrocs veulent vos identifiants pour vider votre compte formation. Les bons réflexes.' },
+  { k: ['CARTID', 'CARTEDIDENTITE', 'CARTEIDENTITE', 'FRANCEIDENTITE'], url: 'cartid.gouv.sim', nm: 'CartID', f: ['#7d5a1c', 'C'], title: 'CartID — Votre carte d\'identité dans votre téléphone',
+    desc: 'L\'application de l\'État (fictive) pour prouver votre identité en ligne avec votre carte d\'identité à puce.' },
   { k: K_FISC, url: 'fiscalis.gouv.sim', nm: 'Fiscalis', f: ['#1f4d3a', 'F'], title: 'Fiscalis | Le site officiel des impôts',
     desc: 'Déclarer, payer, gérer votre prélèvement à la source, consulter vos avis : accédez à votre espace particulier et à tous les services en ligne des finances publiques.',
     links: [['Votre espace particulier', 'fiscalis.gouv.sim/connexion'], ['Payer en ligne', 'fiscalis.gouv.sim/page?t=Payer'], ['Questions fréquentes', 'fiscalis.gouv.sim/page?t=Questions fréquentes']] },
@@ -2534,10 +2956,10 @@ const TV_INDEX = [
     links: [['Mon compte', 'santea.gouv.sim/connexion'], ['Attestation de droits', 'santea.gouv.sim/page?t=Obtenir une attestation de droits'], ['Nous contacter', 'santea.gouv.sim/page?t=Nous contacter']] },
   { k: K_SANTE.concat(['COMPTE', 'CONNEXION', 'CONNECTER']), url: 'santea.gouv.sim/connexion', nm: 'Santéa', f: ['#5b2a6e', 'S'], title: 'Se connecter à mon compte Santéa',
     desc: 'Accédez à votre compte Santéa pour suivre vos remboursements, télécharger vos attestations et échanger avec un conseiller.' },
-  { k: ['IDENTIPASS', 'FRANCECONNECT', 'CONNEXIONUNIQUE', 'IDENTIFIANTUNIQUE'], url: 'identipass.sim', nm: 'IdentiPass', f: ['#2b3440', '🔑'], title: 'IdentiPass — La connexion unique aux services publics',
+  { k: ['IDENTIPASS', 'IDENTIPASS+', 'FRANCECONNECT', 'CONNEXIONUNIQUE', 'IDENTIFIANTUNIQUE'], url: 'identipass.sim', nm: 'IdentiPass', f: ['#2b3440', '🔑'], title: 'IdentiPass — La connexion unique aux services publics',
     desc: 'Connectez-vous à plus de 1 400 services en ligne avec un compte que vous possédez déjà. Simple, sécurisé, gratuit.' },
   { k: ['NUMERID', 'IDENTITENUMERIQUE', 'LAPOSTE', 'IDENTITE'], url: 'numerid.sim', nm: 'NumérID', f: ['#00787a', 'ID'], title: 'NumérID — Votre identité numérique, simple et sécurisée',
-    desc: 'Créez gratuitement votre identité numérique et connectez-vous à de nombreux services via IdentiPass.' },
+    desc: 'Créez gratuitement votre identité numérique et connectez-vous à de nombreux services via IdentiPass et IdentiPass+, sans mot de passe.' },
   { k: K_FISC.concat(['ESPACE', 'NUMERO', 'CREER']), url: 'info-pratique.sim/article?t=' + encodeURIComponent('Impôts en ligne : 7 questions que tout le monde se pose'), nm: 'Info Pratique', f: ['#e8590c', 'iP'],
     title: 'Impôts en ligne : 7 questions que tout le monde se pose', desc: 'Numéro fiscal, numéro d\'accès en ligne, code par mail… Le point sur les démarches qui posent le plus de problèmes. Publié le 2 nov. 2026.' },
   { k: ['MOTDEPASSE', 'OUBLIE', 'BLOQUE', 'CODE', 'MAIL', 'ARNAQUE', 'PIRATE', 'HAMECON'], url: 'info-pratique.sim/article?t=' + encodeURIComponent('Arnaques par mail : les nouvelles techniques des escrocs'), nm: 'Info Pratique', f: ['#e8590c', 'iP'],
@@ -2549,7 +2971,9 @@ const TV_ADS = [
   { k: K_FISC, url: 'aide-demarches-express.sim', nm: 'Aide Démarches Express', title: 'Créez votre compte impôts en 5 min - Assistance démarches officielles',
     desc: 'Évitez les erreurs ! Nos experts créent votre espace pour vous. Service rapide, satisfait ou remboursé. Plus de 50 000 clients.' },
   { k: K_SANTE, url: 'aide-demarches-express.sim/?d=sante', nm: 'Aide Démarches Express', title: 'Compte assurance maladie - Démarche simplifiée en ligne',
-    desc: 'Attestation, carte, compte : nous nous occupons de tout. Réponse en 24 h.' }
+    desc: 'Attestation, carte, compte : nous nous occupons de tout. Réponse en 24 h.' },
+  { k: K_FORM, url: 'aide-demarches-express.sim/?d=formation', nm: 'Aide Démarches Express', title: 'Vos droits formation expirent bientôt ! Inscription rapide par nos conseillers',
+    desc: 'Ne perdez pas vos droits : un conseiller vous inscrit à votre formation par téléphone. Tablette offerte.' }
 ];
 const tvLogo = '<div class="tv-logo"><span>T</span><span>r</span><span>o</span><span>u</span><span>v</span><span>o</span></div>';
 
@@ -2621,7 +3045,7 @@ SITES['aide-demarches-express.sim'] = {
       title: 'Aide Démarches Express - Vos démarches sans stress',
       html: `<div style="background:#fff;border-bottom:1px solid #eee;padding:14px 30px;display:flex;align-items:center;gap:10px"><span style="background:#d6336c;color:#fff;font-weight:900;padding:6px 10px;border-radius:6px">ADE</span><b style="font-size:20px">Aide Démarches Express</b><span style="flex:1"></span><span style="font-size:13px">⭐⭐⭐⭐⭐ 4,9/5 (12 482 avis)</span></div>
         <div style="background:linear-gradient(120deg,#d6336c,#f76707);color:#fff;padding:40px 30px;text-align:center"><h1 style="font-size:32px;margin:0 0 10px">Vos démarches administratives, sans stress</h1>
-          <p style="font-size:17px">Compte impôts, assurance maladie, carte grise… Nos experts s'occupent de tout pour vous.</p>
+          <p style="font-size:17px">Compte impôts, assurance maladie, formation, carte grise… Nos experts s'occupent de tout pour vous.</p>
           <p style="font-size:44px;font-weight:900;margin:14px 0">39,90 €<span style="font-size:14px;font-weight:400"> seulement</span></p>
           <span data-act="go" style="display:inline-block;background:#fff;color:#d6336c;font-weight:700;padding:14px 34px;border-radius:30px;font-size:17px;cursor:pointer">Commencer ma démarche</span></div>
         <div style="max-width:900px;margin:30px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 20px">${['✅ Traitement en 24 h', '✅ Experts certifiés', '✅ Satisfait ou remboursé'].map(x => `<div style="border:1px solid #eee;border-radius:10px;padding:18px;text-align:center;font-weight:700">${x}</div>`).join('')}</div>
@@ -2642,8 +3066,9 @@ function finalCode(I = S.incidents) {
   const c1 = Math.min(I.refus, 9);
   const v2 = (I.enregistre ? 1 : 0) + (I.codeExpire ? 2 : 0) + (I.bloque ? 4 : 0);
   const v3 = (I.fauxLu ? 1 : 0) + (I.fauxOuvert ? 2 : 0) + (I.fauxIdentifiants ? 4 : 0) + (I.avisAnDernier ? 8 : 0);
-  const c4 = (I.avisConjoint ? 5 : 0) + (c1 + v2 + v3) % 5;
-  return String(c1) + ALPH[v2] + ALPH[v3] + String(c4);
+  const v5 = (I.codeSecretFaux ? 1 : 0) + (I.refusPlus ? 2 : 0) + (I.fausseDemande === 'acceptee' ? 4 : 0) + (I.etape4 ? 8 : 0);
+  const c4 = (I.avisConjoint ? 5 : 0) + (c1 + v2 + v3 + v5) % 5;
+  return String(c1) + ALPH[v2] + ALPH[v3] + ALPH[v5] + String(c4);
 }
 
 function showRecap() {
@@ -2658,13 +3083,17 @@ function showRecap() {
     ['Lien du faux mail cliqué', yn(I.fauxOuvert)],
     ['Identifiants saisis sur le faux site', yn(I.fauxIdentifiants)],
     ['Avis d\'impôt de l\'an dernier utilisé', yn(I.avisAnDernier)],
-    ['Avis d\'impôt du conjoint utilisé', yn(I.avisConjoint)]
+    ['Avis d\'impôt du conjoint utilisé', yn(I.avisConjoint)],
+    ['Code secret NumérID faux, au moins une fois', yn(I.codeSecretFaux)],
+    ['Compte refusé essayé sur IdentiPass+', yn(I.refusPlus)],
+    ['Demande de connexion inattendue sur le téléphone', { acceptee: 'acceptée', refusee: 'refusée', ignoree: 'pas de réponse' }[I.fausseDemande] || 'pas reçue'],
+    ['Étape 4 (inscription avec IdentiPass+) terminée', yn(I.etape4)]
   ];
   const el = document.createElement('div');
   el.className = 'fullscreen recap';
   el.innerHTML = `<div class="rbox"><h1>Séance terminée — bravo !</h1><p style="color:#555;margin:0">Voici ce qui s'est passé pendant vos démarches. Ce n'est pas une note : ce sont les situations que vous avez rencontrées.</p>
     <table>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
-    <p style="margin:0">Recopiez ce <b>code de fin</b> sur votre fiche :</p><div class="code">${finalCode()}</div>
+    <p style="margin:0">Notez ce <b>code de fin</b> : votre professeur vous le demandera.</p><div class="code">${finalCode()}</div>
     <p style="text-align:right;margin:10px 0 0"><button id="recapclose" style="background:#fff;border:1px solid #999;padding:6px 14px;border-radius:4px;cursor:pointer">Revenir au simulateur</button></p></div>`;
   document.body.appendChild(el);
   $('#recapclose', el).onclick = () => el.remove();
@@ -2673,13 +3102,16 @@ function showRecap() {
 function openFicheProf() {
   const c = CONFIG.codes, d = CONFIG.durees, a = P.documents.find(x => x.id === 'avisAnDernier');
   const t2 = [...Array(8)].map((_, v) => `<tr><td><b>${ALPH[v]}</b></td><td>${v & 1 ? 'oui' : '–'}</td><td>${v & 2 ? 'oui' : '–'}</td><td>${v & 4 ? 'oui' : '–'}</td></tr>`).join('');
+  const t5 = [...Array(16)].map((_, v) => `<tr><td><b>${ALPH[v]}</b></td><td>${v & 1 ? 'oui' : '–'}</td><td>${v & 2 ? 'oui' : '–'}</td><td>${v & 4 ? 'oui' : '–'}</td><td>${v & 8 ? 'oui' : '–'}</td></tr>`).join('');
+  const cible = FORMATIONS.find(x => x.id === CONFIG.formationCible);
   const t3 = [...Array(16)].map((_, v) => `<tr><td><b>${ALPH[v]}</b></td><td>${v & 1 ? 'oui' : '–'}</td><td>${v & 2 ? 'oui' : '–'}</td><td>${v & 4 ? 'oui' : '–'}</td><td>${v & 8 ? 'oui' : '–'}</td></tr>`).join('');
   const html = `<div style="font-size:13.5px;line-height:1.5">
     <p><button onclick="window.print()">🖨 Imprimer</button> — Raccourcis : <b>Ctrl+Alt+P</b> (cette fiche), <b>Ctrl+Alt+R</b> (réinitialiser). Personnage : ${P.prenom} ${P.nomUsage}.</p>
     <h3>Codes de passage</h3><table><tr><th>Code</th><th>Effet</th></tr>
       <tr><td><b>${c.etape2}</b></td><td>Code n°1 — fin de l'étape 1 → début de l'étape 2 (compte Fiscalis créé et activé)</td></tr>
       <tr><td><b>${c.etape3}</b></td><td>Code n°2 — fin de l'étape 2 (avis 2026 ouvert) → début de l'étape 3 (Santéa / IdentiPass)</td></tr>
-      <tr><td><b>${c.recap}</b></td><td>Code n°3 — fin de l'étape 3 → récapitulatif et code de fin</td></tr>
+      <tr><td><b>${c.etape4}</b></td><td>Code n°3 — fin de l'étape 3 (attestation ouverte) → début de l'étape 4 (FormaCompte / IdentiPass+)</td></tr>
+      <tr><td><b>${c.recap}</b></td><td>Code n°4 — fin de l'étape 4 → récapitulatif et code de fin. <b>Si le temps manque</b>, ce code peut se donner dès la fin de l'étape 3 : l'étape 4 est alors notée « non terminée ».</td></tr>
       <tr><td><b>${c.reinitialisation}</b></td><td>Réinitialisation complète (demande confirmation)</td></tr></table>
     <p>Reprise à l'étape 2 sans compte : mot de passe Fiscalis attribué <b>${h(CONFIG.reprise.motDePasseFiscalis)}</b> (affiché à l'élève).</p>
     <h3>Bonnes réponses</h3><table>
@@ -2689,7 +3121,8 @@ function openFicheProf() {
       <tr><td>Adresse mail</td><td>${P.mail}</td></tr>
       <tr><td>Piège : avis 2025 (rangé dans « Impôts »)</td><td>bon numéro fiscal, mais accès ${a.d.acces} → refus</td></tr>
       <tr><td>Piège : avis de Jean-Yves</td><td>n° fiscal ${fmtNF(P.numeroFiscalConjoint)}, accès ${P.accesConjoint} → refus</td></tr>
-      <tr><td>Étape 3 : compte à utiliser dans IdentiPass</td><td><b>NumérID</b> — ${P.numerid.identifiant} / ${h(P.numerid.motDePasse)} (sur la carte)</td></tr>
+      <tr><td>Étapes 3 et 4 : compte à utiliser dans IdentiPass / IdentiPass+</td><td><b>NumérID</b> — identifiant ${P.numerid.identifiant} (ou le numéro de mobile), puis confirmation <b>sur le téléphone</b> avec le code secret <b>${h(P.numerid.codeSecret)}</b> (sur le post-it de la carte). Ce n'est pas le code du téléphone.</td></tr>
+      <tr><td>Étape 4 : formation à choisir</td><td><b>${cible.titre}</b> — ${cible.lieu}</td></tr>
       <tr><td>MaBoîte / code du téléphone (bonus)</td><td>${h(P.maboite.motDePasse)} / ${P.pinTelephone}</td></tr>
       <tr><td>Mot de passe « changé sur le téléphone »</td><td>${h(CONFIG.motDePasseChangeTelephone)} (ne pas le donner : il faut passer par « Mot de passe oublié »)</td></tr></table>
     <h3>Fins d'étape (le masque « code de passage » apparaît)</h3><table>
@@ -2697,7 +3130,8 @@ function openFicheProf() {
       <tr><td>Étape 2</td><td>1) Connexion (numéro fiscal + mot de passe + code mail), puis <b>Se déconnecter</b> → saut de trois semaines.
         2) Le mot de passe ne marche plus → « Mot de passe oublié » → lien du mail → nouveau mot de passe → connexion + code.
         3) Fin quand l'élève <b>ouvre l'avis d'impôt 2026</b> (Mes derniers documents, ou onglet Documents). Ouvrir l'avis 2025 ne termine pas l'étape.</td></tr>
-      <tr><td>Étape 3</td><td>Connexion à Santéa via IdentiPass + NumérID, puis <b>Mes attestations › Attestation de droits</b>. Les autres attestations (indemnités journalières, remboursements, complémentaire santé solidaire) ne terminent pas l'étape.</td></tr></table>
+      <tr><td>Étape 3</td><td>Connexion à Santéa via IdentiPass + NumérID (confirmation sur le téléphone), puis <b>Mes attestations › Attestation de droits</b>. Les autres attestations (indemnités journalières, remboursements, complémentaire santé solidaire) ne terminent pas l'étape.</td></tr>
+      <tr><td>Étape 4</td><td>FormaCompte › Mon espace › <b>IdentiPass+</b> › NumérID (téléphone) › Continuer › Rechercher une formation › la formation de Quimper › M'inscrire › case cochée › <b>Valider ma demande d'inscription</b>.</td></tr></table>
     <h3>Étape 3 : tous les chemins</h3>
     <p><b>Pour trouver Santéa :</b> taper santea.gouv.sim dans la barre d'adresse, ou chercher « santé », « assurance maladie », « ameli », « carte vitale »… dans Trouvo. Le premier résultat « Sponsorisé » (Aide Démarches Express, 39,90 €) est un piège : impasse.</p>
     <table><tr><th>Chemin</th><th>Ce qui se passe</th><th>Issue</th></tr>
@@ -2708,16 +3142,30 @@ function openFicheProf() {
       <tr><td>IdentiPass › <b>Santéa</b></td><td>« Vous n'avez pas de compte Santéa »</td><td>Impasse</td></tr>
       <tr><td>IdentiPass › <b>Agrimut</b> ou <b>IdNomade</b></td><td>Page de connexion : « Identifiant inconnu » quoi qu'on tape</td><td>Impasse (lien « Choisir un autre compte »)</td></tr>
       <tr><td>« Qu'est-ce que IdentiPass ? » ou numerid.sim tapé directement</td><td>Pages d'information ; une connexion à NumérID depuis numerid.sim mène à l'espace NumérID, pas à Santéa</td><td>Impasse partielle : il faut repasser par le bouton IdentiPass de Santéa</td></tr>
-      <tr><td><b>IdentiPass › NumérID</b> (relire la carte : compte créé par Gwenaëlle)</td><td>Identifiant ${P.numerid.identifiant} + mot de passe ${h(P.numerid.motDePasse)} → code à 6 chiffres reçu par mail (expire en ${Math.round(d.expirationCodeMail / 60)} min) → écran « Santéa va recevoir… » → <b>Continuer</b></td><td><b>Seul chemin gagnant</b> → « Bienvenue Martine Le Gall » → Mes attestations → Attestation de droits</td></tr>
+      <tr><td>IdentiPass › <b>CartID</b></td><td>Code à scanner avec une application que Martine n'a pas (sa carte d'identité est l'ancien modèle : voir « Ma carte »)</td><td>Impasse (lien « Choisir un autre compte »)</td></tr>
+      <tr><td><b>IdentiPass › NumérID</b> (relire la carte : identité numérique sur le téléphone)</td><td>Identifiant ${P.numerid.identifiant} → « Confirmez sur votre téléphone » → sur le téléphone : « Oui, c'est moi » puis code secret ${h(P.numerid.codeSecret)} (3 erreurs = demande annulée, on peut en renvoyer une) → écran « Santéa va recevoir… » → <b>Continuer</b></td><td><b>Seul chemin gagnant</b> → « Bienvenue Martine Le Gall » → Mes attestations → Attestation de droits</td></tr>
       <tr><td>Espace Santéa › autres attestations</td><td>« Aucune indemnité journalière », « service indisponible » ou « vous ne bénéficiez pas… »</td><td>Impasse (revenir à Mes attestations)</td></tr>
       <tr><td>Écran de consentement › Annuler</td><td>Retour à la page de connexion Santéa</td><td>Retour en arrière (recommencer IdentiPass)</td></tr></table>
+    <h3>Étape 4 : IdentiPass+ (FranceConnect+)</h3>
+    <p><b>Idée :</b> une démarche qui touche à l'argent n'accepte que les identités numériques vérifiées. Le compte Fiscalis que l'élève vient de créer est refusé.</p>
+    <table><tr><th>Chemin</th><th>Ce qui se passe</th><th>Issue</th></tr>
+      <tr><td>Trouvo › lien Sponsorisé « Vos droits formation expirent bientôt ! »</td><td>Site payant Aide Démarches Express</td><td>Impasse (les droits n'expirent pas ; le démarchage est interdit)</td></tr>
+      <tr><td>FormaCompte › Mon espace</td><td>Un seul bouton : IdentiPass+. Pas d'identifiant ni de mot de passe.</td><td>—</td></tr>
+      <tr><td>IdentiPass+ › Fiscalis, Santéa, Agrimut ou IdNomade (grisés)</td><td>« Niveau de garantie insuffisant… cette démarche demande une identité numérique vérifiée »</td><td>Impasse, notée au récapitulatif</td></tr>
+      <tr><td>IdentiPass+ › CartID</td><td>Code à scanner, application absente</td><td>Impasse</td></tr>
+      <tr><td><b>IdentiPass+ › NumérID</b></td><td>Même confirmation sur le téléphone qu'à l'étape 3</td><td><b>Seul chemin gagnant</b></td></tr>
+      <tr><td>Formation à distance (2 990 €) ou session de Rennes</td><td>« Vos droits ne couvrent pas le prix… » ou « Cette session est complète »</td><td>Impasse : revenir à la recherche</td></tr>
+      <tr><td>Inscription à une autre formation (fin de vie, gestes, anglais)</td><td>La demande est envoyée, mais l'étape ne se termine pas</td><td>Il faut s'inscrire à la bonne</td></tr></table>
+    <p><b>Demande de connexion inattendue</b> (${CONFIG.fausseDemande.active ? 'activée' : 'désactivée'}) : ${d.delaiFausseDemande} s après le début de l'étape 4, le téléphone affiche « Demande de connexion à ${h(CONFIG.fausseDemande.service)} via IdentiPass. Est-ce bien vous ? ». Bonne réponse : <b>« Non, refuser »</b>. Si l'élève confirme avec le code secret, un écran explique l'erreur, sans reproche. Tant qu'elle n'a pas répondu, la vraie demande n'apparaît pas.</p>
+    <p><b>Lien « Utiliser Aidants Relais »</b> (sous les tuiles d'IdentiPass) : page d'information sur l'équivalent d'Aidants Connect. Utile pour annoncer la séance « Accompagner un tiers ».</p>
     <h3>Règles de mot de passe (révélées une par une)</h3><p>12 caractères, une majuscule, un chiffre, un caractère spécial, sans nom ni prénom. Une phrase de passe de 20 caractères ou plus est acceptée sans majuscule/chiffre/caractère spécial.</p>
     <h3>Durées réglées</h3><p>Code mail : ${d.expirationCodeMail} s — blocage : ${d.blocageCompte} s (affiché « 15 minutes ») — lien de réinitialisation : ${d.validiteLienReinit} s — délai des mails : ${d.delaiMailMin} à ${d.delaiMailMax} s — mail de confirmation dans les indésirables : ${CONFIG.confirmationDansIndesirables}.</p>
-    <h3>Décodage du code de fin (4 caractères, ex. 2DB3)</h3>
+    <h3>Décodage du code de fin (5 caractères, ex. 2DBK3)</h3>
     <p><b>1er caractère</b> (chiffre) : nombre de mots de passe refusés à la création (9 = 9 ou plus).</p>
     <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:16px"><div><b>2e caractère</b><table><tr><th></th><th>Mot de passe enregistré</th><th>Code expiré</th><th>Compte bloqué</th></tr>${t2}</table></div>
     <div><b>3e caractère</b><table><tr><th></th><th>Faux mail ouvert</th><th>Lien cliqué</th><th>Identifiants saisis</th><th>Avis de l'an dernier</th></tr>${t3}</table></div></div>
-    <p><b>4e caractère</b> (chiffre) : 5 à 9 = l'avis du conjoint a été utilisé, 0 à 4 = non. Contrôle : (1er chiffre + rang de la 2e lettre + rang de la 3e lettre) modulo 5 doit être égal au 4e chiffre modulo 5 (rang : A = 0, B = 1, C = 2…). Sinon, le code a été mal recopié.</p>
+    <div style="max-width:560px"><b>4e caractère</b> (nouveau : identité numérique)<table><tr><th></th><th>Code secret NumérID faux</th><th>Compte refusé essayé sur IdentiPass+</th><th>Demande inattendue acceptée</th><th>Étape 4 terminée</th></tr>${t5}</table></div>
+    <p><b>5e caractère</b> (chiffre) : 5 à 9 = l'avis du conjoint a été utilisé, 0 à 4 = non. Contrôle : (1er chiffre + rang des 2e, 3e et 4e lettres) modulo 5 doit être égal au 5e chiffre modulo 5 (rang : A = 0, B = 1, C = 2…). Sinon, le code a été mal recopié.</p>
     <h3>État actuel de ce poste</h3><p>Étape ${S.step}${S.step === 2 ? ' (' + S.phase2 + ' le saut)' : ''} — code de fin actuel : <b>${finalCode()}</b></p></div>`;
   openModal('Fiche professeur', html, 'fiche');
 }

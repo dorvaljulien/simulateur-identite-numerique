@@ -29,8 +29,11 @@ const PERSONNAGES = {
     numeroSecu: '9 68 03 29 103 058 47', // commence par 9 : format invalide exprès
     // Comptes possédés au départ
     maboite: { identifiant: 'martine.legall@maboite.fr', motDePasse: 'Hortensia.29' },
-    numerid: { identifiant: 'martine.legall@maboite.fr', motDePasse: 'Gwen-Penhoat-2024', creePar: 'sa fille Gwenaëlle, en mars 2024' },
+    // NumérID : identité numérique vérifiée, liée au téléphone (pas de mot de passe).
+    // On se connecte en confirmant dans l'application, sur le téléphone, avec le code secret.
+    numerid: { identifiant: 'martine.legall@maboite.fr', codeSecret: '7295', creeLe: 'mars 2024' },
     pinTelephone: '4831',
+    carteIdentite: 'ancien modèle (grand format plastifié, sans puce), valable jusqu\'en 2031',
     santea: null,   // pas de compte Santéa
     fiscalis: null, // à créer pendant la séance
 
@@ -67,18 +70,27 @@ const CONFIG = {
     reinitialisation: '000', // remet tout à zéro (aussi Ctrl+Alt+R)
     etape2: '318',           // code n°1 : fin de l'étape 1 → début de l'étape 2
     etape3: '574',           // code n°2 : fin de l'étape 2 → début de l'étape 3
-    recap:  '926'            // code n°3 : fin de l'étape 3 → récapitulatif
+    etape4: '926',           // code n°3 : fin de l'étape 3 → début de l'étape 4 (IdentiPass+)
+    recap:  '451'            // code n°4 : fin de l'étape 4 → récapitulatif (peut aussi se donner dès la fin de l'étape 3)
   },
 
   // Durées, en secondes réelles
   durees: {
-    expirationCodeMail: 180,     // code à 6 chiffres (Fiscalis, NumérID)
+    expirationCodeMail: 180,     // code à 6 chiffres (Fiscalis)
     blocageCompte: 120,          // affiché « 15 minutes » à l'écran
     validiteLienReinit: 600,     // lien « mot de passe oublié »
     delaiMailMin: 2,             // délai d'arrivée des mails (aléatoire entre min et max)
     delaiMailMax: 8,
-    delaiFauxMail: 7             // le faux mail arrive après le vrai mail de réinitialisation
+    delaiFauxMail: 7,            // le faux mail arrive après le vrai mail de réinitialisation
+    delaiFausseDemande: 12       // étape 4 : la demande de connexion inattendue arrive sur le téléphone
   },
+
+  // Étape 4 : une demande de connexion que Martine n'a pas faite arrive sur son téléphone.
+  // Mettre « active: false » pour la supprimer.
+  fausseDemande: { active: true, service: 'Crédit Éclair' },
+
+  // Étape 4 : la formation à laquelle il faut s'inscrire (identifiant dans FORMATIONS, site-formacompte.js)
+  formationCible: 'asg-quimper',
 
   // Où arrive le mail de confirmation de création Fiscalis : 'toujours' | 'jamais' | 'aleatoire'
   confirmationDansIndesirables: 'toujours',
@@ -103,8 +115,13 @@ const CONFIG = {
     2: 'Connectez-vous à votre espace Fiscalis pour vérifier que tout fonctionne, puis déconnectez-vous.',
     '2b': 'Votre banque vous demande votre avis d\'impôt le plus récent. Connectez-vous à Fiscalis et ouvrez-le.',
     3: 'Le médecin vous demande une attestation de droits. Connectez-vous au site de Santéa (assurance maladie) et ouvrez-la.',
-    4: 'Séance terminée.'
+    4: 'Votre employeur vous propose une formation « Assistante de soins en gérontologie » à Quimper. Inscrivez-vous sur FormaCompte.',
+    5: 'Séance terminée.'
   },
+
+  // Mail reçu au début de l'étape 4
+  mailEtape4: { de: 'EHPAD Les Glycines', adresse: 'direction@ehpad-glycines.sim', objet: 'Formation « Assistante de soins en gérontologie » : inscription avant vendredi',
+    corps: '<p>Bonjour Martine,</p><p>Comme convenu à votre entretien, vous pouvez suivre la formation <b>« Assistante de soins en gérontologie »</b> à Quimper, session de février.</p><p>L\'inscription se fait par vous-même sur le site <b>FormaCompte</b>, avec vos droits à la formation : je ne peux pas la faire à votre place. Merci de vous inscrire avant vendredi.</p><p>Bien cordialement,<br>Mme Riou, cadre de santé</p>' },
 
   // Mails déjà présents dans MaBoîte au début de la séance
   mailsInitiaux: [
