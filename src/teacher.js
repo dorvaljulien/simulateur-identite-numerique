@@ -55,6 +55,7 @@ function openFicheProf() {
       <tr><td><b>${c.recap}</b></td><td>Code n°4 — fin de l'étape 4 → récapitulatif et code de fin. <b>Si le temps manque</b>, ce code peut se donner dès la fin de l'étape 3 : l'étape 4 est alors notée « non terminée ».</td></tr>
       <tr><td><b>${c.reinitialisation}</b></td><td>Réinitialisation complète (demande confirmation)</td></tr></table>
     <p>Reprise à l'étape 2 sans compte : mot de passe Fiscalis attribué <b>${h(CONFIG.reprise.motDePasseFiscalis)}</b> (affiché à l'élève).</p>
+    <p><b>Bouton « ↺ Recommencer l'étape »</b> (bandeau du haut, étapes 1 à 4) : remet le poste au début de l'étape en cours, après confirmation. Ce qui a déjà été relevé pour le récapitulatif est conservé. À l'étape 2, on repart avant le saut dans le temps.</p>
     <h3>Bonnes réponses</h3><table>
       <tr><td>Numéro fiscal de Martine</td><td><b>${fmtNF(P.numeroFiscal)}</b></td></tr>
       <tr><td>Numéro d'accès en ligne (avis 2026, rangé dans « Divers »)</td><td><b>${P.accesCetteAnnee}</b></td></tr>
@@ -96,7 +97,7 @@ function openFicheProf() {
       <tr><td>IdentiPass+ › CartID</td><td>Code à scanner, application absente</td><td>Impasse</td></tr>
       <tr><td><b>IdentiPass+ › NumérID</b></td><td>Même confirmation sur le téléphone qu'à l'étape 3</td><td><b>Seul chemin gagnant</b></td></tr>
       <tr><td>Formation à distance (2 990 €) ou session de Rennes</td><td>« Vos droits ne couvrent pas le prix… » ou « Cette session est complète »</td><td>Impasse : revenir à la recherche</td></tr>
-      <tr><td>Inscription à une autre formation (fin de vie, gestes, anglais)</td><td>La demande est envoyée, mais l'étape ne se termine pas</td><td>Il faut s'inscrire à la bonne</td></tr></table>
+      <tr><td>Inscription à une autre formation (fin de vie, gestes, anglais)</td><td>La demande est envoyée et son prix est réservé sur les droits. L'étape ne se termine pas. Après « anglais », il ne reste plus assez de droits pour la bonne formation.</td><td>Mon espace › <b>Mes dossiers › Annuler ma demande</b> (les droits reviennent), ou le bouton « ↺ Recommencer l'étape »</td></tr></table>
     <p><b>Demande de connexion inattendue</b> (${CONFIG.fausseDemande.active ? 'activée' : 'désactivée'}) : ${d.delaiFausseDemande} s après le début de l'étape 4, le téléphone affiche « Demande de connexion à ${h(CONFIG.fausseDemande.service)} via IdentiPass. Est-ce bien vous ? ». Bonne réponse : <b>« Non, refuser »</b>. Si l'élève confirme avec le code secret, un écran explique l'erreur, sans reproche. Tant qu'elle n'a pas répondu, la vraie demande n'apparaît pas.</p>
     <p><b>Lien « Utiliser Aidants Relais »</b> (sous les tuiles d'IdentiPass) : page d'information sur l'équivalent d'Aidants Connect. Utile pour annoncer la séance « Accompagner un tiers ».</p>
     <h3>Règles de mot de passe (révélées une par une)</h3><p>12 caractères, une majuscule, un chiffre, un caractère spécial, sans nom ni prénom. Une phrase de passe de 20 caractères ou plus est acceptée sans majuscule/chiffre/caractère spécial.</p>

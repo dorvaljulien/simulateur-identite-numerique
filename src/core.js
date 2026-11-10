@@ -36,7 +36,7 @@ function freshState() {
     },
     numerid: { status: null, authOk: null, session: false },
     santea: { loggedIn: false },
-    forma: { loggedIn: false, inscrit: false },
+    forma: { loggedIn: false, dossiers: [] },
     idp: { service: 'santea' },
     maboite: { loggedIn: true, passkey: false, view: 'list', folder: 'inbox', openId: null, settings: null, search: '' },
     browser: { saved: {}, never: {}, cookies: {}, envraiClosed: {} },
@@ -310,6 +310,7 @@ function setMission() {
   const key = S.step === 2 && S.phase2 === 'apres' ? '2b' : S.step;
   const txt = CONFIG.missions[key] || '';
   $('#mission').title = txt;
+  $('#restartbtn').style.display = S.step >= 1 && S.step <= 4 ? '' : 'none';
   $('#mission').innerHTML = S.step ? `<b>${S.step >= 5 ? 'Fin' : 'Étape ' + S.step}</b>${h(txt)}` : '';
 }
 function completeStep(n) {
@@ -325,6 +326,14 @@ function renderGate() {
     <p>Bravo, vous avez atteint l'objectif de cette étape.</p>
     <p>Levez la main : le professeur vous donnera le <b>code de passage</b> pour continuer.</p>
     <p class="arrow">Le code se saisit en haut à droite, dans « Code de passage ».</p></div>`;
+}
+/* Bouton « Recommencer l'étape » : remet le simulateur au début de l'étape en cours.
+   Les incidents déjà relevés pour le récapitulatif sont conservés. */
+function restartStep() {
+  if (S.step < 1 || S.step > 4) return;
+  if (!confirm('Recommencer l\'étape ' + S.step + ' depuis le début ?\n\nCe que vous avez fait dans cette étape sera effacé.')) return;
+  if (S.step === 1) { const inc = S.incidents; resetAll(); $$('.fullscreen.welcome').forEach(o => o.remove()); S.incidents = inc; S.step = 1; setMission(); renderBrowser(); return; }
+  gotoStep(S.step);
 }
 function enterCode(raw) {
   const c = digits(raw);
@@ -378,7 +387,7 @@ function gotoStep(n) {
     if (F.oldPasswords.length === 0) { F.oldPasswords.push(F.account.password); F.account.password = CONFIG.motDePasseChangeTelephone; }
     if (n === 3 || prev < 3) setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 20 }));
     if (!S.mails.some(m => m.tag === 'inter')) addIntermediateMails(true);
-    if (n < 5) { S.santea.loggedIn = false; S.numerid = { status: null, authOk: null, session: false }; S.forma = { loggedIn: false, inscrit: false }; }
+    if (n < 5) { S.santea.loggedIn = false; S.numerid = { status: null, authOk: null, session: false }; S.forma = { loggedIn: false, dossiers: [] }; }
   }
   if (n === 3) {
     S.step = 3;
@@ -472,6 +481,7 @@ function buildShell() {
     <div id="topbar">
       <span class="simlabel" id="simlabel" title="">Simulation pédagogique — aucun site réel</span>
       <span class="mission" id="mission"></span>
+      <button id="restartbtn" title="Recommencer l'étape en cours depuis le début">↺ Recommencer l'étape</button>
       <span class="codebox" id="codebox">Code de passage <input id="codeinput" maxlength="3" inputmode="numeric" autocomplete="off"><button id="codeok">OK</button></span>
     </div>
     <div id="main">
@@ -506,6 +516,7 @@ function buildShell() {
   </div>`;
 
   $('#codeok').onclick = () => enterCode($('#codeinput').value);
+  $('#restartbtn').onclick = restartStep;
   $('#codeinput').addEventListener('keydown', e => { if (e.key === 'Enter') enterCode(e.target.value); });
   $('#btnback').onclick = goBack; $('#btnfwd').onclick = goFwd; $('#btnreload').onclick = reload;
   $('#urlinput').addEventListener('keydown', e => { if (e.key === 'Enter') { omniboxGo(e.target.value); e.target.blur(); } });

@@ -204,3 +204,9 @@ Objectif : faire vivre dans le simulateur ce que le cours explique sur FranceCon
 **Récapitulatif et code de fin.** Quatre lignes ajoutées : code secret NumérID faux, compte refusé essayé sur IdentiPass+, demande inattendue (acceptée, refusée, sans réponse, pas reçue), étape 4 terminée. Le code de fin passe de 4 à **5 caractères** : la 4e position est une lettre qui code ces quatre informations ; le chiffre de contrôle passe en 5e position. La table de décodage est dans la fiche professeur (Ctrl+Alt+P).
 
 **Textes retirés.** Les cartouches ne renvoient plus à « votre fiche » : il n'y a plus de fiche à remplir pendant la séance.
+
+### Complément : bouton « Recommencer l'étape » et droits à la formation
+
+- **Bandeau du haut : bouton « ↺ Recommencer l'étape »** (étapes 1 à 4). Après confirmation, le poste revient au début de l'étape en cours. Ce qui a déjà été relevé pour le récapitulatif est conservé. À l'étape 2, on repart avant le saut dans le temps.
+- **FormaCompte : les droits baissent à chaque demande d'inscription.** Une demande pour une autre formation peut donc empêcher de s'inscrire à la bonne. Deux sorties : **Mon espace › Mes dossiers › Annuler ma demande** (les droits reviennent), ou le bouton « Recommencer l'étape ».
+- **La mission** s'affiche sur deux lignes quand le bandeau est trop étroit.

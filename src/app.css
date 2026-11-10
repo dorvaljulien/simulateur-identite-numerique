@@ -290,3 +290,7 @@ button { font-family: inherit; }
 #phone.active .pinpad .dots { margin: 4px 0 4px; }
 #phone.active .pinpad .keys { gap: 4px; }
 #phone.active .pinpad .keys span { height: 22px; }
+#topbar #restartbtn { height: 22px; border: 1px solid #555; background: transparent; color: #c9ccd1; border-radius: 3px; font-size: 11px; cursor: pointer; padding: 0 8px; white-space: nowrap; }
+#topbar #restartbtn:hover { background: #444; color: #fff; }
+/* La mission passe sur deux lignes si le bandeau est trop étroit (petits écrans) */
+#topbar .mission { white-space: normal; line-height: 1.22; max-height: 32px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }

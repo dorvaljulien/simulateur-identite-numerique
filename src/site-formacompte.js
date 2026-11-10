@@ -10,7 +10,9 @@ const FORMATIONS = [
   { id: 'gestes', titre: 'Gestes et postures : manutention des personnes', org: 'Prévention Ouest (fictif)', lieu: 'Lorient (56)', duree: '14 h', prix: 390, session: 'Les 4 et 5 février 2027', note: '4,3' },
   { id: 'anglais', titre: 'Anglais : remise à niveau', org: 'Langues Express (fictif)', lieu: 'À distance', duree: '30 h', prix: 1200, session: 'Entrée permanente', note: '3,9' }
 ];
-const FO_DROITS = 2840;
+const FO_DROITS_DEPART = 2840;
+// Droits restants : chaque demande d'inscription réserve le prix de la formation
+const foDroits = () => FO_DROITS_DEPART - S.forma.dossiers.reduce((t, id) => t + FORMATIONS.find(x => x.id === id).prix, 0);
 const foEur = n => n.toLocaleString('fr-FR') + ',00 €';
 function foHeader() {
   const L = S.forma.loggedIn;
@@ -78,35 +80,43 @@ SITES['formacompte.gouv.sim'] = {
         const res = FORMATIONS.filter(x => !q || words.some(w => norm(x.titre + x.lieu + x.org).includes(w)));
         return { title: 'Rechercher une formation | FormaCompte', html: foPage(`<div class="fo-wrap">${crumb('Rechercher une formation')}<h1>Rechercher une formation</h1>
           <form class="fo-search" data-form="search2" style="margin-bottom:18px"><input name="q" value="${h(ctx.params.q || '')}" placeholder="Métier, compétence, diplôme…"><button>Rechercher</button></form>
-          <p style="font-size:12.5px;color:#666">${res.length} formation${res.length > 1 ? 's' : ''} — triées par pertinence · Vos droits : <b>${foEur(FO_DROITS)}</b></p>
+          <p style="font-size:12.5px;color:#666">${res.length} formation${res.length > 1 ? 's' : ''} — triées par pertinence · Vos droits : <b>${foEur(foDroits())}</b></p>
           ${res.map(foCard).join('') || '<div class="fo-card">Aucune formation ne correspond à votre recherche. Essayez d\'autres mots.</div>'}</div>`) };
       }
       if (p === '/espace/formation' && f) {
-        const reste = Math.max(0, f.prix - FO_DROITS);
+        const reste = Math.max(0, f.prix - foDroits());
         return { title: f.titre + ' | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:900px">${crumb('<span data-go="/espace/recherche" style="text-decoration:underline">Rechercher une formation</span> › ' + f.titre)}<div id="fo-msg"></div>
           <div class="fo-fiche"><div><h1 style="margin-top:0">${f.titre}</h1><p class="org">${f.org} · ★ ${f.note}/5</p>
             <table><tr><td>Lieu</td><td><b>${f.lieu}</b></td></tr><tr><td>Durée</td><td>${f.duree}</td></tr><tr><td>Session</td><td>${f.session}</td></tr><tr><td>Certification</td><td>Attestation de formation reconnue par la branche</td></tr><tr><td>Public</td><td>Aides-soignants, aides médico-psychologiques, accompagnants éducatifs et sociaux en poste</td></tr></table>
             <p style="line-height:1.6;font-size:13px">Objectifs : accompagner les personnes âgées atteintes de troubles cognitifs, adapter les soins quotidiens, travailler avec les familles et l'équipe. Alternance de cours et de mises en situation.</p></div>
-            <div class="fo-prix"><div class="big">${foEur(f.prix)}</div><table><tr><td>Vos droits</td><td>${foEur(FO_DROITS)}</td></tr><tr><td>Droits utilisés</td><td>− ${foEur(Math.min(f.prix, FO_DROITS))}</td></tr><tr><td><b>Reste à payer</b></td><td><b>${foEur(reste)}</b></td></tr></table>
+            <div class="fo-prix"><div class="big">${foEur(f.prix)}</div><table><tr><td>Vos droits</td><td>${foEur(foDroits())}</td></tr><tr><td>Droits utilisés</td><td>− ${foEur(Math.min(f.prix, foDroits()))}</td></tr><tr><td><b>Reste à payer</b></td><td><b>${foEur(reste)}</b></td></tr></table>
               <span class="fo-btn" style="display:block;text-align:center" data-act="inscrire" data-id="${f.id}">M'inscrire à cette formation</span></div></div></div>`) };
       }
       if (p === '/espace/inscription' && f) {
         return { title: 'Mon inscription | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:680px">${crumb('Mon inscription')}<div class="fo-card"><h2>Vérifiez votre demande d'inscription</h2><div id="fo-msg"></div>
           <table class="fo-recap"><tr><td>Formation</td><td><b>${f.titre}</b></td></tr><tr><td>Organisme</td><td>${f.org}</td></tr><tr><td>Lieu</td><td>${f.lieu}</td></tr><tr><td>Session</td><td>${f.session}</td></tr>
-            <tr><td>Prix</td><td>${foEur(f.prix)}</td></tr><tr><td>Payé avec vos droits</td><td>${foEur(Math.min(f.prix, FO_DROITS))}</td></tr><tr><td>Stagiaire</td><td>${P.prenom} ${P.nomUsage.toUpperCase()}, née ${P.nomNaissance.toUpperCase()}</td></tr></table>
+            <tr><td>Prix</td><td>${foEur(f.prix)}</td></tr><tr><td>Payé avec vos droits</td><td>${foEur(Math.min(f.prix, foDroits()))}</td></tr><tr><td>Stagiaire</td><td>${P.prenom} ${P.nomUsage.toUpperCase()}, née ${P.nomNaissance.toUpperCase()}</td></tr></table>
           <form data-form="valider" autocomplete="off"><input type="hidden" name="id" value="${f.id}"><label class="fo-check"><input type="checkbox" name="ok"> Je confirme ma demande : le montant sera réservé sur mes droits à la formation.</label>
             <button class="fo-btn">Valider ma demande d'inscription</button> <span data-go="/espace/formation?id=${f.id}" style="margin-left:12px;text-decoration:underline;font-size:12.5px">Annuler</span></form></div></div>`) };
       }
-      if (p === '/espace/confirmation' && f && S.forma.inscrit === f.id) {
+      if (p === '/espace/confirmation' && f && S.forma.dossiers.includes(f.id)) {
         return { title: 'Demande envoyée | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:680px"><div class="fo-card"><h2>✔ Votre demande d'inscription est envoyée</h2>
-          <div class="fo-ok">Votre demande pour la formation <b>${f.titre}</b> (${f.lieu}) a bien été transmise à l'organisme. Il a 2 jours ouvrés pour vous répondre.<br><br>Dossier n° FC-2026-1204-${f.prix}7 — ${foEur(Math.min(f.prix, FO_DROITS))} réservés sur vos droits.</div>
+          <div class="fo-ok">Votre demande pour la formation <b>${f.titre}</b> (${f.lieu}) a bien été transmise à l'organisme. Il a 2 jours ouvrés pour vous répondre.<br><br>Dossier n° FC-2026-1204-${f.prix}7 — ${foEur(f.prix)} réservés sur vos droits. Il vous reste ${foEur(foDroits())}.</div>
           <span class="fo-btn ghost" data-go="/espace">Retour à mon espace</span></div></div>`) };
       }
-      const dossier = FORMATIONS.find(x => x.id === S.forma.inscrit);
+      if (p === '/espace/dossiers') {
+        const ds = S.forma.dossiers.map(id => FORMATIONS.find(x => x.id === id));
+        return { title: 'Mes dossiers | FormaCompte', html: foPage(`<div class="fo-wrap" style="max-width:900px">${crumb('Mes dossiers')}<div id="fo-msg"></div><h1>Mes dossiers</h1>
+          ${ds.map(d => `<div class="fo-res" style="cursor:default"><div><b>${d.titre}</b><small>${d.org}</small><span class="tags"><i>📍 ${d.lieu}</i><i>📅 ${d.session}</i><i>⏳ En attente de la réponse de l'organisme</i></span></div>
+            <div class="px">${foEur(d.prix)}<small>réservés sur vos droits</small><span class="fo-btn ghost" style="font-size:12px;padding:5px 10px;margin-top:6px" data-act="annuler" data-id="${d.id}">Annuler ma demande</span></div></div>`).join('') || '<div class="fo-card">Vous n\'avez aucun dossier en cours.</div>'}
+          <p style="font-size:12.5px;color:#666">Tant que l'organisme n'a pas répondu, vous pouvez annuler une demande : le montant réservé revient sur vos droits.</p>
+          <span class="fo-btn ghost" data-go="/espace">Retour à mon espace</span></div>`) };
+      }
+      const nb = S.forma.dossiers.length;
       return { title: 'Mon espace | FormaCompte', html: foPage(`<div class="fo-wrap"><div id="fo-msg"></div>
         <div class="fo-welcome"><div><div class="hi">Bonjour ${P.prenom} ${P.nomUsage}</div><div style="opacity:.85">Connectée avec IdentiPass+ · <span data-act="logout" style="text-decoration:underline">Me déconnecter</span></div></div>
-          <div class="droits"><small>Mes droits à la formation</small><b>${foEur(FO_DROITS)}</b></div></div>
-        <div class="fo-tiles">${[['🔎', 'Rechercher une formation', 'Parmi les offres de votre région ou à distance', '/espace/recherche'], ['📁', 'Mes dossiers', dossier ? '1 demande en attente de réponse' : 'Aucun dossier en cours'], ['💶', 'Le détail de mes droits', 'Droits acquis année par année'],
+          <div class="droits"><small>Mes droits à la formation</small><b>${foEur(foDroits())}</b></div></div>
+        <div class="fo-tiles">${[['🔎', 'Rechercher une formation', 'Parmi les offres de votre région ou à distance', '/espace/recherche'], ['📁', 'Mes dossiers', nb ? nb + ' demande' + (nb > 1 ? 's' : '') + ' en attente de réponse' : 'Aucun dossier en cours', '/espace/dossiers'], ['💶', 'Le détail de mes droits', 'Droits acquis année par année'],
           ['🧭', 'Mon projet professionnel', 'Faire le point avec un conseiller'], ['✉️', 'Ma messagerie', 'Aucun nouveau message'], ['👤', 'Mes informations', 'Coordonnées, situation professionnelle']]
           .map(t => `<div ${t[3] ? `data-go="${t[3]}"` : 'data-act="nope"'}><span class="ic">${t[0]}</span><span><b>${t[1]}</b><small>${t[2]}</small></span></div>`).join('')}</div>
         <h2>Suggestions pour vous</h2>${FORMATIONS.filter(x => ['fin-de-vie', 'gestes', 'anglais'].includes(x.id)).map(foCard).join('')}</div>`) };
@@ -115,16 +125,18 @@ SITES['formacompte.gouv.sim'] = {
   },
   after(root, ctx) {
     // Fin de l'étape 4 : la demande d'inscription à la bonne formation est envoyée
-    if (ctx.path === '/espace/confirmation' && S.forma.inscrit === CONFIG.formationCible && S.step === 4 && !S.waitingCode) { S.incidents.etape4 = true; later(() => completeStep(4), 3500); }
+    if (ctx.path === '/espace/confirmation' && S.forma.dossiers.includes(CONFIG.formationCible) && ctx.params.id === CONFIG.formationCible && S.step === 4 && !S.waitingCode) { S.incidents.etape4 = true; later(() => completeStep(4), 3500); }
   },
   action(name, el, ctx, root) {
     const msg = t => { $('#fo-msg', root).innerHTML = `<div class="fo-err">${t}</div>`; $('#viewport').scrollTop = 0; };
     if (name === 'nope') msg('Ce service est momentanément indisponible. Veuillez réessayer plus tard.');
     if (name === 'logout') { S.forma.loggedIn = false; navigate('/'); }
+    if (name === 'annuler') { S.forma.dossiers = S.forma.dossiers.filter(x => x !== el.dataset.id); renderBrowser(); $('#fo-msg').innerHTML = '<div class="fo-ok">Votre demande est annulée. Le montant réservé est de nouveau disponible sur vos droits.</div>'; return; }
     if (name === 'inscrire') {
       const f = FORMATIONS.find(x => x.id === el.dataset.id);
+      if (S.forma.dossiers.includes(f.id)) return msg('Vous avez déjà une demande en cours pour cette formation. Consultez « Mes dossiers ».');
       if (f.complet) return msg('Cette session est complète. Aucune autre date n\'est proposée pour le moment.');
-      if (f.prix > FO_DROITS) return msg('Vos droits ne couvrent pas le prix de cette formation. Le paiement du reste à payer par carte bancaire est momentanément indisponible.');
+      if (f.prix > foDroits()) return msg('Vos droits ne couvrent pas le prix de cette formation. Le paiement du reste à payer par carte bancaire est momentanément indisponible.');
       navigate('/espace/inscription?id=' + f.id);
     }
   },
@@ -134,7 +146,8 @@ SITES['formacompte.gouv.sim'] = {
     if (name === 'valider') {
       if (!f.ok.checked) { $('#fo-msg', root).innerHTML = '<div class="fo-err">Vous devez confirmer votre demande en cochant la case.</div>'; return; }
       const id = f.id.value, fo = FORMATIONS.find(x => x.id === id);
-      S.forma.inscrit = id;
+      if (fo.prix > foDroits() || S.forma.dossiers.includes(id)) { navigate('/espace/formation?id=' + id); return; }
+      S.forma.dossiers.push(id);
       deliverMail({ fromName: 'FormaCompte', fromAddr: 'ne-pas-repondre@formacompte.gouv.sim', subject: 'Votre demande d\'inscription a bien été envoyée', tag: 'forma',
         html: `<div style="color:#8a4b08;font-weight:700;font-size:17px;border-bottom:3px solid #f0b429;padding-bottom:5px;margin-bottom:10px">▲ FormaCompte</div><p>Bonjour ${P.prenom} ${P.nomUsage},</p><p>Votre demande d'inscription à la formation <b>${fo.titre}</b> (${fo.lieu}) a bien été transmise à l'organisme ${fo.org}.</p><p>Vous serez prévenue de sa réponse par mail. FormaCompte ne vous demandera jamais vos codes par mail ou par téléphone.</p>` });
       navigate('/espace/confirmation?id=' + id);
