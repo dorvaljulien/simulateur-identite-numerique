@@ -31,6 +31,12 @@ Par carte : choix juste 0,25 + justification valable 0,25. Une justification n'e
 
 Dans l'export, `choix` vaut `"officiel"` ou `"a-eviter"`.
 
+**Cas limites (décidés le 15/11/2026, après la copie test) :**
+
+- « L'adresse est bizarre » (A7/B7) : accepté (0,25), l'élève pointe bien l'adresse illisible.
+- « Une emoji » / « il y a des emojis » (A5/B5 ; la carte A5 contient un 👉) : **0**. Un emoji seul n'est pas un indice de la liste. Accepter seulement si l'élève le relie à la forme du message (« post de réseau social, pas un site officiel », « ton publicitaire / urgent »).
+- « Ça ne finit pas par gouv.fr » sur A1/B1 : choix faux, donc 0 ; c'est l'erreur visée par la carte (règle « .gouv.fr ou rien » appliquée à la lettre).
+
 ## 3. Partie 1B — Que dire à la personne ? (4,5 pts)
 
 Clés d'export : `situation1` {dire, questions, ensuite}, `questionFlash`, `situation2` {dire, questions, ensuite}.
@@ -46,12 +52,14 @@ Clés d'export : `situation1` {dire, questions, ensuite}, `questionFlash`, `situ
 | **Questions** (au moins deux pertinentes) : l'adresse du site ; le montant ; l'intitulé du paiement (taxe / timbre fiscal, ou « frais de dossier / de service ») ; comment le site a été trouvé (pub, résultat « Sponsorisé », SMS) | 0,5 (0,25 si une seule) |
 | **Ensuite, selon les réponses** : site en .gouv.fr + taxe ou timbre = normal, on peut payer ; « frais de service » sur un autre site = site à éviter, on va sur le site officiel (par service-public.gouv.fr) | 1 (0,5 si un seul des deux cas) |
 
+**Cas limite** : « C'est normal de payer » / « il faut payer la carte grise » dans « Tout de suite » vaut **0**, même si le fait est vrai : l'élève tranche avant de savoir sur quel site la personne a payé. C'est précisément le réflexe évalué.
+
 Faits utiles : le changement de titulaire d'une carte grise est soumis à une taxe (régionale, selon la puissance) ; le timbre fiscal d'un passeport adulte coûte 86 €. Un élève qui cite ces faits montre une bonne maîtrise, mais ils ne sont pas exigés.
 
 ### Question flash (0,5 pt)
 
 - A : « Il existe une liste des vrais sites ? » ; B : « Il y a un endroit où chercher ? »
-- Attendu : **service-public.gouv.fr** (partir de là pour trouver le bon site). Accepter « service-public.fr » ou « le site Service public ». « Un site du gouvernement » ou « les .gouv » sans nommer le site : 0,25.
+- Attendu : **service-public.gouv.fr** (partir de là pour trouver le bon site). Accepter « service-public.fr » ou « le site Service public ». « Un site du gouvernement » ou « les .gouv » sans nommer le site : 0,25. « Sur Google » : 0.
 
 ### Situation 2 (2 pts) — « déjà payé, trop cher »
 
@@ -68,6 +76,8 @@ Faits utiles : le changement de titulaire d'une carte grise est soumis à une ta
 | Vérifier la démarche et, si besoin, la refaire sur le site officiel | 0,25 |
 | Identifie que le montant ne correspond pas au prix officiel (86 € ; gratuit) | 0,25 |
 
+**Cas limites** : « Le passeport, c'est gratuit » (variante A) est faux : 0 sur la ligne « montant », et pas de point « rassurer » si c'est la seule chose dite. « Signaler le problème » sans dire où : 0 sur la ligne SignalConso.
+
 ## 4. Partie 2A — Mots de passe (1,5 pt)
 
 Identifiants : `m5` gestionnaire de mots de passe · `m3` recette · `m1` carnet à la maison · `m6` même mot de passe long partout · `m4` fichier mdp.txt sur le bureau · `m2` prénom de l'enfant + année partout.
@@ -83,6 +93,8 @@ Le reste de l'ordre est libre (le fichier mdp.txt peut se discuter). Le champ `c
 
 Justification (0,5) : si un site est piraté ou si le mot de passe fuite, **tous les comptes** sont ouverts d'un coup (un seul mot de passe à trouver). 0,25 si l'idée est floue (« c'est moins sécurisé »).
 
+**Cas limite** : la consigne est « Pourquoi utiliser le même mot de passe partout est-il dangereux ? ». « C'est facile à deviner » vaut **0** : l'élève confond avec `m2` (le mot de passe `m6` est long et compliqué, le risque n'est pas qu'on le devine).
+
 ## 5. Partie 2B — Définir la double authentification (1,5 pt)
 
 | Élément | Pts |
@@ -92,6 +104,8 @@ Justification (0,5) : si un site est piraté ou si le mot de passe fuite, **tous
 | Exemple correct : mot de passe + code reçu par SMS sur son téléphone ; carte + code ; mot de passe + validation dans une appli | 0,5 |
 
 « Deux mots de passe » comme exemple = exemple faux (0 sur la ligne exemple, et la ligne « types différents » n'est pas acquise si rien d'autre ne la montre).
+
+**Réponses implicites** : « Il faut vérifier sur son téléphone » sans parler d'une première preuve n'acquiert **pas** la ligne « deux preuves ». Un exemple du type « je me connecte à Insta et je reçois un code par SMS » est accepté (0,5) : la connexion suppose le mot de passe.
 
 ## 6. Partie 2C — Est-ce de la double authentification ? (2 pts)
 
@@ -109,6 +123,8 @@ Justification (0,5) : si un site est piraté ou si le mot de passe fuite, **tous
 | c8 | Identité numérique : appli du téléphone + code secret | … appli du téléphone + empreinte | **Oui** | ce que j'ai (le téléphone) + ce que je sais (A) / ce que je suis (B) |
 
 Dans l'export, `reponse` vaut `"oui"` ou `"non"`.
+
+**Cas limite** : pour c1, « c'est pareil qu'un seul mot de passe » est accepté (l'idée « un seul type de preuve » est là).
 
 ## 7. Partie 2D — Simulateur IdentiPass+ (7 pts)
 
@@ -169,7 +185,9 @@ Le temps passé dans le simulateur est dans `dureeSimulateur` (secondes).
 | **Faire avec, pas à la place** : l'aider à faire la démarche à côté d'elle | 0,25 |
 | A : pour une professionnelle, **Aidants Connect** avec un mandat. B : toute solution légale citée (accompagner en sa présence, Aidants Connect par un professionnel, demande par courrier) | 0,25 |
 
-**Q3 (0,25)** — IdentiPass+ = **FranceConnect+** ; NumérID = **L'Identité Numérique La Poste** ; CartID = **France Identité**. Accepter les orthographes approchantes (« France connect + », « identité numérique de La Poste »). 0,25 si les trois sont justes, 0,1 si deux.
+**Cas limite** : « On ne doit pas faire à la place des gens » seul : 0,25 (ligne « faire avec ») + 0,25 (refus, implicite mais sans ambiguïté) = 0,5.
+
+**Q3 (0,25)** — IdentiPass+ = **FranceConnect+** ; NumérID = **L'Identité Numérique La Poste** ; CartID = **France Identité**. Accepter les orthographes approchantes (« France connect + », « identité numérique de La Poste »). 0,25 si les trois sont justes, 0,1 si deux. *Question de mémorisation, peu discriminante : ne pas en tirer de conclusion sur le niveau de l'élève.*
 
 ### Journal du simulateur (analyse, non noté)
 
@@ -203,3 +221,9 @@ Chaque clic sur un élément cliquable est enregistré dans `simulateur.evenemen
 4. Fermer l'onglet en cours de route, rouvrir, ressaisir le code : « Reprendre la copie en cours ».
 5. Faire `0000` (ou Ctrl+Alt+R) entre les deux groupes.
 6. Faire un parcours complet du simulateur (compter 10 à 15 min pour un élève).
+7. 2A : le classement se fait avec les flèches ↑ ↓. Sur la copie test, la partie 2A a duré 20 min contre 2 min pour la 1A (pause du professeur ou difficulté réelle ?) : vérifier en séance que les élèves comprennent le principe des flèches.
+8. Prévoir le temps : la copie test (professeur qui connaît le parcours) a pris 32 min, dont 3 min de simulateur. Un élève fragile à l'écrit mettra nettement plus longtemps sur 1A, 1B et 2B.
+
+## 9. Copie test (15/11/2026)
+
+Copie `N7EP7HPC`, variante A, passée par le professeur en simulant un élève de niveau moyen bas. Note obtenue avec cette grille : **≈ 8,3 / 20** (1A 2,5 · 1B 1,5 · 2A 0,5 · 2B 0,5 · 2C 1 · 2D 2,3). Profil cohérent : règle « .gouv.fr ou rien » (A1 faux), « double authentification = code SMS » (2B, c2, c3, c5, c7), réflexes techniques acquis dans le simulateur mais pas les réflexes de méfiance (demande pirate confirmée, code lu, frais payés, pas de déconnexion). Compteurs du journal vérifiés : 8 utiles, 5 pièges, 12 neutres, 25 au total.
