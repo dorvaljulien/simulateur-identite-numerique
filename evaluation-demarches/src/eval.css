@@ -5,19 +5,27 @@ body { font-family: "Segoe UI", system-ui, Arial, sans-serif; font-size: 15px; c
 button, input, textarea, select { font-family: inherit; }
 .hidden { display: none !important; }
 
-#evtop { position: fixed; left: 0; right: 0; top: 0; height: 40px; z-index: 50; display: flex; align-items: center; gap: 14px; padding: 0 12px; background: #33363b; color: #c9ccd1; font-size: 12px; white-space: nowrap; }
-#evtop .simlabel { opacity: .8; user-select: none; }
-#evtop .steps { display: flex; gap: 4px; padding-left: 12px; border-left: 1px solid #555; }
-#evtop .steps span { padding: 3px 9px; border-radius: 10px; background: #44474d; color: #9a9ea6; font-weight: 600; font-size: 11.5px; }
-#evtop .steps span.done { background: #2f5d3a; color: #b9e0c1; }
-#evtop .steps span.cur { background: #ffd479; color: #222; }
-#evtop .partname { flex: 1; overflow: hidden; text-overflow: ellipsis; color: #fff; font-size: 13px; }
-#evtop .timers { display: flex; gap: 12px; align-items: center; }
-#evtop .timers b { color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
-#evtop .timers .over b { color: #ffb366; }
-#evtop .idc { opacity: .55; font-family: Consolas, monospace; }
+/* En-tête : où j'en suis (partie + étapes) et combien de temps il reste */
+#evtop { position: fixed; left: 0; right: 0; top: 0; height: 60px; z-index: 50; display: flex; align-items: center; gap: 16px; padding: 0 14px; background: #2b2e33; color: #c9ccd1; font-size: 12px; white-space: nowrap; }
+#evtop .partname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: #fff; font-size: 18px; font-weight: 700; line-height: 1.1; }
+#evtop .partname small { display: block; font-size: 12px; font-weight: 600; color: #ffd479; letter-spacing: .02em; margin-bottom: 2px; }
+#evtop .steps { display: flex; gap: 5px; }
+#evtop .steps span { padding: 5px 10px; border-radius: 12px; background: #44474d; color: #9a9ea6; font-weight: 700; font-size: 13px; }
+#evtop .steps span.done { background: #2f6b3f; color: #d4f0db; }
+#evtop .steps span.cur { background: #ffd479; color: #222; box-shadow: 0 0 0 2px #fff; }
+#evtop .chrono { position: relative; overflow: hidden; display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 5px 14px 8px; border-radius: 8px; background: #1f6f43; color: #fff; min-width: 250px; }
+#evtop .chrono .lbl { grid-column: 1 / 3; font-size: 11.5px; font-weight: 600; opacity: .9; }
+#evtop .chrono .val { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: .02em; }
+#evtop .chrono .sur { font-size: 12.5px; opacity: .9; }
+#evtop .chrono i { position: absolute; left: 0; bottom: 0; height: 4px; background: rgba(255,255,255,.75); transition: width .9s linear; }
+#evtop .chrono.last { background: #c77700; }
+#evtop .chrono.over { background: #b4441c; }
+#evtop .total { display: flex; flex-direction: column; align-items: center; line-height: 1.15; color: #b9bdc4; }
+#evtop .total b { color: #fff; font-size: 16px; font-variant-numeric: tabular-nums; }
+#evtop .idc { opacity: .5; font-family: Consolas, monospace; font-size: 11px; }
+#evtop .idc::after { content: "sites fictifs"; display: block; font-family: "Segoe UI", system-ui, Arial, sans-serif; }
 
-#evmain { position: absolute; top: 40px; left: 0; right: 0; bottom: 0; overflow: auto; }
+#evmain { position: absolute; top: 60px; left: 0; right: 0; bottom: 0; overflow: auto; }
 #evmain.sim { overflow: hidden; }
 
 .page { max-width: 1060px; margin: 0 auto; padding: 18px 22px 90px; }
@@ -142,23 +150,48 @@ label.q { display: block; font-weight: 600; margin: 12px 0 5px; color: #2a3340; 
 .sit .dit { display: flex; gap: 10px; align-items: flex-start; background: #f5f1e8; border-radius: 10px; padding: 10px 12px; font-size: 15px; line-height: 1.45; font-style: italic; }
 .sit .dit .av { font-style: normal; font-size: 26px; }
 
-/* ---------- 2A ---------- */
-.rank { list-style: none; padding: 0; margin: 0; counter-reset: r; }
-.rank li { display: grid; grid-template-columns: 40px 1fr 84px; align-items: center; gap: 10px; background: #fff; border: 1px solid #d5d8dd; border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; }
-.rank li .n { width: 30px; height: 30px; border-radius: 50%; background: #3b5b8c; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.rank li .arr { display: flex; gap: 6px; }
-.rank li .arr button { width: 36px; height: 32px; border: 1px solid #b9c0ca; background: #f6f7f9; border-radius: 5px; cursor: pointer; font-size: 16px; }
-.rank li .arr button:hover:not(:disabled) { background: #e3e9f3; }
-.rank li .arr button:disabled { opacity: .3; cursor: default; }
-.rank .lab { font-size: 13px; color: #666; margin: 4px 0; }
-.rank li.moved { animation: mv .4s; }
+/* ---------- 2A : classement par glisser-déposer ---------- */
+.rank2 { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: stretch; }
+.rank2 .axe { display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 4px 0; border-radius: 10px;
+  background: linear-gradient(#d8f0de, #f7f7f7 50%, #f8dcd6); font-weight: 700; font-size: 14px; color: #333; text-align: center; }
+.rank2 .axe .top { color: #1f6f43; } .rank2 .axe .bot { color: #a2381e; }
+.rank2 .axe .mid { font-size: 22px; color: #999; line-height: 1; }
+.rank { list-style: none; padding: 0; margin: 0; }
+.rank li { display: grid; grid-template-columns: 26px 44px 1fr; align-items: center; gap: 12px; background: #fff; border: 2px solid #d5d8dd; border-left-width: 8px;
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; font-size: 15.5px; line-height: 1.35; cursor: grab; user-select: none; touch-action: none; position: relative; }
+.rank li:hover { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.rank li .grip { color: #9aa1ab; font-size: 22px; line-height: 1; letter-spacing: -2px; }
+.rank li .lt { width: 40px; height: 40px; border-radius: 50%; color: #fff; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+.rank li.dragging { cursor: grabbing; z-index: 5; box-shadow: 0 8px 22px rgba(0,0,0,.25); transition: none; }
+.rank li.moved { animation: mv .5s; }
 @keyframes mv { from { background: #fff4c7; } to { background: #fff; } }
+.astuce { font-size: 13px; color: #555; margin: 0 0 10px; }
 
 /* ---------- 2C ---------- */
+.question-visible { background: #fff7dd; border: 2px solid #e0b43a; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px; font-size: 16px; line-height: 1.5; }
+.question-visible .qq { font-size: 19px; font-weight: 800; color: #5b4200; }
+.yn-head { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: 1fr 230px; gap: 12px; padding: 8px 14px; margin-bottom: 6px;
+  background: #3b5b8c; color: #fff; border-radius: 8px; font-weight: 700; font-size: 14px; }
+.yn-head span:last-child { text-align: center; }
 .yn { background: #fff; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
-.yn .row { display: grid; grid-template-columns: 1fr 200px; gap: 12px; align-items: center; font-size: 15px; }
+.yn .row { display: grid; grid-template-columns: 1fr 230px; gap: 12px; align-items: center; font-size: 15px; }
 .yn .star { color: #c58a00; font-weight: 700; }
 .yn input { margin-top: 8px; font-size: 14px; }
+
+/* ---------- 1B : questions à poser ---------- */
+.qpair { display: grid; grid-template-columns: 110px 1fr; gap: 6px 10px; align-items: center; }
+.qpair span { font-size: 14px; color: #3b5b8c; font-weight: 600; }
+.aide-q { font-size: 13px; color: #555; margin: -2px 0 6px; }
+
+/* ---------- 2D : rappel du vrai nom, question 3 ---------- */
+.envrai { color: #5b4200; background: #fff1c2; border-radius: 4px; padding: 0 5px; }
+.q3grid { display: grid; grid-template-columns: max-content max-content 320px; gap: 10px 12px; align-items: center; }
+.q3grid .eg { color: #555; font-size: 14px; }
+.q3grid select { font-size: 15px; padding: 7px 8px; border: 1px solid #b9c0ca; border-radius: 6px; background: #fff; }
+
+/* Logos image (dossier logos/) */
+.logo-img { display: block; width: auto; max-width: 260px; object-fit: contain; }
+.ico-img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 /* ---------- Fin ---------- */
 .endbox { max-width: 620px; margin: 40px auto; background: #fff; border-radius: 10px; padding: 26px 30px; box-shadow: 0 4px 18px rgba(0,0,0,.1); text-align: center; line-height: 1.5; }

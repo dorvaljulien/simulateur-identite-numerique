@@ -1,11 +1,11 @@
 # Corrigé et grille — Évaluation « Démarches en ligne et identité numérique »
 
-*1ère SAPAT, informatique (TIM). Fichier élève : `evaluation-demarches.html` (version 1.0, 15/11/2026). Ce document sert à corriger les copies exportées (`.json`). Il ne doit jamais être donné aux élèves.*
+*1ère SAPAT, informatique (TIM). Fichier élève : `evaluation-demarches.html` (version 1.1, 15/11/2026). Ce document sert à corriger les copies exportées (`.json`). Il ne doit jamais être donné aux élèves.*
 
 ## 0. Mode d'emploi pour la correction
 
 - Chaque copie est un fichier JSON. Champs utiles : `variante` (A ou B), `idCopie`, `reponses` (parties 1A à 2D), `simulateur.resultats` (réflexes du 2D, déjà calculés), `simulateur.evenements` (frise des clics), `simulateur.compteurs`.
-- Les items sont repérés par un identifiant stable (`A1`…`A7`, `B1`…`B7`, `m1`…`m6`, `c1`…`c8`). L'ordre d'affichage (`ordreAffiche`) change d'une copie à l'autre et ne compte pas.
+- Les items sont repérés par un identifiant stable (`A1`…`A7`, `B1`…`B7`, `m1`, `m2`, `m5`, `m6`, `c1`…`c8`). L'ordre d'affichage (`ordreAffiche`) change d'une copie à l'autre et ne compte pas.
 - Réponse vide = 0. On ne pénalise pas l'orthographe. Une justification juste mais maladroite compte, à condition qu'elle s'appuie sur un indice ou une idée du cours.
 - Barème sur 20 : 1A 3,5 · 1B 4,5 · 2A 1,5 · 2B 1,5 · 2C 2 · 2D 7.
 
@@ -14,6 +14,15 @@
 - **1A, carte « officiel mais payant »** : remplacée dans les deux variantes, pour ne plus donner d'indice sur le 1B. A3 du cahier (carte grise, taxe régionale) devient A6 « Permis de conduire perdu : duplicata — timbre fiscal de 25 € » (permisdeconduire.ants.gouv.fr). Le timbre fiscal du passeport à 86 € devient B6 « Carte d'identité perdue ou volée : timbre fiscal de 25 € » (timbres.impots.gouv.fr). Les deux montants ont été vérifiés : 25 € dans les deux cas.
 - **2C, variante A** : « code à 6 chiffres reçu par mail » devient « code à 6 chiffres reçu par **SMS** ».
 - **1B** : la « situation 3 » du cahier des charges s'affiche **« Situation 2 »** pour les élèves. Dans l'export, la clé est `situation2`.
+
+### Version 1.1 (15/11/2026, après la passation test)
+
+- **En-tête** : progression plus lisible (« Partie 3 sur 6 », étapes cochées) et **compte à rebours** de la partie en gros (vert, orange la dernière minute, puis « dépassé de + mm:ss »). Temps total en minutes.
+- **1B** : la ligne « questions » est reformulée (« Avant de la conseiller, il me manque des informations. Je lui pose deux questions ») avec **deux champs séparés** « Question 1 » / « Question 2 ». Dans l'export, `questions` est une liste de deux textes.
+- **2A** : **quatre propositions** au lieu de six (`m3` recette et `m4` fichier mdp.txt retirées), classement par **glisser-déposer** (plus de flèches), chaque proposition repérée par une **lettre de couleur** (A à D, tirée au hasard pour chaque copie ; la lettre est dans l'export).
+- **2C** : la question « Est-ce de la double authentification ? » est écrite en toutes lettres dans un encadré et rappelée au-dessus de la colonne Oui/Non (bandeau qui reste visible). `c5` précise le **code de la carte à 4 chiffres tapé sur le terminal de paiement** (A) ou sur le distributeur (B) ; `c6` précise « on approche la carte du terminal, sans taper de code ».
+- **2D** : il est écrit aux élèves qu'**IdentiPass+ correspond à FranceConnect+** (prédiction et bandeau du simulateur). La question 3 ne porte plus que sur NumérID et CartID, avec un **menu déroulant**.
+- **Noms et logos des services inventés** regroupés dans `src/services.js` et le dossier `logos/` (voir le README) pour pouvoir les remplacer sans toucher au reste. Dans l'export, `demandePirate.service` vaut la clé du service (`fiscalis` ou `santea`).
 
 ## 2. Partie 1A — Site officiel ou site à éviter ? (3,5 pts)
 
@@ -39,7 +48,7 @@ Dans l'export, `choix` vaut `"officiel"` ou `"a-eviter"`.
 
 ## 3. Partie 1B — Que dire à la personne ? (4,5 pts)
 
-Clés d'export : `situation1` {dire, questions, ensuite}, `questionFlash`, `situation2` {dire, questions, ensuite}.
+Clés d'export : `situation1` {dire, questions, ensuite}, `questionFlash`, `situation2` {dire, questions, ensuite}. `questions` est une liste de deux textes (« Question 1 », « Question 2 »).
 
 ### Situation 1 (2 pts) — « payant, donc arnaque ? »
 
@@ -49,7 +58,7 @@ Clés d'export : `situation1` {dire, questions, ensuite}, `questionFlash`, `situ
 | Élément attendu | Pts |
 |---|---|
 | **Tout de suite** : ne tranche pas sans informations (« pas forcément », « on va vérifier ensemble ») | 0,5 |
-| **Questions** (au moins deux pertinentes) : l'adresse du site ; le montant ; l'intitulé du paiement (taxe / timbre fiscal, ou « frais de dossier / de service ») ; comment le site a été trouvé (pub, résultat « Sponsorisé », SMS) | 0,5 (0,25 si une seule) |
+| **Questions** (les deux pertinentes) : l'adresse du site ; le montant ; l'intitulé du paiement (taxe / timbre fiscal, ou « frais de dossier / de service ») ; comment le site a été trouvé (pub, résultat « Sponsorisé », SMS) | 0,5 (0,25 si une seule) |
 | **Ensuite, selon les réponses** : site en .gouv.fr + taxe ou timbre = normal, on peut payer ; « frais de service » sur un autre site = site à éviter, on va sur le site officiel (par service-public.gouv.fr) | 1 (0,5 si un seul des deux cas) |
 
 **Cas limite** : « C'est normal de payer » / « il faut payer la carte grise » dans « Tout de suite » vaut **0**, même si le fait est vrai : l'élève tranche avant de savoir sur quel site la personne a payé. C'est précisément le réflexe évalué.
@@ -69,7 +78,7 @@ Faits utiles : le changement de titulaire d'une carte grise est soumis à une ta
 | Élément attendu | Pts |
 |---|---|
 | Rassurer sans juger (« ça arrive souvent », « on va voir ensemble ») | 0,25 |
-| Questions : sur quel site ; ce qui a été payé (intitulé) ; si la démarche a avancé ; si la carte bancaire a été donnée (au moins deux) | 0,5 (0,25 si une seule) |
+| Questions : sur quel site ; ce qui a été payé (intitulé) ; si la démarche a avancé ; si la carte bancaire a été donnée (les deux questions pertinentes) | 0,5 (0,25 si une seule) |
 | Garder les preuves (mails, factures, captures) | 0,25 |
 | Signaler sur SignalConso | 0,25 |
 | Si la carte bancaire a été donnée à un site douteux : appeler la banque (opposition) ; accepter le 33700 pour signaler un SMS | 0,25 |
@@ -80,16 +89,16 @@ Faits utiles : le changement de titulaire d'une carte grise est soumis à une ta
 
 ## 4. Partie 2A — Mots de passe (1,5 pt)
 
-Identifiants : `m5` gestionnaire de mots de passe · `m3` recette · `m1` carnet à la maison · `m6` même mot de passe long partout · `m4` fichier mdp.txt sur le bureau · `m2` prénom de l'enfant + année partout.
+Quatre propositions (version 1.1). Identifiants : `m5` gestionnaire de mots de passe · `m1` carnet à la maison · `m6` même mot de passe long partout · `m2` prénom de l'enfant + année partout. Ordre attendu : **m5 > m1 > m6 > m2**. La lettre (A à D) vue par l'élève change d'une copie à l'autre : se fier à `item`, pas à `lettre`.
 
-Seules les paires solides sont notées (1 pt, 0,25 chacune) :
+Classement (1 pt, 0,25 par ligne) :
 
 - `m5` (gestionnaire) classé **1er** ;
 - `m2` (prénom + année) classé **dernier** ;
-- `m6` (même mot de passe partout) classé **sous** `m3` (recette) ;
-- `m6` classé **sous** `m1` (carnet).
+- `m6` (même mot de passe partout) classé **sous** `m1` (carnet) ;
+- ordre complet exact (m5, m1, m6, m2).
 
-Le reste de l'ordre est libre (le fichier mdp.txt peut se discuter). Le champ `classementModifie: false` signale un élève qui n'a pas touché à l'ordre de départ (aléatoire).
+Le champ `classementModifie: false` signale un élève qui n'a pas touché à l'ordre de départ (aléatoire).
 
 Justification (0,5) : si un site est piraté ou si le mot de passe fuite, **tous les comptes** sont ouverts d'un coup (un seul mot de passe à trouver). 0,25 si l'idée est floue (« c'est moins sécurisé »).
 
@@ -117,8 +126,8 @@ Justification (0,5) : si un site est piraté ou si le mot de passe fuite, **tous
 | c2 | Mot de passe + question secrète | Mot de passe + date de naissance | **Non** | deux choses que je sais (la date de naissance est en plus connue de beaucoup) |
 | c3 | Mot de passe + « Je ne suis pas un robot » | idem | **Non** | la case vérifie qu'on est humain, elle ne prouve pas qui on est |
 | c4 | Mot de passe + code à 6 chiffres reçu par SMS | Mot de passe + validation dans l'appli de la banque | **Oui** | ce que je sais + ce que j'ai (le téléphone) |
-| c5 ★ | Payer en magasin avec carte + code | Retirer au distributeur avec carte + code | **Oui** | ce que j'ai (la carte) + ce que je sais (le code) |
-| c6 | Paiement sans contact, sans code | idem | **Non** | une seule preuve (la carte) |
+| c5 ★ | Payer en magasin avec sa carte, code à 4 chiffres tapé sur le terminal de paiement | Retirer au distributeur : carte + code à 4 chiffres | **Oui** | ce que j'ai (la carte) + ce que je sais (le code) |
+| c6 | Payer sans contact (carte approchée du terminal, sans code) | idem | **Non** | une seule preuve (la carte) |
 | c7 | Déverrouiller le téléphone avec l'empreinte | … avec le visage | **Non** | une seule preuve (ce que je suis) |
 | c8 | Identité numérique : appli du téléphone + code secret | … appli du téléphone + empreinte | **Oui** | ce que j'ai (le téléphone) + ce que je sais (A) / ce que je suis (B) |
 
@@ -128,7 +137,9 @@ Dans l'export, `reponse` vaut `"oui"` ou `"non"`.
 
 ## 7. Partie 2D — Simulateur IdentiPass+ (7 pts)
 
-### Correspondances (non affichées aux élèves)
+### Correspondances (non affichées aux élèves, sauf IdentiPass+ = FranceConnect+)
+
+Noms, adresses et logos de ces services : `src/services.js` et `logos/`. Si un nom est remplacé, mettre ce tableau à jour.
 
 | Fictif | Rôle réel |
 |---|---|
@@ -140,7 +151,7 @@ Dans l'export, `reponse` vaut `"oui"` ou `"non"`.
 | Fiscalis, Santéa | impots.gouv.fr, ameli.fr |
 | Adapt'Senior Dossier (adapt-senior-dossier.fr) | intermédiaire payant (49 €) |
 
-Données de Mme Prigent : numéro fiscal **99 38 471 205 316** ; code secret NumérID **582914** ; carte d'identité ancien modèle (pas de CartID possible). Demande pirate : **Fiscalis** (A), **Santéa** (B). Ordre des incidents après le dépôt : A appel puis SMS ; B SMS puis appel. SMS de frais : A 12,90 €, habitat-adapt-frais.com ; B 14,50 €, habitatadapt-validation.net.
+Données de Mme Prigent : numéro fiscal **99 38 471 205 316** ; code secret NumérID **582914** ; carte d'identité ancien modèle (pas de CartID possible). Demande pirate : **Fiscalis** (A), **Santéa** (B) ; dans l'export, `demandePirate.service` vaut `fiscalis` ou `santea`. Ordre des incidents après le dépôt : A appel puis SMS ; B SMS puis appel. SMS de frais : A 12,90 €, habitat-adapt-frais.com ; B 14,50 €, habitatadapt-validation.net.
 
 ### Prédiction (1 pt) — `reponses.2D.prediction`
 
@@ -187,7 +198,7 @@ Le temps passé dans le simulateur est dans `dureeSimulateur` (secondes).
 
 **Cas limite** : « On ne doit pas faire à la place des gens » seul : 0,25 (ligne « faire avec ») + 0,25 (refus, implicite mais sans ambiguïté) = 0,5.
 
-**Q3 (0,25)** — IdentiPass+ = **FranceConnect+** ; NumérID = **L'Identité Numérique La Poste** ; CartID = **France Identité**. Accepter les orthographes approchantes (« France connect + », « identité numérique de La Poste »). 0,25 si les trois sont justes, 0,1 si deux. *Question de mémorisation, peu discriminante : ne pas en tirer de conclusion sur le niveau de l'élève.*
+**Q3 (0,25)** — Menu déroulant (version 1.1), export `questionsFin.q3` : `{ "numerid": …, "cartid": … }`. NumérID = **L'Identité Numérique La Poste** ; CartID = **France Identité**. IdentiPass+ = FranceConnect+ est donné en exemple et n'est plus demandé. 0,125 par réponse juste. Choix proposés : Aidants Connect, Ameli, France Identité, France Travail, FranceConnect, FranceConnect+, L'Identité Numérique La Poste, Mon espace santé, Service-public.gouv.fr, Je ne sais pas. *Question de mémorisation qui repose sur un choix pédagogique (des noms inventés) : peu discriminante, ne pas en tirer de conclusion sur le niveau de l'élève.*
 
 ### Journal du simulateur (analyse, non noté)
 
@@ -221,7 +232,7 @@ Chaque clic sur un élément cliquable est enregistré dans `simulateur.evenemen
 4. Fermer l'onglet en cours de route, rouvrir, ressaisir le code : « Reprendre la copie en cours ».
 5. Faire `0000` (ou Ctrl+Alt+R) entre les deux groupes.
 6. Faire un parcours complet du simulateur (compter 10 à 15 min pour un élève).
-7. 2A : le classement se fait avec les flèches ↑ ↓. Sur la copie test, la partie 2A a duré 20 min contre 2 min pour la 1A (pause du professeur ou difficulté réelle ?) : vérifier en séance que les élèves comprennent le principe des flèches.
+7. 2A : le classement se fait par glisser-déposer (version 1.1, les flèches de la version 1.0 rendaient la liste peu lisible). Vérifier sur un poste du lycée que le glisser-déposer marche à la souris et au pavé tactile.
 8. Prévoir le temps : la copie test (professeur qui connaît le parcours) a pris 32 min, dont 3 min de simulateur. Un élève fragile à l'écrit mettra nettement plus longtemps sur 1A, 1B et 2B.
 
 ## 9. Copie test (15/11/2026)

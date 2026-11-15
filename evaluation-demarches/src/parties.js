@@ -17,7 +17,7 @@ function maquette(c) {
   const sbar = `<div class="sbar"><span>${h(c.heure || '14:27')}</span><span>📶 4G ▮▮▮</span></div>`;
   switch (c.type) {
     case 'recherche':
-      return `<div class="mk-search"><div class="bar"><span class="lg">Trouvo</span><span class="q">${h(c.requete || '')}</span><span>🔍</span></div><div class="r">
+      return `<div class="mk-search"><div class="bar"><span class="lg">${h(nom('trouvo'))}</span><span class="q">${h(c.requete || '')}</span><span>🔍</span></div><div class="r">
         ${c.sponsorise ? '<div class="spons">Sponsorisé</div>' : ''}
         <div class="site"><span class="f" style="background:${c.couleur}">${h(c.favicon)}</span><span><span class="nm">${h(c.nomSite)}</span><br><span class="u">https://${h(c.adresse)}</span></span></div>
         <h3>${h(c.titre)}</h3><p>${h(c.texte)}</p></div></div>`;
@@ -67,9 +67,13 @@ RENDUS['1A'] = main => {
 /* ---------- 1B ---------- */
 RENDUS['1B'] = main => {
   const v = V(), R = E.reponses['1B'], S1 = v.situations1B;
+  ['s1', 's3'].forEach(k => { if (!Array.isArray(R[k].questions)) R[k].questions = [R[k].questions || '', '']; });
   const trois = (k, titre, phrase) => `<div class="sit"><h2>${titre}</h2><div class="dit"><span class="av">🧓</span><span>« ${h(phrase)} »</span></div>
       <label class="q">1. Ce que je lui dis tout de suite</label><textarea rows="2" data-k="${k}.dire"></textarea>
-      <label class="q">2. Les questions que je lui pose (au moins deux)</label><textarea rows="3" data-k="${k}.questions"></textarea>
+      <label class="q">2. Avant de la conseiller, il me manque des informations. Je lui pose deux questions :</label>
+      <p class="aide-q">Écrivez les deux questions que vous posez à la personne, comme vous les diriez à voix haute.</p>
+      <div class="qpair"><span>Question 1 :</span><input class="txt" data-k="${k}.questions.0" maxlength="200">
+        <span>Question 2 :</span><input class="txt" data-k="${k}.questions.1" maxlength="200"></div>
       <label class="q">3. Ce qu'on fait ensuite, selon ses réponses</label><textarea rows="3" data-k="${k}.ensuite"></textarea></div>`;
   main.innerHTML = `<div class="page"><h1>Que dire à la personne ?</h1>
     <div class="consigne">Vous accompagnez une personne qui vous dit ceci. Pour les situations 1 et 2, <b>répondez en trois temps</b>. Pour la question flash, une ligne suffit.</div>
@@ -78,30 +82,59 @@ RENDUS['1B'] = main => {
       <label class="q">Ma réponse</label><input class="txt" data-k="flash" maxlength="300"></div>
     ${trois('s3', 'Situation 2', S1.s3)}</div>`;
   $$('[data-k]', main).forEach(el => {
-    const [a, b] = el.dataset.k.split('.');
-    lier(el, () => b ? R[a][b] : R[a], x => { if (b) R[a][b] = x; else R[a] = x; });
+    const [a, b, c] = el.dataset.k.split('.');
+    if (c != null) lier(el, () => R[a][b][c], x => { R[a][b][c] = x; });
+    else lier(el, () => b ? R[a][b] : R[a], x => { if (b) R[a][b] = x; else R[a] = x; });
   });
   footbar('', null, () => $$('[data-k]', main).filter(el => !el.value.trim()).length);
 };
 
 /* ---------- 2A ---------- */
+/* Lettre et couleur d'une proposition : fixées par l'ordre de départ (tiré au hasard), elles ne bougent pas pendant le classement */
+function lettre2A(id) { return String.fromCharCode(65 + E.ordres['2A'].indexOf(id)); }
+function couleur2A(id) { const c = CONFIG.couleursLettres2A; return c[E.ordres['2A'].indexOf(id) % c.length]; }
+
 RENDUS['2A'] = main => {
-  const R = E.reponses['2A'];
+  const R = E.reponses['2A'], n = CONFIG.motsDePasse.length;
   if (!R.classement) R.classement = E.ordres['2A'].slice();
   main.innerHTML = `<div class="page"><h1>Gérer ses mots de passe</h1>
-    <div class="consigne">Classez ces six façons de gérer ses mots de passe, <b>de la meilleure (en haut) à la pire (en bas)</b>, avec les flèches ↑ ↓.</div>
-    <div class="rank lab">▲ La meilleure</div><ol class="rank" id="rank"></ol><div class="rank lab">▼ La pire</div>
+    <div class="consigne">Voici ${n} façons de gérer ses mots de passe. <b>Rangez-les de la meilleure (en haut) à la pire (en bas).</b><br>
+      Pour déplacer une étiquette : <b>cliquez dessus, gardez le bouton appuyé, faites-la glisser</b> à sa place, puis relâchez.</div>
+    <div class="rank2"><div class="axe"><span class="top">▲<br>La meilleure</span><span class="mid">⋮</span><span class="bot">La pire<br>▼</span></div><ol class="rank" id="rank"></ol></div>
     <label class="q" style="margin-top:20px">Pourquoi utiliser le même mot de passe partout est-il dangereux ?</label><textarea rows="3" id="j2a"></textarea></div>`;
   const ol = $('#rank', main);
   const draw = moved => {
-    ol.innerHTML = R.classement.map((id, i) => `<li class="${id === moved ? 'moved' : ''}"><span class="n">${i + 1}</span><span>${h(CONFIG.motsDePasse.find(m => m.id === id).texte)}</span>
-      <span class="arr"><button data-u="${i}" ${i === 0 ? 'disabled' : ''} title="Monter">↑</button><button data-d="${i}" ${i === R.classement.length - 1 ? 'disabled' : ''} title="Descendre">↓</button></span></li>`).join('');
+    ol.innerHTML = R.classement.map(id => { const c = couleur2A(id);
+      return `<li data-id="${id}" class="${id === moved ? 'moved' : ''}" style="border-left-color:${c}"><span class="grip" aria-hidden="true">⋮⋮</span>
+        <span class="lt" style="background:${c}">${lettre2A(id)}</span><span>${h(CONFIG.motsDePasse.find(m => m.id === id).texte)}</span></li>`; }).join('');
   };
-  ol.onclick = e => {
-    const b = e.target.closest('button'); if (!b || b.disabled) return;
-    const i = +(b.dataset.u ?? b.dataset.d), j = b.dataset.u != null ? i - 1 : i + 1;
-    const a = R.classement; [a[i], a[j]] = [a[j], a[i]]; R.modifie = true; sauver(); draw(a[j]);
+  /* Glisser-déposer à la souris (événements pointer : marche aussi au doigt et au stylet) */
+  let drag = null;
+  ol.addEventListener('pointerdown', e => {
+    const li = e.target.closest('li'); if (!li || e.button > 0) return;
+    e.preventDefault();
+    ol.setPointerCapture(e.pointerId);
+    drag = { li, decalage: e.clientY - li.getBoundingClientRect().top, avant: R.classement.join() };
+    li.classList.add('dragging');
+  });
+  ol.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const li = drag.li, autres = $$('li', ol).filter(x => x !== li);
+    let i = autres.findIndex(x => { const r = x.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+    const ref = i < 0 ? null : autres[i];
+    if (li.nextElementSibling !== ref) ol.insertBefore(li, ref);
+    li.style.transform = '';
+    li.style.transform = `translateY(${e.clientY - drag.decalage - li.getBoundingClientRect().top}px)`;
+  });
+  const lacher = () => {
+    if (!drag) return;
+    const li = drag.li; li.style.transform = ''; li.classList.remove('dragging');
+    R.classement = $$('li', ol).map(x => x.dataset.id);
+    if (R.classement.join() !== drag.avant) { R.modifie = true; sauver(); draw(li.dataset.id); }
+    drag = null;
   };
+  ol.addEventListener('pointerup', lacher);
+  ol.addEventListener('pointercancel', lacher);
   draw();
   lier($('#j2a', main), () => R.justification, x => R.justification = x);
   footbar('', null, () => (R.justification.trim() ? 0 : 1) + (R.modifie ? 0 : 1));
@@ -120,14 +153,17 @@ RENDUS['2B'] = main => {
 RENDUS['2C'] = main => {
   const v = V(), R = E.reponses['2C'];
   main.innerHTML = `<div class="page"><h1>Est-ce de la double authentification ?</h1>
-    <div class="consigne">Pour chaque situation, répondez <b>Oui</b> ou <b>Non</b>. Pour les situations marquées <span style="color:#c58a00;font-weight:700">★</span>, expliquez aussi pourquoi.</div><div id="yn"></div></div>`;
+    <div class="question-visible"><span class="qq">Question : dans chacune de ces situations, est-ce de la double authentification ?</span><br>
+      Pour chaque ligne, cliquez sur <b>Oui</b> (c'est de la double authentification) ou sur <b>Non</b> (ce n'est pas de la double authentification).<br>
+      Pour les situations marquées <span class="star" style="color:#c58a00;font-weight:700">★</span>, expliquez aussi pourquoi.</div>
+    <div class="yn-head"><span>Pour chaque situation : est-ce de la double authentification ?</span><span>Oui ou Non</span></div><div id="yn"></div></div>`;
   const zone = $('#yn', main);
   E.ordres['2C'].forEach((id, i) => {
     const s = v.situations2C.find(x => x.id === id); if (!R[id]) R[id] = { reponse: null, justification: '' };
     const d = document.createElement('div'); d.className = 'yn';
     d.innerHTML = `<div class="row"><span><b>${i + 1}.</b> ${s.etoile ? '<span class="star">★</span> ' : ''}${h(s.texte)}</span>
       <div class="choice2"><button data-c="oui">Oui</button><button data-c="non">Non</button></div></div>
-      ${s.etoile ? '<input class="txt" placeholder="Pourquoi ?" maxlength="300">' : ''}`;
+      ${s.etoile ? '<input class="txt" placeholder="★ Pourquoi est-ce (ou n\'est-ce pas) de la double authentification ?" maxlength="300">' : ''}`;
     const btns = $$('[data-c]', d), maj = () => btns.forEach(b => b.classList.toggle('on', R[id].reponse === b.dataset.c));
     btns.forEach(b => b.onclick = () => { R[id].reponse = b.dataset.c; maj(); sauver(); }); maj();
     if (s.etoile) lier($('input', d), () => R[id].justification, x => R[id].justification = x);

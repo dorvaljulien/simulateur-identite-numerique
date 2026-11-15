@@ -12,19 +12,27 @@ body { font-family: "Segoe UI", system-ui, Arial, sans-serif; font-size: 15px; c
 button, input, textarea, select { font-family: inherit; }
 .hidden { display: none !important; }
 
-#evtop { position: fixed; left: 0; right: 0; top: 0; height: 40px; z-index: 50; display: flex; align-items: center; gap: 14px; padding: 0 12px; background: #33363b; color: #c9ccd1; font-size: 12px; white-space: nowrap; }
-#evtop .simlabel { opacity: .8; user-select: none; }
-#evtop .steps { display: flex; gap: 4px; padding-left: 12px; border-left: 1px solid #555; }
-#evtop .steps span { padding: 3px 9px; border-radius: 10px; background: #44474d; color: #9a9ea6; font-weight: 600; font-size: 11.5px; }
-#evtop .steps span.done { background: #2f5d3a; color: #b9e0c1; }
-#evtop .steps span.cur { background: #ffd479; color: #222; }
-#evtop .partname { flex: 1; overflow: hidden; text-overflow: ellipsis; color: #fff; font-size: 13px; }
-#evtop .timers { display: flex; gap: 12px; align-items: center; }
-#evtop .timers b { color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
-#evtop .timers .over b { color: #ffb366; }
-#evtop .idc { opacity: .55; font-family: Consolas, monospace; }
+/* En-tête : où j'en suis (partie + étapes) et combien de temps il reste */
+#evtop { position: fixed; left: 0; right: 0; top: 0; height: 60px; z-index: 50; display: flex; align-items: center; gap: 16px; padding: 0 14px; background: #2b2e33; color: #c9ccd1; font-size: 12px; white-space: nowrap; }
+#evtop .partname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: #fff; font-size: 18px; font-weight: 700; line-height: 1.1; }
+#evtop .partname small { display: block; font-size: 12px; font-weight: 600; color: #ffd479; letter-spacing: .02em; margin-bottom: 2px; }
+#evtop .steps { display: flex; gap: 5px; }
+#evtop .steps span { padding: 5px 10px; border-radius: 12px; background: #44474d; color: #9a9ea6; font-weight: 700; font-size: 13px; }
+#evtop .steps span.done { background: #2f6b3f; color: #d4f0db; }
+#evtop .steps span.cur { background: #ffd479; color: #222; box-shadow: 0 0 0 2px #fff; }
+#evtop .chrono { position: relative; overflow: hidden; display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 5px 14px 8px; border-radius: 8px; background: #1f6f43; color: #fff; min-width: 250px; }
+#evtop .chrono .lbl { grid-column: 1 / 3; font-size: 11.5px; font-weight: 600; opacity: .9; }
+#evtop .chrono .val { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: .02em; }
+#evtop .chrono .sur { font-size: 12.5px; opacity: .9; }
+#evtop .chrono i { position: absolute; left: 0; bottom: 0; height: 4px; background: rgba(255,255,255,.75); transition: width .9s linear; }
+#evtop .chrono.last { background: #c77700; }
+#evtop .chrono.over { background: #b4441c; }
+#evtop .total { display: flex; flex-direction: column; align-items: center; line-height: 1.15; color: #b9bdc4; }
+#evtop .total b { color: #fff; font-size: 16px; font-variant-numeric: tabular-nums; }
+#evtop .idc { opacity: .5; font-family: Consolas, monospace; font-size: 11px; }
+#evtop .idc::after { content: "sites fictifs"; display: block; font-family: "Segoe UI", system-ui, Arial, sans-serif; }
 
-#evmain { position: absolute; top: 40px; left: 0; right: 0; bottom: 0; overflow: auto; }
+#evmain { position: absolute; top: 60px; left: 0; right: 0; bottom: 0; overflow: auto; }
 #evmain.sim { overflow: hidden; }
 
 .page { max-width: 1060px; margin: 0 auto; padding: 18px 22px 90px; }
@@ -149,23 +157,48 @@ label.q { display: block; font-weight: 600; margin: 12px 0 5px; color: #2a3340; 
 .sit .dit { display: flex; gap: 10px; align-items: flex-start; background: #f5f1e8; border-radius: 10px; padding: 10px 12px; font-size: 15px; line-height: 1.45; font-style: italic; }
 .sit .dit .av { font-style: normal; font-size: 26px; }
 
-/* ---------- 2A ---------- */
-.rank { list-style: none; padding: 0; margin: 0; counter-reset: r; }
-.rank li { display: grid; grid-template-columns: 40px 1fr 84px; align-items: center; gap: 10px; background: #fff; border: 1px solid #d5d8dd; border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; }
-.rank li .n { width: 30px; height: 30px; border-radius: 50%; background: #3b5b8c; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.rank li .arr { display: flex; gap: 6px; }
-.rank li .arr button { width: 36px; height: 32px; border: 1px solid #b9c0ca; background: #f6f7f9; border-radius: 5px; cursor: pointer; font-size: 16px; }
-.rank li .arr button:hover:not(:disabled) { background: #e3e9f3; }
-.rank li .arr button:disabled { opacity: .3; cursor: default; }
-.rank .lab { font-size: 13px; color: #666; margin: 4px 0; }
-.rank li.moved { animation: mv .4s; }
+/* ---------- 2A : classement par glisser-déposer ---------- */
+.rank2 { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: stretch; }
+.rank2 .axe { display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 4px 0; border-radius: 10px;
+  background: linear-gradient(#d8f0de, #f7f7f7 50%, #f8dcd6); font-weight: 700; font-size: 14px; color: #333; text-align: center; }
+.rank2 .axe .top { color: #1f6f43; } .rank2 .axe .bot { color: #a2381e; }
+.rank2 .axe .mid { font-size: 22px; color: #999; line-height: 1; }
+.rank { list-style: none; padding: 0; margin: 0; }
+.rank li { display: grid; grid-template-columns: 26px 44px 1fr; align-items: center; gap: 12px; background: #fff; border: 2px solid #d5d8dd; border-left-width: 8px;
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; font-size: 15.5px; line-height: 1.35; cursor: grab; user-select: none; touch-action: none; position: relative; }
+.rank li:hover { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.rank li .grip { color: #9aa1ab; font-size: 22px; line-height: 1; letter-spacing: -2px; }
+.rank li .lt { width: 40px; height: 40px; border-radius: 50%; color: #fff; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+.rank li.dragging { cursor: grabbing; z-index: 5; box-shadow: 0 8px 22px rgba(0,0,0,.25); transition: none; }
+.rank li.moved { animation: mv .5s; }
 @keyframes mv { from { background: #fff4c7; } to { background: #fff; } }
+.astuce { font-size: 13px; color: #555; margin: 0 0 10px; }
 
 /* ---------- 2C ---------- */
+.question-visible { background: #fff7dd; border: 2px solid #e0b43a; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px; font-size: 16px; line-height: 1.5; }
+.question-visible .qq { font-size: 19px; font-weight: 800; color: #5b4200; }
+.yn-head { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: 1fr 230px; gap: 12px; padding: 8px 14px; margin-bottom: 6px;
+  background: #3b5b8c; color: #fff; border-radius: 8px; font-weight: 700; font-size: 14px; }
+.yn-head span:last-child { text-align: center; }
 .yn { background: #fff; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
-.yn .row { display: grid; grid-template-columns: 1fr 200px; gap: 12px; align-items: center; font-size: 15px; }
+.yn .row { display: grid; grid-template-columns: 1fr 230px; gap: 12px; align-items: center; font-size: 15px; }
 .yn .star { color: #c58a00; font-weight: 700; }
 .yn input { margin-top: 8px; font-size: 14px; }
+
+/* ---------- 1B : questions à poser ---------- */
+.qpair { display: grid; grid-template-columns: 110px 1fr; gap: 6px 10px; align-items: center; }
+.qpair span { font-size: 14px; color: #3b5b8c; font-weight: 600; }
+.aide-q { font-size: 13px; color: #555; margin: -2px 0 6px; }
+
+/* ---------- 2D : rappel du vrai nom, question 3 ---------- */
+.envrai { color: #5b4200; background: #fff1c2; border-radius: 4px; padding: 0 5px; }
+.q3grid { display: grid; grid-template-columns: max-content max-content 320px; gap: 10px 12px; align-items: center; }
+.q3grid .eg { color: #555; font-size: 14px; }
+.q3grid select { font-size: 15px; padding: 7px 8px; border: 1px solid #b9c0ca; border-radius: 6px; background: #fff; }
+
+/* Logos image (dossier logos/) */
+.logo-img { display: block; width: auto; max-width: 260px; object-fit: contain; }
+.ico-img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 /* ---------- Fin ---------- */
 .endbox { max-width: 620px; margin: 40px auto; background: #fff; border-radius: 10px; padding: 26px 30px; box-shadow: 0 4px 18px rgba(0,0,0,.1); text-align: center; line-height: 1.5; }
@@ -430,7 +463,7 @@ input[data-log], select[data-log], textarea[data-log] { cursor: text; }
    ===================================================================== */
 const CONFIG = {
   evaluation: 'demarches-identite-1SAPAT',
-  version: '1.0',
+  version: '1.1',
 
   // Code de séance donné au tableau → variante
   codesSeance: { '4172': 'A', '8395': 'B' },
@@ -441,11 +474,12 @@ const CONFIG = {
   // Temps conseillés, en minutes (indicatifs, aucun blocage)
   tempsConseilles: { '1A': 10, '1B': 12, '2A': 4, '2B': 3, '2C': 5, '2D': 20, fin: 2 },
 
-  // Réglages du simulateur IdentiPass+ (durées en secondes)
+  // Réglages du simulateur (durées en secondes). Noms des services : voir services.js
+  // Dans les textes ci-dessous, {fiscalis}, {numerid}… sont remplacés par le nom du service.
   simulateur: {
-    delaiNotificationNumerid: 2,   // après le choix de NumérID dans IdentiPass+
+    delaiNotificationNumerid: 2,   // après le choix de l'identité numérique
     essaisCodeAvantBlocage: 3,
-    dureeBlocageNumerid: 120,      // appli NumérID bloquée après 3 codes faux
+    dureeBlocageNumerid: 120,      // appli d'identité bloquée après 3 codes faux
     delaiDemandePirate: 8,         // après l'arrivée sur l'écran de consentement
     delaiPremierIncident: 5,       // après l'enregistrement de la demande
     delaiEntreIncidents: 6,        // après la fin du premier incident
@@ -471,15 +505,24 @@ const CONFIG = {
     ]
   },
 
-  /* ---------- 2A : façons de gérer ses mots de passe (identiques A et B) ---------- */
+  /* ---------- 2A : façons de gérer ses mots de passe (identiques A et B) ----------
+     Version 1.1 : quatre propositions (m3 « recette » et m4 « fichier mdp.txt » retirées).
+     Les identifiants restent ceux de la version 1.0. Chaque proposition reçoit une lettre
+     (A, B, C, D) et une couleur selon l'ordre de départ, tiré au hasard pour chaque copie. */
   motsDePasse: [
     { id: 'm1', texte: 'Des mots de passe différents, notés dans un carnet rangé à la maison' },
     { id: 'm2', texte: 'Le prénom de son enfant suivi de son année de naissance, sur tous les sites' },
-    { id: 'm3', texte: 'Une recette : une racine + des lettres tirées du nom du site' },
-    { id: 'm4', texte: 'Des mots de passe différents, dans un fichier « mdp.txt » sur le bureau de l\'ordinateur' },
     { id: 'm5', texte: 'Un gestionnaire de mots de passe, protégé par un compte Google ou Apple avec une phrase de passe et la double authentification' },
     { id: 'm6', texte: 'Le même mot de passe, long et compliqué, sur tous les sites' }
   ],
+  couleursLettres2A: ['#2f6fd0', '#d9731a', '#23935f', '#9c45bd'],
+
+  /* ---------- 2D, question 3 : noms réels (menu déroulant) ----------
+     Services demandés (clés de services.js) et choix proposés dans chaque menu, dans cet ordre. */
+  question3: {
+    services: ['numerid', 'cartid'],
+    choix: ['Aidants Connect', 'Ameli', 'France Identité', 'France Travail', 'FranceConnect', 'FranceConnect+', 'L\'Identité Numérique La Poste', 'Mon espace santé', 'Service-public.gouv.fr']
+  },
 
   /* ---------- Contenus des deux variantes ---------- */
   variantes: {
@@ -510,17 +553,17 @@ const CONFIG = {
         { id: 'c2', texte: 'Mot de passe + question secrète (« nom de votre premier animal »)' },
         { id: 'c3', texte: 'Mot de passe + case « Je ne suis pas un robot »' },
         { id: 'c4', texte: 'Mot de passe + code à 6 chiffres reçu par SMS' },
-        { id: 'c5', texte: 'Payer en magasin avec sa carte bancaire et son code', etoile: true },
-        { id: 'c6', texte: 'Paiement sans contact, sans code' },
+        { id: 'c5', texte: 'Payer en magasin avec sa carte bancaire, en tapant le code de la carte (4 chiffres) sur le terminal de paiement', etoile: true },
+        { id: 'c6', texte: 'Payer en magasin sans contact : on approche la carte du terminal, sans taper de code' },
         { id: 'c7', texte: 'Déverrouiller son téléphone avec son empreinte' },
         { id: 'c8', texte: 'Identité numérique : confirmer dans l\'appli du téléphone avec un code secret' }
       ],
       sim: {
-        servicePirate: 'Fiscalis',
+        servicePirate: 'fiscalis',     // clé de services.js
         ordreIncidents: ['appel', 'sms'],
         smsFrais: { montant: '12,90 €', domaine: 'habitat-adapt-frais.com', expediteur: '06 39 98 70 05' },
-        q1: 'Son voisin, M. Le Bris, n\'a qu\'un compte Fiscalis. Il veut faire la même demande. Que lui dites-vous ?',
-        q2: 'Laura, l\'aide à domicile, propose : « Donnez-moi votre code secret NumérID, je ferai vos démarches quand vous n\'êtes pas là. » Que répondez-vous ?'
+        q1: 'Son voisin, M. Le Bris, n\'a qu\'un compte {fiscalis}. Il veut faire la même demande. Que lui dites-vous ?',
+        q2: 'Laura, l\'aide à domicile, propose : « Donnez-moi votre code secret {numerid}, je ferai vos démarches quand vous n\'êtes pas là. » Que répondez-vous ?'
       }
     },
     B: {
@@ -550,21 +593,103 @@ const CONFIG = {
         { id: 'c2', texte: 'Mot de passe + date de naissance' },
         { id: 'c3', texte: 'Mot de passe + case « Je ne suis pas un robot »' },
         { id: 'c4', texte: 'Mot de passe + validation dans l\'appli de la banque sur le téléphone' },
-        { id: 'c5', texte: 'Retirer de l\'argent au distributeur avec sa carte et son code', etoile: true },
-        { id: 'c6', texte: 'Paiement sans contact, sans code' },
+        { id: 'c5', texte: 'Retirer de l\'argent au distributeur : on insère sa carte bancaire et on tape le code de la carte (4 chiffres)', etoile: true },
+        { id: 'c6', texte: 'Payer en magasin sans contact : on approche la carte du terminal, sans taper de code' },
         { id: 'c7', texte: 'Déverrouiller son téléphone avec son visage' },
         { id: 'c8', texte: 'Identité numérique : confirmer dans l\'appli du téléphone avec son empreinte' }
       ],
       sim: {
-        servicePirate: 'Santéa',
+        servicePirate: 'santea',       // clé de services.js
         ordreIncidents: ['sms', 'appel'],
         smsFrais: { montant: '14,50 €', domaine: 'habitatadapt-validation.net', expediteur: '06 39 98 70 05' },
-        q1: 'Sa sœur, Mme Tanguy, n\'a qu\'un compte Santéa. Elle veut faire la même demande. Que lui dites-vous ?',
-        q2: 'Sophie, sa fille, propose : « Installe ton identité NumérID sur mon téléphone, comme ça je ferai tes démarches. » Que répondez-vous ?'
+        q1: 'Sa sœur, Mme Tanguy, n\'a qu\'un compte {santea}. Elle veut faire la même demande. Que lui dites-vous ?',
+        q2: 'Sophie, sa fille, propose : « Installe ton identité {numerid} sur mon téléphone, comme ça je ferai tes démarches. » Que répondez-vous ?'
       }
     }
   }
 };
+
+
+/* Logos inlinés par build.js depuis logos/ : aucun */
+const LOGOS_IMAGES = {};
+
+/* =====================================================================
+   SERVICES FICTIFS : noms, adresses, couleurs et logos
+   ---------------------------------------------------------------------
+   Tout ce qui identifie un service inventé est ici, et nulle part ailleurs.
+
+   Pour RENOMMER un service : changer `nom` (et `nomHtml` s'il existe,
+   c'est la version mise en forme du nom, avec des balises HTML).
+   Pour changer son ADRESSE : changer `domaine`.
+   Pour changer sa PETITE ICÔNE dessinée (onglet, appli, pastille) :
+   changer `lettre` (1 ou 2 caractères) et `couleur`.
+   Pour mettre un vrai LOGO (image) : voir le README (dossier logos/).
+
+   Ne pas changer les clés (trouvo, habitatAdapt…) : le code, l'export
+   des copies et le corrigé s'en servent.
+
+   Les correspondances avec les vrais services NE SONT PAS ici (ce sont
+   des réponses) : voir le corrigé. Seule exception : `enVrai` d'IdentiPass+,
+   affiché volontairement aux élèves.
+   Après toute modification : node build.js
+   ===================================================================== */
+const SERVICES = {
+  trouvo: {
+    nom: 'Trouvo', domaine: 'trouvo.sim', lettre: 'T', couleur: '#e8590c',
+    // couleurs des lettres du logo dessiné (une par lettre, reprises en boucle)
+    couleursLogo: ['#e8590c', '#0c8599', '#e8590c', '#5c940d', '#0c8599', '#862e9c']
+  },
+  habitatAdapt: {
+    nom: 'HabitatAdapt', domaine: 'habitat-adapt.gouv.sim', lettre: 'H', couleur: '#24506b',
+    slogan: 'Adapter son logement pour bien vieillir',
+    prefixeDossier: 'HA'          // numéro de demande : HA-12345
+  },
+  identipassPlus: {
+    nom: 'IdentiPass+', nomHtml: 'IdentiPass<sup>+</sup>', domaine: 'identipass.sim', lettre: '🔑', couleur: '#2b3440',
+    slogan: 'La connexion renforcée aux services publics',
+    enVrai: 'FranceConnect+'      // affiché aux élèves
+  },
+  identipass: {                   // version « simple » (la demande pirate passe par là)
+    nom: 'IdentiPass', domaine: 'identipass.sim', lettre: '🔑', couleur: '#2b3440'
+  },
+  numerid: { nom: 'NumérID', lettre: 'ID', couleur: '#00787a', description: 'identité numérique' },
+  cartid: { nom: 'CartID', lettre: 'C', couleur: '#7a3f8f', description: 'identité numérique avec carte d\'identité' },
+  fiscalis: { nom: 'Fiscalis', lettre: 'F', couleur: '#1f4e79' },
+  santea: { nom: 'Santéa', lettre: 'S', couleur: '#0b7a75' },
+  adaptSenior: {                  // intermédiaire payant (résultat sponsorisé)
+    nom: 'Adapt\'Senior Dossier', nomHtml: 'Adapt\'<span>Senior</span> Dossier', domaine: 'adapt-senior-dossier.fr',
+    lettre: 'A', couleur: '#0f6e5e', lettreResultat: '⓪', couleurResultat: '#999'
+  },
+  maisonConfort: { nom: 'Maison & Confort', domaine: 'maison-confort-blog.fr', lettre: 'M', couleur: '#c2410c' },
+  forumSeniors: { nom: 'Forum Seniors Bretagne', domaine: 'forum-seniors-bzh.fr', lettre: 'F', couleur: '#5b7a3a' }
+};
+
+/* ---------- Outils (rien à modifier en dessous) ---------- */
+const SV = SERVICES;
+// Images ajoutées par build.js depuis le dossier logos/ (objet vide s'il n'y en a pas)
+const LOGOS = (typeof LOGOS_IMAGES !== 'undefined') ? LOGOS_IMAGES : {};
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* Nom affiché (texte brut) / mis en forme (HTML) */
+function nom(cle) { return SV[cle].nom; }
+function nomHtml(cle) { return SV[cle].nomHtml || esc(SV[cle].nom); }
+/* Remplace {cle} par le nom du service dans un texte de CONFIG : « un compte {fiscalis} » */
+function nommer(t) { return String(t).replace(/\{(\w+)\}/g, (m, k) => SV[k] ? SV[k].nom : m); }
+
+/* Logo « en grand » (en-tête de site) : image du dossier logos/ si elle existe, sinon le logo dessiné */
+function logo(cle, dessine, hauteur) {
+  const img = LOGOS[cle];
+  return img ? `<img class="logo-img" src="${img}" alt="${esc(nom(cle))}" style="height:${hauteur || 32}px">` : dessine;
+}
+/* Contenu d'une petite icône carrée (onglet, appli, pastille) : image <cle>-icone, sinon image <cle>, sinon la lettre */
+function iconeContenu(cle, lettre) {
+  const img = LOGOS[cle + '-icone'] || LOGOS[cle];
+  return img ? `<img class="ico-img" src="${img}" alt="">` : esc(lettre != null ? lettre : SV[cle].lettre);
+}
+/* Fond de cette icône : blanc s'il y a une image */
+function iconeFond(cle, couleur) { return (LOGOS[cle + '-icone'] || LOGOS[cle]) ? '#fff' : (couleur || SV[cle].couleur); }
+/* Favicon d'onglet : [fond, contenu HTML] */
+function favicon(cle) { return [iconeFond(cle), iconeContenu(cle)]; }
 
 
 /* =====================================================================
@@ -573,13 +698,13 @@ const CONFIG = {
    ===================================================================== */
 const PARTIES = ['1A', '1B', '2A', '2B', '2C', '2D', 'fin'];
 const NOMS_PARTIES = {
-  '1A': 'Partie 1A — Site officiel ou site à éviter ?',
-  '1B': 'Partie 1B — Que dire à la personne ?',
-  '2A': 'Partie 2A — Gérer ses mots de passe',
-  '2B': 'Partie 2B — La double authentification',
-  '2C': 'Partie 2C — Est-ce de la double authentification ?',
-  '2D': 'Partie 2D — Une démarche avec IdentiPass+',
-  fin: 'Fin — Enregistrer ma copie'
+  '1A': 'Site officiel ou site à éviter ?',
+  '1B': 'Que dire à la personne ?',
+  '2A': 'Gérer ses mots de passe',
+  '2B': 'La double authentification',
+  '2C': 'Est-ce de la double authentification ?',
+  '2D': 'Une démarche avec le simulateur',
+  fin: 'Enregistrer ma copie'
 };
 
 let E = null;            // état de la copie (sauvegardé dans localStorage)
@@ -610,9 +735,9 @@ function nouvelleCopie(variante) {
       '2C': shuffle(v.situations2C.map(c => c.id))
     },
     reponses: {
-      '1A': {}, '1B': { s1: { dire: '', questions: '', ensuite: '' }, flash: '', s3: { dire: '', questions: '', ensuite: '' } },
+      '1A': {}, '1B': { s1: { dire: '', questions: ['', ''], ensuite: '' }, flash: '', s3: { dire: '', questions: ['', ''], ensuite: '' } },
       '2A': { justification: '' }, '2B': '', '2C': {},
-      '2D': { prediction: '', predictionValidee: false, formulaire: {}, questionsFin: { q1: '', q2: '', q3IdentiPassPlus: '', q3NumerID: '', q3CartID: '' }, etape: 'prediction' }
+      '2D': { prediction: '', predictionValidee: false, formulaire: {}, questionsFin: { q1: '', q2: '', q3: {} }, etape: 'prediction' }
     },
     sim: null
   };
@@ -634,21 +759,34 @@ setInterval(() => { sauver(); }, 5000);
 
 function totalSecondes() { return Object.values(E.durees).reduce((a, b) => a + b, 0); }
 
-/* ---------- En-tête ---------- */
+/* ---------- En-tête : progression + temps ---------- */
 function majEnTete() {
   const top = $('#evtop'); if (!top || !E) return;
   const p = E.partie, conseil = CONFIG.tempsConseilles[p];
   const ecoule = E.durees[p] || 0;
-  $('.partname', top).textContent = NOMS_PARTIES[p];
-  $('.steps', top).innerHTML = PARTIES.filter(x => x !== 'fin').map(x => `<span class="${E.valides[x] ? 'done' : x === p ? 'cur' : ''}">${x}</span>`).join('');
-  $('.timers', top).innerHTML = (conseil ? `<span class="${ecoule > conseil * 60 ? 'over' : ''}">Temps conseillé : <b>${conseil} min</b> · passé : <b>${mmss(ecoule)}</b></span>` : '') +
-    `<span>Total : <b>${mmss(totalSecondes())}</b></span><span class="idc">${E.idCopie}</span>`;
+  const liste = PARTIES.filter(x => x !== 'fin'), rang = liste.indexOf(p);
+  $('.partname', top).innerHTML = p === 'fin' ? `<small>C'est fini !</small>${h(NOMS_PARTIES[p])}`
+    : `<small>Partie ${rang + 1} sur ${liste.length} · ${p}</small>${h(NOMS_PARTIES[p])}`;
+  $('.steps', top).innerHTML = liste.map(x => `<span class="${E.valides[x] ? 'done' : x === p ? 'cur' : ''}">${E.valides[x] ? '✓ ' : ''}${x}</span>`).join('');
+  // Chronomètre de la partie : temps restant (compte à rebours), puis dépassement
+  const chrono = $('.chrono', top);
+  if (conseil) {
+    const total = conseil * 60, reste = total - ecoule;
+    const etat = reste < 0 ? 'over' : reste < 60 ? 'last' : '';
+    chrono.className = 'chrono ' + etat;
+    chrono.innerHTML = reste >= 0
+      ? `<span class="lbl">Temps restant pour cette partie</span><span class="val">${mmss(reste)}</span><span class="sur">sur ${conseil} min</span><i style="width:${Math.min(100, 100 * ecoule / total).toFixed(1)}%"></i>`
+      : `<span class="lbl">Temps conseillé dépassé de</span><span class="val">+${mmss(-reste)}</span><span class="sur">passez à la suite</span><i style="width:100%"></i>`;
+  } else { chrono.className = 'chrono hidden'; chrono.innerHTML = ''; }
+  const totConseil = Object.values(CONFIG.tempsConseilles).reduce((a, b) => a + b, 0);
+  $('.total', top).innerHTML = `Temps total<b>${Math.floor(totalSecondes() / 60)} min</b><small>sur ${totConseil} min</small>`;
+  $('.idc', top).textContent = E.idCopie;
 }
 
 function montrerEnTete() {
   if ($('#evtop')) return;
   const d = document.createElement('div'); d.id = 'evtop';
-  d.innerHTML = `<span class="simlabel">Évaluation — les sites du simulateur sont fictifs</span><span class="steps"></span><span class="partname"></span><span class="timers"></span>`;
+  d.innerHTML = `<span class="partname"></span><span class="steps"></span><span class="chrono"></span><span class="total"></span><span class="idc" title="Numéro de copie"></span>`;
   document.body.appendChild(d);
   const m = document.createElement('div'); m.id = 'evmain'; document.body.appendChild(m);
 }
@@ -713,7 +851,7 @@ function construireExport() {
       '1A': E.ordres['1A'].map((id, i) => { const c = v.cartes1A.find(x => x.id === id); const r = R['1A'][id] || {};
         return { item: id, ordreAffiche: i + 1, support: c.type, adresseOuLien: adresseCarte(c), choix: r.choix || null, justification: r.justification || '' }; }),
       '1B': { situation1: R['1B'].s1, questionFlash: R['1B'].flash, situation2: R['1B'].s3 },
-      '2A': { classement: (R['2A'].classement || E.ordres['2A']).map((id, i) => ({ rang: i + 1, item: id, texte: CONFIG.motsDePasse.find(m => m.id === id).texte })),
+      '2A': { classement: (R['2A'].classement || E.ordres['2A']).map((id, i) => ({ rang: i + 1, item: id, lettre: lettre2A(id), texte: CONFIG.motsDePasse.find(m => m.id === id).texte })),
         classementModifie: !!R['2A'].modifie, justification: R['2A'].justification },
       '2B': R['2B'],
       '2C': E.ordres['2C'].map((id, i) => { const s = v.situations2C.find(x => x.id === id); const r = R['2C'][id] || {};
@@ -760,7 +898,7 @@ function afficherAccueil() {
       <ul>
         <li>L'évaluation a deux parties : <b>1. Sites officiels et conseils</b>, puis <b>2. Identité numérique</b>, avec un simulateur.</li>
         <li>Chaque partie se termine par le bouton <b>« Valider cette partie »</b>. Ensuite, <b>on ne peut plus revenir en arrière</b>.</li>
-        <li>En haut de l'écran : le <b>temps conseillé</b> pour chaque partie. C'est une indication, rien ne se bloque.</li>
+        <li>En haut de l'écran : <b>le temps qu'il reste</b> pour la partie en cours. C'est une indication, rien ne se bloque. Si le temps est dépassé, passez à la suite.</li>
         <li>Répondez avec vos mots, en phrases courtes. <b>N'écrivez pas votre nom.</b></li>
         <li>À la fin, vous enregistrerez votre copie avec le nom donné par le professeur.</li>
       </ul>
@@ -820,7 +958,7 @@ function maquette(c) {
   const sbar = `<div class="sbar"><span>${h(c.heure || '14:27')}</span><span>📶 4G ▮▮▮</span></div>`;
   switch (c.type) {
     case 'recherche':
-      return `<div class="mk-search"><div class="bar"><span class="lg">Trouvo</span><span class="q">${h(c.requete || '')}</span><span>🔍</span></div><div class="r">
+      return `<div class="mk-search"><div class="bar"><span class="lg">${h(nom('trouvo'))}</span><span class="q">${h(c.requete || '')}</span><span>🔍</span></div><div class="r">
         ${c.sponsorise ? '<div class="spons">Sponsorisé</div>' : ''}
         <div class="site"><span class="f" style="background:${c.couleur}">${h(c.favicon)}</span><span><span class="nm">${h(c.nomSite)}</span><br><span class="u">https://${h(c.adresse)}</span></span></div>
         <h3>${h(c.titre)}</h3><p>${h(c.texte)}</p></div></div>`;
@@ -870,9 +1008,13 @@ RENDUS['1A'] = main => {
 /* ---------- 1B ---------- */
 RENDUS['1B'] = main => {
   const v = V(), R = E.reponses['1B'], S1 = v.situations1B;
+  ['s1', 's3'].forEach(k => { if (!Array.isArray(R[k].questions)) R[k].questions = [R[k].questions || '', '']; });
   const trois = (k, titre, phrase) => `<div class="sit"><h2>${titre}</h2><div class="dit"><span class="av">🧓</span><span>« ${h(phrase)} »</span></div>
       <label class="q">1. Ce que je lui dis tout de suite</label><textarea rows="2" data-k="${k}.dire"></textarea>
-      <label class="q">2. Les questions que je lui pose (au moins deux)</label><textarea rows="3" data-k="${k}.questions"></textarea>
+      <label class="q">2. Avant de la conseiller, il me manque des informations. Je lui pose deux questions :</label>
+      <p class="aide-q">Écrivez les deux questions que vous posez à la personne, comme vous les diriez à voix haute.</p>
+      <div class="qpair"><span>Question 1 :</span><input class="txt" data-k="${k}.questions.0" maxlength="200">
+        <span>Question 2 :</span><input class="txt" data-k="${k}.questions.1" maxlength="200"></div>
       <label class="q">3. Ce qu'on fait ensuite, selon ses réponses</label><textarea rows="3" data-k="${k}.ensuite"></textarea></div>`;
   main.innerHTML = `<div class="page"><h1>Que dire à la personne ?</h1>
     <div class="consigne">Vous accompagnez une personne qui vous dit ceci. Pour les situations 1 et 2, <b>répondez en trois temps</b>. Pour la question flash, une ligne suffit.</div>
@@ -881,30 +1023,59 @@ RENDUS['1B'] = main => {
       <label class="q">Ma réponse</label><input class="txt" data-k="flash" maxlength="300"></div>
     ${trois('s3', 'Situation 2', S1.s3)}</div>`;
   $$('[data-k]', main).forEach(el => {
-    const [a, b] = el.dataset.k.split('.');
-    lier(el, () => b ? R[a][b] : R[a], x => { if (b) R[a][b] = x; else R[a] = x; });
+    const [a, b, c] = el.dataset.k.split('.');
+    if (c != null) lier(el, () => R[a][b][c], x => { R[a][b][c] = x; });
+    else lier(el, () => b ? R[a][b] : R[a], x => { if (b) R[a][b] = x; else R[a] = x; });
   });
   footbar('', null, () => $$('[data-k]', main).filter(el => !el.value.trim()).length);
 };
 
 /* ---------- 2A ---------- */
+/* Lettre et couleur d'une proposition : fixées par l'ordre de départ (tiré au hasard), elles ne bougent pas pendant le classement */
+function lettre2A(id) { return String.fromCharCode(65 + E.ordres['2A'].indexOf(id)); }
+function couleur2A(id) { const c = CONFIG.couleursLettres2A; return c[E.ordres['2A'].indexOf(id) % c.length]; }
+
 RENDUS['2A'] = main => {
-  const R = E.reponses['2A'];
+  const R = E.reponses['2A'], n = CONFIG.motsDePasse.length;
   if (!R.classement) R.classement = E.ordres['2A'].slice();
   main.innerHTML = `<div class="page"><h1>Gérer ses mots de passe</h1>
-    <div class="consigne">Classez ces six façons de gérer ses mots de passe, <b>de la meilleure (en haut) à la pire (en bas)</b>, avec les flèches ↑ ↓.</div>
-    <div class="rank lab">▲ La meilleure</div><ol class="rank" id="rank"></ol><div class="rank lab">▼ La pire</div>
+    <div class="consigne">Voici ${n} façons de gérer ses mots de passe. <b>Rangez-les de la meilleure (en haut) à la pire (en bas).</b><br>
+      Pour déplacer une étiquette : <b>cliquez dessus, gardez le bouton appuyé, faites-la glisser</b> à sa place, puis relâchez.</div>
+    <div class="rank2"><div class="axe"><span class="top">▲<br>La meilleure</span><span class="mid">⋮</span><span class="bot">La pire<br>▼</span></div><ol class="rank" id="rank"></ol></div>
     <label class="q" style="margin-top:20px">Pourquoi utiliser le même mot de passe partout est-il dangereux ?</label><textarea rows="3" id="j2a"></textarea></div>`;
   const ol = $('#rank', main);
   const draw = moved => {
-    ol.innerHTML = R.classement.map((id, i) => `<li class="${id === moved ? 'moved' : ''}"><span class="n">${i + 1}</span><span>${h(CONFIG.motsDePasse.find(m => m.id === id).texte)}</span>
-      <span class="arr"><button data-u="${i}" ${i === 0 ? 'disabled' : ''} title="Monter">↑</button><button data-d="${i}" ${i === R.classement.length - 1 ? 'disabled' : ''} title="Descendre">↓</button></span></li>`).join('');
+    ol.innerHTML = R.classement.map(id => { const c = couleur2A(id);
+      return `<li data-id="${id}" class="${id === moved ? 'moved' : ''}" style="border-left-color:${c}"><span class="grip" aria-hidden="true">⋮⋮</span>
+        <span class="lt" style="background:${c}">${lettre2A(id)}</span><span>${h(CONFIG.motsDePasse.find(m => m.id === id).texte)}</span></li>`; }).join('');
   };
-  ol.onclick = e => {
-    const b = e.target.closest('button'); if (!b || b.disabled) return;
-    const i = +(b.dataset.u ?? b.dataset.d), j = b.dataset.u != null ? i - 1 : i + 1;
-    const a = R.classement; [a[i], a[j]] = [a[j], a[i]]; R.modifie = true; sauver(); draw(a[j]);
+  /* Glisser-déposer à la souris (événements pointer : marche aussi au doigt et au stylet) */
+  let drag = null;
+  ol.addEventListener('pointerdown', e => {
+    const li = e.target.closest('li'); if (!li || e.button > 0) return;
+    e.preventDefault();
+    ol.setPointerCapture(e.pointerId);
+    drag = { li, decalage: e.clientY - li.getBoundingClientRect().top, avant: R.classement.join() };
+    li.classList.add('dragging');
+  });
+  ol.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const li = drag.li, autres = $$('li', ol).filter(x => x !== li);
+    let i = autres.findIndex(x => { const r = x.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+    const ref = i < 0 ? null : autres[i];
+    if (li.nextElementSibling !== ref) ol.insertBefore(li, ref);
+    li.style.transform = '';
+    li.style.transform = `translateY(${e.clientY - drag.decalage - li.getBoundingClientRect().top}px)`;
+  });
+  const lacher = () => {
+    if (!drag) return;
+    const li = drag.li; li.style.transform = ''; li.classList.remove('dragging');
+    R.classement = $$('li', ol).map(x => x.dataset.id);
+    if (R.classement.join() !== drag.avant) { R.modifie = true; sauver(); draw(li.dataset.id); }
+    drag = null;
   };
+  ol.addEventListener('pointerup', lacher);
+  ol.addEventListener('pointercancel', lacher);
   draw();
   lier($('#j2a', main), () => R.justification, x => R.justification = x);
   footbar('', null, () => (R.justification.trim() ? 0 : 1) + (R.modifie ? 0 : 1));
@@ -923,14 +1094,17 @@ RENDUS['2B'] = main => {
 RENDUS['2C'] = main => {
   const v = V(), R = E.reponses['2C'];
   main.innerHTML = `<div class="page"><h1>Est-ce de la double authentification ?</h1>
-    <div class="consigne">Pour chaque situation, répondez <b>Oui</b> ou <b>Non</b>. Pour les situations marquées <span style="color:#c58a00;font-weight:700">★</span>, expliquez aussi pourquoi.</div><div id="yn"></div></div>`;
+    <div class="question-visible"><span class="qq">Question : dans chacune de ces situations, est-ce de la double authentification ?</span><br>
+      Pour chaque ligne, cliquez sur <b>Oui</b> (c'est de la double authentification) ou sur <b>Non</b> (ce n'est pas de la double authentification).<br>
+      Pour les situations marquées <span class="star" style="color:#c58a00;font-weight:700">★</span>, expliquez aussi pourquoi.</div>
+    <div class="yn-head"><span>Pour chaque situation : est-ce de la double authentification ?</span><span>Oui ou Non</span></div><div id="yn"></div></div>`;
   const zone = $('#yn', main);
   E.ordres['2C'].forEach((id, i) => {
     const s = v.situations2C.find(x => x.id === id); if (!R[id]) R[id] = { reponse: null, justification: '' };
     const d = document.createElement('div'); d.className = 'yn';
     d.innerHTML = `<div class="row"><span><b>${i + 1}.</b> ${s.etoile ? '<span class="star">★</span> ' : ''}${h(s.texte)}</span>
       <div class="choice2"><button data-c="oui">Oui</button><button data-c="non">Non</button></div></div>
-      ${s.etoile ? '<input class="txt" placeholder="Pourquoi ?" maxlength="300">' : ''}`;
+      ${s.etoile ? '<input class="txt" placeholder="★ Pourquoi est-ce (ou n\'est-ce pas) de la double authentification ?" maxlength="300">' : ''}`;
     const btns = $$('[data-c]', d), maj = () => btns.forEach(b => b.classList.toggle('on', R[id].reponse === b.dataset.c));
     btns.forEach(b => b.onclick = () => { R[id].reponse = b.dataset.c; maj(); sauver(); }); maj();
     if (s.etoile) lier($('input', d), () => R[id].justification, x => R[id].justification = x);
@@ -967,14 +1141,19 @@ RENDUS.fin = main => {
 
 
 /* =====================================================================
-   PARTIE 2D — SIMULATEUR IdentiPass+
-   Navigateur fictif (Trouvo, HabitatAdapt, IdentiPass+, intermédiaire)
-   + téléphone (NumérID, SMS, appels) + journal des clics.
+   PARTIE 2D — SIMULATEUR (connexion renforcée)
+   Navigateur fictif (moteur de recherche, site de l'aide, service de
+   connexion, intermédiaire) + téléphone (appli d'identité, SMS, appels)
+   + journal des clics.
+   Noms, adresses et logos des services : services.js (SV, nom(), logo()…).
    Les correspondances avec les vrais services sont dans le corrigé.
    Aucune aide pédagogique n'est affichée.
    ===================================================================== */
 const P = CONFIG.personnage;
 const SC = CONFIG.simulateur;
+/* Adresses des sites fictifs (modifiables dans services.js) */
+const TV = SV.trouvo.domaine, HA = SV.habitatAdapt.domaine, IP = SV.identipassPlus.domaine,
+  ASD = SV.adaptSenior.domaine, MC = SV.maisonConfort.domaine, FS = SV.forumSeniors.domaine;
 const L = (cible, cat) => `data-log="${cible}|${cat}"`;
 let simTimers = [];
 let bannerTimer = null;
@@ -987,7 +1166,7 @@ function clearSimTimers() { simTimers.forEach(clearTimeout); simTimers = []; }
 /* ---------- État initial du simulateur ---------- */
 function nouvelEtatSim() {
   return {
-    tAcc: 0, url: 'trouvo.sim', hist: ['trouvo.sim'], histIdx: 0,
+    tAcc: 0, url: TV, hist: [TV], histIdx: 0,
     ph: { ecran: 'home', notifs: [], sms: [], reqs: [], appels: [], pin: null, call: null, essaisFaux: 0, bloqueJusqua: 0, web: null, nid: 0 },
     f: {
       rechercheLancee: false, resultatSponsoriseClique: false, intermediairePaye: false, siteOfficielAtteint: false, siteOfficielAvantPaiement: null,
@@ -1054,9 +1233,9 @@ function carteHtml() {
       <tr><td>Adresse</td><td>${P.adresse}, ${P.cp} ${P.ville}</td></tr>
       <tr><td>Téléphone</td><td>${P.telephone}</td></tr>
       <tr><td>Numéro fiscal</td><td><code>${P.numeroFiscal}</code></td></tr>
-      <tr><td>Compte Fiscalis</td><td>identifiant : numéro fiscal<br>mot de passe : <code>${P.fiscalis.motDePasse}</code></td></tr>
-      <tr><td>Compte Santéa</td><td>identifiant : <code>${P.santea.identifiant}</code><br>mot de passe : <code>${P.santea.motDePasse}</code></td></tr>
-      <tr><td>NumérID</td><td>identité numérique installée sur <b>son</b> téléphone (${P.numerid.verifiee})<br>code secret : <code>${P.numerid.codeSecret}</code></td></tr>
+      <tr><td>Compte ${nomHtml('fiscalis')}</td><td>identifiant : numéro fiscal<br>mot de passe : <code>${P.fiscalis.motDePasse}</code></td></tr>
+      <tr><td>Compte ${nomHtml('santea')}</td><td>identifiant : <code>${P.santea.identifiant}</code><br>mot de passe : <code>${P.santea.motDePasse}</code></td></tr>
+      <tr><td>${nomHtml('numerid')}</td><td>identité numérique installée sur <b>son</b> téléphone (${P.numerid.verifiee})<br>code secret : <code>${P.numerid.codeSecret}</code></td></tr>
       <tr><td>Carte d'identité</td><td>${P.carteIdentite}</td></tr>
     </table></div></div>
     <div class="postit">${P.proches.join('<br>')}</div>`;
@@ -1082,10 +1261,10 @@ RENDUS['2D'] = main => {
 
 function renderPrediction(main) {
   const R = E.reponses['2D'];
-  main.innerHTML = `<div class="page"><h1>Une démarche avec IdentiPass+</h1>
+  main.innerHTML = `<div class="page"><h1>Une démarche avec ${nomHtml('identipassPlus')}</h1>
     <div class="mission"><b>Mission.</b> ${MISSION}</div>
     <div class="pred"><div class="carteinline">${carteHtml()}</div><div>
-      <div class="consigne" style="margin-top:0"><b>Avant de commencer.</b> Pour cette démarche, il faudra se connecter avec <b>IdentiPass+</b>. Regardez la carte de Mme Prigent.<br><b>Quel compte va fonctionner ? Pourquoi les autres non ?</b></div>
+      <div class="consigne" style="margin-top:0"><b>Avant de commencer.</b> Pour cette démarche, il faudra se connecter avec <b>${nomHtml('identipassPlus')}</b> <span class="envrai">(dans la vraie vie : <b>${esc(SV.identipassPlus.enVrai)}</b>)</span>. Regardez la carte de Mme Prigent.<br><b>Quel compte va fonctionner ? Pourquoi les autres non ?</b></div>
       <textarea rows="8" id="pred"></textarea>
       <p style="font-size:13px;color:#666">Votre prédiction sera verrouillée, puis le simulateur s'ouvrira. La carte de Mme Prigent restera disponible avec le bouton « Ma carte ».</p>
       <button class="btn" id="btnpred">Valider ma prédiction et ouvrir le simulateur</button></div></div></div>`;
@@ -1100,23 +1279,29 @@ function renderPrediction(main) {
 }
 
 function renderQuestionsFin(main) {
-  const v = V().sim, Q = E.reponses['2D'].questionsFin;
+  const v = V().sim, Q = E.reponses['2D'].questionsFin, Q3 = CONFIG.question3;
+  if (!Q.q3 || typeof Q.q3 !== 'object') Q.q3 = {};
+  const menu = cle => `<select data-q3="${cle}"><option value="">— Choisir —</option>${Q3.choix.map(c => `<option>${h(c)}</option>`).join('')}<option>Je ne sais pas</option></select>`;
   main.innerHTML = `<div class="page"><h1>Questions de fin</h1>
     <div class="consigne">Le simulateur est terminé. Répondez avec vos mots.</div>
-    <div class="sit"><h2>Question 1</h2><div class="dit"><span class="av">💬</span><span>${h(v.q1)}</span></div><textarea rows="4" data-k="q1"></textarea></div>
-    <div class="sit"><h2>Question 2</h2><div class="dit"><span class="av">💬</span><span>${h(v.q2)}</span></div><textarea rows="4" data-k="q2"></textarea></div>
-    <div class="sit"><h2>Question 3</h2><p style="margin:0 0 8px">En vrai, comment s'appellent ces services ?</p>
-      <div style="display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center">
-      <b>IdentiPass+</b><input class="txt" data-k="q3IdentiPassPlus" maxlength="80"><b>NumérID</b><input class="txt" data-k="q3NumerID" maxlength="80"><b>CartID</b><input class="txt" data-k="q3CartID" maxlength="80"></div></div></div>`;
+    <div class="sit"><h2>Question 1</h2><div class="dit"><span class="av">💬</span><span>${h(nommer(v.q1))}</span></div><textarea rows="4" data-k="q1"></textarea></div>
+    <div class="sit"><h2>Question 2</h2><div class="dit"><span class="av">💬</span><span>${h(nommer(v.q2))}</span></div><textarea rows="4" data-k="q2"></textarea></div>
+    <div class="sit"><h2>Question 3</h2><p style="margin:0 0 4px">Dans le simulateur, les services ont des noms inventés. <b>Comment s'appellent-ils dans la vraie vie ?</b> Choisissez dans chaque liste.</p>
+      <p style="margin:0 0 10px;font-size:13px;color:#555">Exemple : ${nomHtml('identipassPlus')} s'appelle ${h(SV.identipassPlus.enVrai)} dans la vraie vie.</p>
+      <div class="q3grid">${Q3.services.map(cle => `<b>${nomHtml(cle)}</b><span class="eg">s'appelle en vrai :</span>${menu(cle)}`).join('')}</div></div></div>`;
   $$('[data-k]', main).forEach(el => lier(el, () => Q[el.dataset.k], x => Q[el.dataset.k] = x));
-  footbar('', null, () => $$('[data-k]', main).filter(el => !el.value.trim()).length);
+  $$('[data-q3]', main).forEach(el => {
+    el.value = Q.q3[el.dataset.q3] || '';
+    el.addEventListener('change', () => { Q.q3[el.dataset.q3] = el.value; sauver(); });
+  });
+  footbar('', null, () => $$('[data-k]', main).filter(el => !el.value.trim()).length + $$('[data-q3]', main).filter(el => !el.value).length);
 }
 
 /* ---------- Coque du simulateur ---------- */
 function renderSim(main) {
   main.className = 'sim';
   main.innerHTML = `<div id="sim">
-    <div id="simbar"><span class="mtx"><b>Mission :</b>${h(MISSION)}</span>
+    <div id="simbar"><span class="mtx"><b>Mission :</b>${h(MISSION)} <span class="envrai">${nomHtml('identipassPlus')} = ${esc(SV.identipassPlus.enVrai)} dans la vraie vie.</span></span>
       <button ${L('ma-carte', 'neutre')} data-act="carte">🪪 Ma carte</button>
       <button class="end" ${L('j-ai-termine', 'neutre')} data-act="terminer">J'ai terminé la démarche</button></div>
     <div id="simmain">
@@ -1153,7 +1338,7 @@ function reprendreSim() {
   if (f.pirate.programmee && !f.pirate.envoyee) later(envoyerPirate, SC.delaiDemandePirate);
   if (f.depot && !ph.call) programmerIncidentSuivant();
   const u = parse(s.url);
-  if (u.host === 'identipass.sim' && u.path === '/plus/consentement' && !f.authOk) s.url = 'identipass.sim/plus?service=habitatadapt';
+  if (u.host === IP && u.path === '/plus/consentement' && !f.authOk) s.url = IP + '/plus?service=habitatadapt';
 }
 
 /* ---------- Clics ---------- */
@@ -1177,18 +1362,18 @@ const ACTIONS = {
   fwd: () => { const s = S(); if (s.histIdx < s.hist.length - 1) { s.histIdx++; s.url = s.hist[s.histIdx]; renderBrowser(true); } },
   reload: () => renderBrowser(true),
   /* Trouvo */
-  rechercher: () => { F().rechercheLancee = true; navigate('trouvo.sim/recherche?q=' + encodeURIComponent('aide douche personne âgée')); },
+  rechercher: () => { F().rechercheLancee = true; navigate(TV + '/recherche?q=' + encodeURIComponent('aide douche personne âgée')); },
   /* intermédiaire */
-  payer49: () => { const f = F(); f.intermediairePaye = true; if (!f.siteOfficielAtteint) f.siteOfficielAvantPaiement = false; journal('navigateur', 'paiement-intermediaire-49', 'evenement', 'paiement de 49 € enregistré'); navigate('adapt-senior-dossier.fr/commande'); },
+  payer49: () => { const f = F(); f.intermediairePaye = true; if (!f.siteOfficielAtteint) f.siteOfficielAvantPaiement = false; journal('navigateur', 'paiement-intermediaire-49', 'evenement', 'paiement de 49 € enregistré'); navigate(ASD + '/commande'); },
   /* HabitatAdapt */
-  ancien: () => { const f = F(); f.ancienIdentifiantEssais++; navigate('habitat-adapt.gouv.sim/connexion?ancien=1', true); },
+  ancien: () => { const f = F(); f.ancienIdentifiantEssais++; navigate(HA + '/connexion?ancien=1', true); },
   envoyerDemande: () => envoyerDemande(),
-  deconnexion: () => { const f = F(); f.session = false; f.authOk = false; f.deconnecte = true; if (f.depot) f.deconnexionApresDepot = true; journal('navigateur', 'deconnexion', 'evenement', f.depot ? 'après le dépôt' : 'avant le dépôt'); navigate('habitat-adapt.gouv.sim?deco=1'); },
+  deconnexion: () => { const f = F(); f.session = false; f.authOk = false; f.deconnecte = true; if (f.depot) f.deconnexionApresDepot = true; journal('navigateur', 'deconnexion', 'evenement', f.depot ? 'après le dépôt' : 'avant le dépôt'); navigate(HA + '?deco=1'); },
   /* IdentiPass+ */
   choixNumerid: () => choisirNumerid(),
-  choixCartid: () => { const f = F(); f.cartidEssais++; navigate('identipass.sim/plus?service=habitatadapt&msg=cartid', true); },
-  consentOui: () => { const f = F(); if (!f.authOk) return navigate('identipass.sim/plus?service=habitatadapt'); f.consentement = true; f.session = true; journal('navigateur', 'connexion-habitatadapt', 'evenement', 'connectée via IdentiPass+'); navigate('habitat-adapt.gouv.sim/demande'); },
-  consentNon: () => { F().authOk = false; navigate('habitat-adapt.gouv.sim/connexion'); },
+  choixCartid: () => { const f = F(); f.cartidEssais++; navigate(IP + '/plus?service=habitatadapt&msg=cartid', true); },
+  consentOui: () => { const f = F(); if (!f.authOk) return navigate(IP + '/plus?service=habitatadapt'); f.consentement = true; f.session = true; journal('navigateur', 'connexion-habitatadapt', 'evenement', 'connectée via ' + nom('identipassPlus')); navigate(HA + '/demande'); },
+  consentNon: () => { F().authOk = false; navigate(HA + '/connexion'); },
   /* Téléphone */
   phHome: () => { const ph = S().ph; ph.ecran = 'home'; ph.web = null; renderPhone(); },
   phApp: el => { const ph = S().ph; ph.ecran = el.dataset.app; if (el.dataset.app === 'messages') ph.thread = null; renderPhone(); },
@@ -1215,7 +1400,7 @@ async function terminerDemarche() {
   }
   if (!await confirmer('Terminer la démarche ?', '<p>Vous allez passer aux questions de fin.</p><p><b>Vous ne pourrez plus revenir dans le simulateur.</b></p>', 'Passer aux questions', 'Revenir au simulateur')) return;
   f.finDemarche = { t: hhmmss(s.tAcc), demandeDeposee: f.depot };
-  if (f.pirate.envoyee && !f.pirate.etat) journal('telephone', 'demande-pirate-ignoree', 'evenement', 'aucune réponse à la demande ' + V().sim.servicePirate);
+  if (f.pirate.envoyee && !f.pirate.etat) journal('telephone', 'demande-pirate-ignoree', 'evenement', 'aucune réponse à la demande ' + nom(V().sim.servicePirate));
   journal('barre', 'fin-demarche', 'evenement');
   clearSimTimers(); hideBanner();
   E.reponses['2D'].etape = 'questions'; sauver(); afficherPartie();
@@ -1241,7 +1426,7 @@ function renderBrowser(anim) {
   const site = SITES[u.host];
   const pg = site ? site(u) : { title: 'Page inaccessible', fav: ['#999', '!'], cls: '', html: '<div class="neutralpage"><h2>Ce site est inaccessible</h2></div>' };
   if (pg.redirect) { s.url = pg.redirect; s.hist[s.histIdx] = pg.redirect; return renderBrowser(anim); }
-  $('#tabttl').textContent = pg.title; const fv = $('#tabfav'); fv.style.background = pg.fav[0]; fv.textContent = pg.fav[1];
+  $('#tabttl').textContent = pg.title; const fv = $('#tabfav'); fv.style.background = pg.fav[0]; fv.innerHTML = pg.fav[1];
   const shown = s.url.split('?')[0]; const i = shown.indexOf('/');
   $('#urlbar').innerHTML = `<span class="host">${h(i < 0 ? shown : shown.slice(0, i))}</span><span class="rest">${h(i < 0 ? '' : shown.slice(i))}</span>`;
   const vp = $('#viewport'); vp.innerHTML = `<div class="pg ${pg.cls || ''}">${pg.html}</div>`; vp.scrollTop = 0;
@@ -1254,62 +1439,65 @@ function renderBrowser(anim) {
 const SITES = {};
 
 /* ---------- Trouvo ---------- */
-const tvLogo = '<div class="tv-logo"><span>T</span><span>r</span><span>o</span><span>u</span><span>v</span><span>o</span></div>';
-SITES['trouvo.sim'] = u => {
+function tvLogo(hauteur) {
+  const c = SV.trouvo.couleursLogo;
+  return logo('trouvo', `<div class="tv-logo">${[...nom('trouvo')].map((x, i) => `<span style="color:${c[i % c.length]}">${esc(x)}</span>`).join('')}</div>`, hauteur);
+}
+SITES[TV] = u => {
   if (u.path === '/recherche') {
     const res = (spons, f, nm, url, go, titre, desc, cat, cible, links) => `<div class="tv-r">${spons ? '<div class="spons">Sponsorisé</div>' : ''}
       <div class="site" data-go="${go}" ${L(cible, cat)}><span class="f" style="background:${f[0]}">${f[1]}</span><span><span class="nm">${nm}</span><br><span class="u">${url}</span></span></div>
       <h3 data-go="${go}" ${L(cible, cat)}>${titre}</h3><p>${desc}</p>${links || ''}</div>`;
-    return { title: 'aide douche personne âgée - Recherche Trouvo', fav: ['#e8590c', 'T'], cls: 'tv',
-      html: `<div class="tv-rhead"><span data-go="trouvo.sim" ${L('trouvo-logo', 'neutre')}>${tvLogo}</span><div class="tv-box"><span class="qv">aide douche personne âgée</span><span>🔍</span></div></div>
+    return { title: 'aide douche personne âgée - Recherche ' + nom('trouvo'), fav: favicon('trouvo'), cls: 'tv',
+      html: `<div class="tv-rhead"><span data-go="${TV}" ${L('trouvo-logo', 'neutre')}>${tvLogo(34)}</span><div class="tv-box"><span class="qv">aide douche personne âgée</span><span>🔍</span></div></div>
       <div class="tv-rtabs"><span class="on">Tous</span><span ${L('trouvo-onglet-images', 'sans-objet')}>Images</span><span ${L('trouvo-onglet-actualites', 'sans-objet')}>Actualités</span><span ${L('trouvo-onglet-videos', 'sans-objet')}>Vidéos</span><span ${L('trouvo-onglet-cartes', 'sans-objet')}>Cartes</span></div>
       <div class="tv-results"><div class="stat">Environ 2 140 000 résultats (0,38 secondes)</div>
-      ${res(true, ['#999', '⓪'], 'Adapt\'Senior Dossier', 'https://adapt-senior-dossier.fr', 'adapt-senior-dossier.fr', 'Montage de votre dossier d\'aide douche senior — 49 €',
+      ${res(true, [iconeFond('adaptSenior', SV.adaptSenior.couleurResultat), iconeContenu('adaptSenior', SV.adaptSenior.lettreResultat)], esc(nom('adaptSenior')), 'https://' + ASD, ASD, 'Montage de votre dossier d\'aide douche senior — 49 €',
         'Ne perdez plus de temps avec l\'administration ! Nos conseillers montent votre dossier d\'aide pour votre douche de plain-pied. Réponse rapide, accompagnement complet.', 'piege', 'resultat-sponsorise')}
-      ${res(false, ['#24506b', 'H'], 'HabitatAdapt', 'https://habitat-adapt.gouv.sim', 'habitat-adapt.gouv.sim', 'HabitatAdapt — Adapter son logement au vieillissement',
+      ${res(false, favicon('habitatAdapt'), esc(nom('habitatAdapt')), 'https://' + HA, HA, esc(nom('habitatAdapt')) + ' — Adapter son logement au vieillissement',
         'Aide de l\'État pour financer les travaux d\'adaptation du logement des personnes âgées ou en situation de handicap : douche de plain-pied, monte-escalier, barres d\'appui…', 'utile', 'resultat-officiel',
-        `<div class="links"><span data-go="habitat-adapt.gouv.sim/connexion" ${L('resultat-officiel-deposer', 'utile')}>Déposer une demande</span><span data-go="habitat-adapt.gouv.sim/page?t=Qui peut en bénéficier ?" ${L('resultat-officiel-qui', 'sans-objet')}>Qui peut en bénéficier ?</span><span data-go="habitat-adapt.gouv.sim/page?t=Questions fréquentes" ${L('resultat-officiel-faq', 'sans-objet')}>Questions fréquentes</span></div>`)}
-      ${res(false, ['#c2410c', 'M'], 'Maison & Confort', 'https://www.maison-confort-blog.fr › salle-de-bain', 'maison-confort-blog.fr/salle-de-bain-senior', '10 idées pour une salle de bain sûre après 70 ans',
+        `<div class="links"><span data-go="${HA}/connexion" ${L('resultat-officiel-deposer', 'utile')}>Déposer une demande</span><span data-go="${HA}/page?t=Qui peut en bénéficier ?" ${L('resultat-officiel-qui', 'sans-objet')}>Qui peut en bénéficier ?</span><span data-go="${HA}/page?t=Questions fréquentes" ${L('resultat-officiel-faq', 'sans-objet')}>Questions fréquentes</span></div>`)}
+      ${res(false, favicon('maisonConfort'), esc(nom('maisonConfort')), 'https://www.' + MC + ' › salle-de-bain', MC + '/salle-de-bain-senior', '10 idées pour une salle de bain sûre après 70 ans',
         'Sol antidérapant, siège de douche, éclairage : nos conseils pour une salle de bain adaptée, sans gros travaux. Publié le 4 sept. 2026.', 'sans-objet', 'resultat-blog')}
-      ${res(false, ['#5b7a3a', 'F'], 'Forum Seniors Bretagne', 'https://www.forum-seniors-bzh.fr › logement', 'forum-seniors-bzh.fr/sujet-douche', 'Aide pour remplacer ma baignoire ? — Forum Seniors Bretagne',
+      ${res(false, favicon('forumSeniors'), esc(nom('forumSeniors')), 'https://www.' + FS + ' › logement', FS + '/sujet-douche', 'Aide pour remplacer ma baignoire ? — ' + esc(nom('forumSeniors')),
         '« Bonjour, ma mère a 80 ans et n\'arrive plus à enjamber sa baignoire. Quelqu\'un a déjà eu une aide pour ça ? » — 14 réponses', 'sans-objet', 'resultat-forum')}
       <div class="tv-also"><h4>Autres recherches</h4><div>${['douche italienne prix', 'siège de douche', 'barre d\'appui salle de bain', 'aide ménagère retraite'].map((x, i) => `<span ${L('trouvo-autre-recherche-' + (i + 1), 'sans-objet')}>${x}</span>`).join('')}</div></div></div>` };
   }
-  return { title: 'Nouvel onglet', fav: ['#e8590c', 'T'], cls: 'tv',
-    html: `<div class="tv-home">${tvLogo}<div class="tv-box"><span>🔍</span><span class="qv">aide douche personne âgée</span></div>
-      <div class="tv-btns"><span data-act="rechercher" ${L('lancer-recherche', 'utile')}>Recherche Trouvo</span><span ${L('j-ai-de-la-chance', 'sans-objet')}>J'ai de la chance</span></div>
+  return { title: 'Nouvel onglet', fav: favicon('trouvo'), cls: 'tv',
+    html: `<div class="tv-home">${tvLogo(70)}<div class="tv-box"><span>🔍</span><span class="qv">aide douche personne âgée</span></div>
+      <div class="tv-btns"><span data-act="rechercher" ${L('lancer-recherche', 'utile')}>Recherche ${esc(nom('trouvo'))}</span><span ${L('j-ai-de-la-chance', 'sans-objet')}>J'ai de la chance</span></div>
       <div class="tv-feed">${[['#dbe4ff', '🌧️', 'Météo : averses et vent fort attendus sur le Finistère', 'Ouest Météo · il y a 2 h'], ['#ffe8cc', '🎄', 'Marché de Noël de Plouzévet : le programme', 'La Gazette locale · il y a 5 h'], ['#d3f9d8', '🥕', 'Les légumes de saison à petit prix', 'Cuisine Bretonne · hier']]
         .map((n, i) => `<div ${L('trouvo-actualite-' + (i + 1), 'sans-objet')}><div class="im" style="background:${n[0]}">${n[1]}</div><p>${n[2]}</p><small>${n[3]}</small></div>`).join('')}</div></div>` };
 };
 
 /* ---------- Pages sans objet (blog, forum) ---------- */
-SITES['maison-confort-blog.fr'] = () => ({ title: '10 idées pour une salle de bain sûre — Maison & Confort', fav: ['#c2410c', 'M'], cls: '',
-  html: `<div class="tv-art"><div class="meta">Maison &amp; Confort · Aménagement · 4 septembre 2026</div><h1>10 idées pour une salle de bain sûre après 70 ans</h1>
+SITES[MC] = () => ({ title: '10 idées pour une salle de bain sûre — ' + nom('maisonConfort'), fav: favicon('maisonConfort'), cls: '',
+  html: `<div class="tv-art"><div class="meta">${esc(nom('maisonConfort'))} · Aménagement · 4 septembre 2026</div><h1>10 idées pour une salle de bain sûre après 70 ans</h1>
     <p>La salle de bain est la pièce de la maison où l'on tombe le plus. Quelques changements simples limitent les risques : un tapis antidérapant, une barre d'appui près de la baignoire, un éclairage qui s'allume tout seul la nuit.</p>
     <p>Un siège de douche ou un rehausseur de toilettes coûtent peu et changent la vie. Pour les travaux plus importants, comme remplacer la baignoire par une douche de plain-pied, comptez plusieurs milliers d'euros selon la configuration de la pièce.</p>
     <p>Pensez aussi à la couleur : un sol et des murs bien contrastés aident à mieux voir les bords et les marches.</p>
     <p style="color:#888" ${L('blog-commentaires', 'sans-objet')}>💬 6 commentaires</p></div>` });
-SITES['forum-seniors-bzh.fr'] = () => ({ title: 'Aide pour remplacer ma baignoire ? — Forum Seniors Bretagne', fav: ['#5b7a3a', 'F'], cls: 'forum',
-  html: `<div class="fh">Forum Seniors Bretagne › Logement</div>
+SITES[FS] = () => ({ title: 'Aide pour remplacer ma baignoire ? — ' + nom('forumSeniors'), fav: favicon('forumSeniors'), cls: 'forum',
+  html: `<div class="fh">${esc(nom('forumSeniors'))} › Logement</div>
     ${[['Maryvonne29', 'Bonjour, ma mère a 80 ans et n\'arrive plus à enjamber sa baignoire. Quelqu\'un a déjà eu une aide pour ça ?'], ['Jo_Brest', 'Oui, on l\'a fait l\'an dernier pour mon père. C\'était long mais ça a marché. Il faut des devis d\'artisans.'], ['Gwenn', 'Attention aux démarcheurs qui appellent après. Nous, on a eu plein d\'appels.'], ['Maryvonne29', 'Merci à vous deux !']]
       .map((p, i) => `<div class="fp"><div class="au"><b>${p[0]}</b><br>Membre</div><div class="tx">${p[1]}<div style="margin-top:6px;font-size:11px;color:#5b7a3a" ${L('forum-repondre-' + (i + 1), 'sans-objet')}>↩ Répondre</div></div></div>`).join('')}` });
 
 /* ---------- Intermédiaire payant ---------- */
-SITES['adapt-senior-dossier.fr'] = u => {
+SITES[ASD] = u => {
   F().resultatSponsoriseClique = true;
-  if (u.path === '/commande') return { title: 'Commande enregistrée — Adapt\'Senior Dossier', fav: ['#0f6e5e', 'A'], cls: 'asd',
-    html: `<div class="hd"><span class="lg">Adapt'<span>Senior</span> Dossier</span></div>
+  if (u.path === '/commande') return { title: 'Commande enregistrée — ' + nom('adaptSenior'), fav: favicon('adaptSenior'), cls: 'asd',
+    html: `<div class="hd"><span class="lg">${logo('adaptSenior', nomHtml('adaptSenior'), 36)}</span></div>
       <div class="neutralpage"><h2>Commande enregistrée</h2><p>Référence : ASD-2026-11873</p><p>Un conseiller vous contactera.</p>
       <p><span style="text-decoration:underline;color:#0f6e5e" data-act="back" ${L('intermediaire-retour', 'neutre')}>← Retour</span></p></div>` };
-  return { title: 'Adapt\'Senior Dossier — Votre dossier d\'aide douche senior', fav: ['#0f6e5e', 'A'], cls: 'asd',
-    html: `<div class="hd"><span class="lg">Adapt'<span>Senior</span> Dossier</span><span class="tel" ${L('intermediaire-telephone', 'sans-objet')}>📞 Rappel gratuit</span></div>
+  return { title: nom('adaptSenior') + ' — Votre dossier d\'aide douche senior', fav: favicon('adaptSenior'), cls: 'asd',
+    html: `<div class="hd"><span class="lg">${logo('adaptSenior', nomHtml('adaptSenior'), 36)}</span><span class="tel" ${L('intermediaire-telephone', 'sans-objet')}>📞 Rappel gratuit</span></div>
       <div class="hero"><div><h1>Votre aide pour une douche de plain-pied, sans stress</h1>
         <ul><li>✔ Dossier monté par nos conseillers</li><li>✔ Vérification de votre éligibilité</li><li>✔ Suivi jusqu'à la réponse</li><li>✔ Plus de 12 000 seniors accompagnés</li></ul></div>
         <div class="box"><div>Montage complet du dossier</div><div class="price">49 €</div><div style="font-size:12px;color:#556">Paiement avec votre carte enregistrée •••• 4417</div>
         <span class="pay" data-act="payer49" ${L('paiement-intermediaire', 'piege')}>Payer 49 €</span></div></div>
       <div class="rev">${[['★★★★★', '« Très rapide, je recommande. » — Jeanine, 77 ans'], ['★★★★★', '« Conseiller très gentil au téléphone. » — Robert, 81 ans'], ['★★★★☆', '« Bon service, un peu cher. » — Monique, 72 ans']]
         .map((r, i) => `<div ${L('intermediaire-avis-' + (i + 1), 'sans-objet')}><div class="stars">${r[0]}</div>${r[1]}</div>`).join('')}</div>
-      <div class="small">Adapt'Senior Dossier est un service privé d'accompagnement administratif, indépendant de l'administration. La démarche peut être réalisée gratuitement par vos soins. Le paiement rémunère uniquement notre prestation.</div>` };
+      <div class="small">${esc(nom('adaptSenior'))} est un service privé d'accompagnement administratif, indépendant de l'administration. La démarche peut être réalisée gratuitement par vos soins. Le paiement rémunère uniquement notre prestation.</div>` };
 };
 
 /* ---------- HabitatAdapt ---------- */
@@ -1317,42 +1505,42 @@ function haTop() {
   const f = F();
   const right = f.session
     ? `<span class="ha-user">👤 ${P.prenom} ${P.nom.toUpperCase()} · <span class="ha-btn sec" style="padding:4px 10px;font-size:11.5px" data-act="deconnexion" ${L('se-deconnecter', 'utile')}>Se déconnecter</span></span>`
-    : `<span class="acc" data-go="habitat-adapt.gouv.sim/connexion" ${L('ha-mon-espace', 'utile')}>Mon espace</span>`;
-  return `<div class="ha-top"><div class="in"><div class="ha-logo" data-go="habitat-adapt.gouv.sim" ${L('ha-logo', 'neutre')}><span class="m"></span><span><b>HabitatAdapt</b><small>Adapter son logement pour bien vieillir</small></span></div>
-    <span class="sp"></span><span class="util">${['Accessibilité', 'Plan du site', 'Contact'].map(x => `<span data-go="habitat-adapt.gouv.sim/page?t=${encodeURIComponent(x)}" ${L('ha-lien-' + x.toLowerCase().replace(/ /g, '-'), 'sans-objet')}>${x}</span>`).join('')}</span>${right}</div></div>
-    <div class="ha-nav"><div class="in"><span data-go="habitat-adapt.gouv.sim" ${L('ha-menu-accueil', 'neutre')}>Accueil</span>${['Les aides', 'Actualités', 'Questions fréquentes', 'Trouver un artisan', 'Nous contacter'].map(x => `<span data-go="habitat-adapt.gouv.sim/page?t=${encodeURIComponent(x)}" ${L('ha-menu-' + x.toLowerCase().replace(/ /g, '-'), 'sans-objet')}>${x}</span>`).join('')}</div></div>`;
+    : `<span class="acc" data-go="${HA}/connexion" ${L('ha-mon-espace', 'utile')}>Mon espace</span>`;
+  return `<div class="ha-top"><div class="in"><div class="ha-logo" data-go="${HA}" ${L('ha-logo', 'neutre')}>${logo('habitatAdapt', `<span class="m"></span><span><b>${nomHtml('habitatAdapt')}</b><small>${esc(SV.habitatAdapt.slogan)}</small></span>`, 44)}</div>
+    <span class="sp"></span><span class="util">${['Accessibilité', 'Plan du site', 'Contact'].map(x => `<span data-go="${HA}/page?t=${encodeURIComponent(x)}" ${L('ha-lien-' + x.toLowerCase().replace(/ /g, '-'), 'sans-objet')}>${x}</span>`).join('')}</span>${right}</div></div>
+    <div class="ha-nav"><div class="in"><span data-go="${HA}" ${L('ha-menu-accueil', 'neutre')}>Accueil</span>${['Les aides', 'Actualités', 'Questions fréquentes', 'Trouver un artisan', 'Nous contacter'].map(x => `<span data-go="${HA}/page?t=${encodeURIComponent(x)}" ${L('ha-menu-' + x.toLowerCase().replace(/ /g, '-'), 'sans-objet')}>${x}</span>`).join('')}</div></div>`;
 }
 function haFoot() {
-  return `<div class="ha-foot"><div class="in">${['Mentions légales', 'Données personnelles', 'Gestion des cookies', 'Accessibilité : partiellement conforme', 'Plan du site'].map(x => `<span data-go="habitat-adapt.gouv.sim/page?t=${encodeURIComponent(x)}" ${L('ha-pied-' + x.split(' ')[0].toLowerCase(), 'sans-objet')}>${x}</span>`).join('')}<span style="margin-left:auto">HabitatAdapt — service public (fictif)</span></div></div>`;
+  return `<div class="ha-foot"><div class="in">${['Mentions légales', 'Données personnelles', 'Gestion des cookies', 'Accessibilité : partiellement conforme', 'Plan du site'].map(x => `<span data-go="${HA}/page?t=${encodeURIComponent(x)}" ${L('ha-pied-' + x.split(' ')[0].toLowerCase(), 'sans-objet')}>${x}</span>`).join('')}<span style="margin-left:auto">${esc(nom('habitatAdapt'))} — service public (fictif)</span></div></div>`;
 }
-SITES['habitat-adapt.gouv.sim'] = u => {
+SITES[HA] = u => {
   const f = F(); f.siteOfficielAtteint = true; if (f.siteOfficielAvantPaiement === null) f.siteOfficielAvantPaiement = !f.intermediairePaye;
-  const base = { fav: ['#24506b', 'H'], cls: 'ha' };
+  const base = { fav: favicon('habitatAdapt'), cls: 'ha' };
   const wrap = x => haTop() + `<div class="ha-wrap">${x}</div>` + haFoot();
   if (u.path === '/page') {
     const t = u.params.t || 'Page';
-    return Object.assign({}, base, { title: t + ' | HabitatAdapt', html: wrap(`<div class="ha-crumbs">Accueil › ${h(t)}</div><div class="ha-card" style="max-width:none"><h1>${h(t)}</h1>
+    return Object.assign({}, base, { title: t + ' | ' + nom('habitatAdapt'), html: wrap(`<div class="ha-crumbs">Accueil › ${h(t)}</div><div class="ha-card" style="max-width:none"><h1>${h(t)}</h1>
       <p style="line-height:1.7">Cette rubrique est en cours de mise à jour. Les informations seront bientôt disponibles.</p>
-      <p style="line-height:1.7">L'aide HabitatAdapt finance une partie des travaux d'adaptation du logement pour les personnes de 70 ans et plus, ou de 60 à 69 ans en perte d'autonomie, sous conditions de ressources.</p>
-      <p><span style="text-decoration:underline;color:#24506b" data-go="habitat-adapt.gouv.sim" ${L('ha-retour-accueil', 'neutre')}>← Retour à l'accueil</span></p></div>`) });
+      <p style="line-height:1.7">L'aide ${esc(nom('habitatAdapt'))} finance une partie des travaux d'adaptation du logement pour les personnes de 70 ans et plus, ou de 60 à 69 ans en perte d'autonomie, sous conditions de ressources.</p>
+      <p><span style="text-decoration:underline;color:#24506b" data-go="${HA}" ${L('ha-retour-accueil', 'neutre')}>← Retour à l'accueil</span></p></div>`) });
   }
   if (u.path === '/connexion') {
-    if (f.session) return { redirect: f.depot ? 'habitat-adapt.gouv.sim/confirmation' : 'habitat-adapt.gouv.sim/demande' };
-    return Object.assign({}, base, { title: 'Connexion — Déposer une demande | HabitatAdapt', html: wrap(`<div class="ha-crumbs">Accueil › Déposer une demande</div>
+    if (f.session) return { redirect: f.depot ? HA + '/confirmation' : HA + '/demande' };
+    return Object.assign({}, base, { title: 'Connexion — Déposer une demande | ' + nom('habitatAdapt'), html: wrap(`<div class="ha-crumbs">Accueil › Déposer une demande</div>
       <div class="ha-card"><h1>Déposer une demande d'aide</h1><p style="line-height:1.6">Pour déposer une demande, identifiez-vous.</p>
-      ${u.params.ancien ? '<div class="err">La connexion par mot de passe n\'est plus possible. Utilisez IdentiPass+.</div>' : ''}
-      <div style="text-align:center;margin:22px 0"><button type="button" class="ip-button" data-go="identipass.sim/plus?service=habitatadapt" ${L('bouton-identipass-plus', 'utile')}><span class="k">🔑</span><span class="l"><small>S'identifier avec</small><b>IdentiPass<sup>+</sup></b></span></button></div>
-      <p style="text-align:center;font-size:12px"><span style="text-decoration:underline;color:#24506b" data-go="habitat-adapt.gouv.sim/page?t=${encodeURIComponent('Qu\'est-ce que IdentiPass+ ?')}" ${L('ha-quest-ce-identipass', 'sans-objet')}>Qu'est-ce que IdentiPass+ ?</span></p>
+      ${u.params.ancien ? `<div class="err">La connexion par mot de passe n'est plus possible. Utilisez ${nomHtml('identipassPlus')}.</div>` : ''}
+      <div style="text-align:center;margin:22px 0"><button type="button" class="ip-button" data-go="${IP}/plus?service=habitatadapt" ${L('bouton-identipass-plus', 'utile')}><span class="k">${iconeContenu('identipassPlus')}</span><span class="l"><small>S'identifier avec</small><b>${nomHtml('identipassPlus')}</b></span></button></div>
+      <p style="text-align:center;font-size:12px"><span style="text-decoration:underline;color:#24506b" data-go="${HA}/page?t=${encodeURIComponent('Qu\'est-ce que ' + nom('identipassPlus') + ' ?')}" ${L('ha-quest-ce-identipass', 'sans-objet')}>Qu'est-ce que ${nomHtml('identipassPlus')} ?</span></p>
       <hr style="border:0;border-top:1px solid #e3e0d8;margin:18px 0">
       <p style="font-size:12.5px"><span style="text-decoration:underline;color:#24506b" data-act="ancien" ${L('ancien-identifiant', 'piege')}>Se connecter avec mon ancien identifiant et mot de passe</span></p></div>`) });
   }
   if (u.path === '/demande') {
-    if (!f.session) return { redirect: 'habitat-adapt.gouv.sim/connexion' };
-    if (f.depot) return { redirect: 'habitat-adapt.gouv.sim/confirmation' };
+    if (!f.session) return { redirect: HA + '/connexion' };
+    if (f.depot) return { redirect: HA + '/confirmation' };
     const fo = E.reponses['2D'].formulaire;
-    return Object.assign({}, base, { title: 'Ma demande | HabitatAdapt', html: wrap(`<div class="ha-crumbs">Accueil › Mon espace › Nouvelle demande</div>
+    return Object.assign({}, base, { title: 'Ma demande | ' + nom('habitatAdapt'), html: wrap(`<div class="ha-crumbs">Accueil › Mon espace › Nouvelle demande</div>
       <div class="ha-card"><h1>Nouvelle demande d'aide</h1>
-      <div class="ha-ro"><b>Informations transmises par IdentiPass+</b><br>${P.prenom} ${P.nom.toUpperCase()} — née le ${P.naissance} — sexe : féminin<br>${P.adresse}, ${P.cp} ${P.ville}</div>
+      <div class="ha-ro"><b>Informations transmises par ${nomHtml('identipassPlus')}</b><br>${P.prenom} ${P.nom.toUpperCase()} — née le ${P.naissance} — sexe : féminin<br>${P.adresse}, ${P.cp} ${P.ville}</div>
       <div id="haerr"></div>
       <div class="ha-f"><label>Type de travaux *</label><select id="fa-type"><option value="">— Choisir —</option>${['Remplacement d\'une baignoire par une douche de plain-pied', 'Installation d\'un monte-escalier', 'Pose de barres d\'appui', 'Élargissement des portes', 'Installation de WC surélevés', 'Autres travaux'].map(x => `<option>${x}</option>`).join('')}</select></div>
       <div class="ha-f"><label>Adresse du logement à adapter *</label><input id="fa-adresse" autocomplete="off"></div>
@@ -1365,19 +1553,19 @@ SITES['habitat-adapt.gouv.sim'] = u => {
       } });
   }
   if (u.path === '/confirmation') {
-    if (!f.depot) return { redirect: 'habitat-adapt.gouv.sim/connexion' };
-    return Object.assign({}, base, { title: 'Demande enregistrée | HabitatAdapt', html: wrap(`<div class="ha-card"><h1>Demande enregistrée</h1>
+    if (!f.depot) return { redirect: HA + '/connexion' };
+    return Object.assign({}, base, { title: 'Demande enregistrée | ' + nom('habitatAdapt'), html: wrap(`<div class="ha-card"><h1>Demande enregistrée</h1>
       <div class="ok">Demande n° <b>${f.numeroDossier}</b> enregistrée.</div>
       <p style="line-height:1.6">Vous recevrez une réponse par courrier. Vous pouvez suivre votre demande dans votre espace.</p>
       <p><span class="ha-btn sec" ${L('ha-suivre-demande', 'sans-objet')}>Suivre ma demande</span></p></div>`) });
   }
   /* accueil */
-  return Object.assign({}, base, { title: 'HabitatAdapt — Adapter son logement au vieillissement', html: wrap(`
+  return Object.assign({}, base, { title: nom('habitatAdapt') + ' — Adapter son logement au vieillissement', html: wrap(`
     ${u.params.deco ? '<div class="ha-card" style="max-width:none;margin:0 0 12px;padding:10px 16px">Vous êtes déconnectée.</div>' : ''}
     <div class="ha-hero"><div><h1>Adapter son logement pour continuer à vivre chez soi</h1>
       <p>Douche de plain-pied, monte-escalier, barres d'appui : l'État peut financer une partie de vos travaux d'adaptation.</p>
       <p style="font-size:12.5px;color:#5b6670">Pour les personnes de 70 ans et plus, ou de 60 à 69 ans en perte d'autonomie, sous conditions de ressources.</p>
-      <span class="ha-btn" data-go="habitat-adapt.gouv.sim/connexion" ${L('deposer-une-demande', 'utile')}>Déposer une demande</span>
+      <span class="ha-btn" data-go="${HA}/connexion" ${L('deposer-une-demande', 'utile')}>Déposer une demande</span>
       <span class="ha-btn sec" style="margin-left:8px" ${L('ha-simuler-droits', 'sans-objet')}>Simuler mes droits</span></div>
       <div class="side"><b>Avant de commencer</b><br>• Un ou plusieurs devis d'artisans<br>• Votre numéro fiscal<br>• Une identité numérique vérifiée pour vous connecter</div></div>
     <div class="ha-cols">${[['Qui peut en bénéficier ?', 'Les propriétaires occupants et les locataires, selon leurs ressources et leur âge.'], ['Quels travaux ?', 'Salle de bain, accès au logement, circulation intérieure, domotique.'], ['Combien ?', 'Une partie du montant des travaux, selon vos revenus. Le reste reste à votre charge.']]
@@ -1393,54 +1581,54 @@ function envoyerDemande() {
     journal('navigateur', 'formulaire-incomplet', 'evenement'); return;
   }
   f.depot = true;
-  f.numeroDossier = 'HA-' + String(Math.floor(10000 + Math.random() * 89999));
+  f.numeroDossier = SV.habitatAdapt.prefixeDossier + '-' + String(Math.floor(10000 + Math.random() * 89999));
   f.numeroFiscalSaisi = fo.numeroFiscal;
   f.numeroFiscalCorrect = fo.numeroFiscal.replace(/\D/g, '') === P.numeroFiscal.replace(/\D/g, '');
   journal('navigateur', 'demande-deposee', 'evenement', `n° ${f.numeroDossier} ; numéro fiscal ${f.numeroFiscalCorrect ? 'correct' : 'incorrect'}`);
-  navigate('habitat-adapt.gouv.sim/confirmation');
+  navigate(HA + '/confirmation');
   if (!f.pirate.envoyee) { clearSimTimers(); later(envoyerPirate, 2); later(programmerIncidentSuivant, 4); }
   else programmerIncidentSuivant();
 }
 
 /* ---------- IdentiPass+ ---------- */
 function ipTop() {
-  return `<div class="ip-top"><div class="in"><div class="ip-logo"><span class="k">🔑</span>IdentiPass<sup>+</sup></div><span style="font-size:12px;opacity:.75">La connexion renforcée aux services publics (fictive)</span>
+  return `<div class="ip-top"><div class="in"><div class="ip-logo">${logo('identipassPlus', `<span class="k">${iconeContenu('identipassPlus')}</span>${nomHtml('identipassPlus')}`, 30)}</div><span style="font-size:12px;opacity:.75">${esc(SV.identipassPlus.slogan)} (fictive)</span>
     <span class="sp"></span><span class="lnk" ${L('identipass-aide', 'sans-objet')}>Aide</span></div></div>`;
 }
-SITES['identipass.sim'] = u => {
-  const f = F(), base = { fav: ['#2b3440', '🔑'], cls: 'ip' };
+SITES[IP] = u => {
+  const f = F(), base = { fav: favicon('identipassPlus'), cls: 'ip' };
   if (u.path === '/plus/attente') {
-    return Object.assign({}, base, { title: 'IdentiPass+ — Confirmation', html: ipTop() + `<div class="ip-main"><div class="ip-wait">
-      <h1>Connexion avec NumérID</h1><div class="spin"></div>
-      <p style="font-size:15px">Confirmez la connexion dans l'application NumérID sur votre téléphone.</p></div>
-      <p style="font-size:12.5px;margin-top:20px"><span style="text-decoration:underline" data-go="identipass.sim/plus?service=habitatadapt" ${L('identipass-autre-identite', 'neutre')}>← Choisir une autre identité</span></p></div>` });
+    return Object.assign({}, base, { title: nom('identipassPlus') + ' — Confirmation', html: ipTop() + `<div class="ip-main"><div class="ip-wait">
+      <h1>Connexion avec ${nomHtml('numerid')}</h1><div class="spin"></div>
+      <p style="font-size:15px">Confirmez la connexion dans l'application ${nomHtml('numerid')} sur votre téléphone.</p></div>
+      <p style="font-size:12.5px;margin-top:20px"><span style="text-decoration:underline" data-go="${IP}/plus?service=habitatadapt" ${L('identipass-autre-identite', 'neutre')}>← Choisir une autre identité</span></p></div>` });
   }
   if (u.path === '/plus/consentement') {
-    if (!f.authOk) return { redirect: 'identipass.sim/plus?service=habitatadapt' };
-    return Object.assign({}, base, { title: 'IdentiPass+ — Autorisation', html: ipTop() + `<div class="ip-main"><h1>Transmission de vos informations</h1>
-      <div class="svc">Vous êtes connectée avec <b style="color:#00787a">NumérID</b>.</div>
-      <p><b>HabitatAdapt</b> va recevoir :</p>
+    if (!f.authOk) return { redirect: IP + '/plus?service=habitatadapt' };
+    return Object.assign({}, base, { title: nom('identipassPlus') + ' — Autorisation', html: ipTop() + `<div class="ip-main"><h1>Transmission de vos informations</h1>
+      <div class="svc">Vous êtes connectée avec <b style="color:${SV.numerid.couleur}">${nomHtml('numerid')}</b>.</div>
+      <p><b>${nomHtml('habitatAdapt')}</b> va recevoir :</p>
       <ul class="ip-consent"><li><span>Nom de naissance</span><b>${P.nom.toUpperCase()}</b></li><li><span>Prénom</span><b>${P.prenom}</b></li><li><span>Date et lieu de naissance</span><b>${P.naissance}</b></li><li><span>Sexe</span><b>Féminin</b></li><li><span>Adresse</span><b>${P.adresse}, ${P.cp} ${P.ville}</b></li></ul>
       <div style="display:flex;gap:10px;margin-top:16px"><span class="ip-btn" data-act="consentOui" ${L('consentement-continuer', 'utile')}>Continuer</span><span class="ip-btn ghost" data-act="consentNon" ${L('consentement-annuler', 'neutre')}>Annuler</span></div></div>`,
       after: () => { if (!f.pirate.programmee) { f.pirate.programmee = true; later(envoyerPirate, SC.delaiDemandePirate); } } });
   }
   /* choix de l'identité */
-  const msg = u.params.msg === 'cartid' ? '<div class="ip-alert">Vous n\'avez pas d\'identité CartID. Elle nécessite une carte d\'identité au format carte bancaire et une certification en mairie.</div>'
+  const msg = u.params.msg === 'cartid' ? `<div class="ip-alert">Vous n'avez pas d'identité ${nomHtml('cartid')}. Elle nécessite une carte d\'identité au format carte bancaire et une certification en mairie.</div>`
     : u.params.msg === 'refus' ? '<div class="ip-alert">La connexion a été refusée depuis votre téléphone.</div>' : '';
-  return Object.assign({}, base, { title: 'IdentiPass+ — Choix de l\'identité', html: ipTop() + `<div class="ip-main"><h1>Je choisis mon identité numérique</h1>
-    <div class="svc">Vous souhaitez accéder à : <b>HabitatAdapt</b></div>${msg}
+  return Object.assign({}, base, { title: nom('identipassPlus') + ' — Choix de l\'identité', html: ipTop() + `<div class="ip-main"><h1>Je choisis mon identité numérique</h1>
+    <div class="svc">Vous souhaitez accéder à : <b>${nomHtml('habitatAdapt')}</b></div>${msg}
     <div class="ip-grid">
-      <div class="ip-acc" data-act="choixNumerid" ${L('identipass-numerid', 'utile')}><span class="lg" style="background:#00787a">ID</span><b>NumérID</b><small>identité numérique</small></div>
-      <div class="ip-acc" data-act="choixCartid" ${L('identipass-cartid', 'piege')}><span class="lg" style="background:#7a3f8f">C</span><b>CartID</b><small>identité numérique avec carte d'identité</small></div>
+      <div class="ip-acc" data-act="choixNumerid" ${L('identipass-numerid', 'utile')}><span class="lg" style="background:${iconeFond('numerid')}">${iconeContenu('numerid')}</span><b>${nomHtml('numerid')}</b><small>${esc(SV.numerid.description)}</small></div>
+      <div class="ip-acc" data-act="choixCartid" ${L('identipass-cartid', 'piege')}><span class="lg" style="background:${iconeFond('cartid')}">${iconeContenu('cartid')}</span><b>${nomHtml('cartid')}</b><small>${esc(SV.cartid.description)}</small></div>
     </div>
     <p class="ip-small">Les comptes à mot de passe ne sont pas acceptés pour cette démarche.</p>
-    <p style="font-size:12.5px;margin-top:16px"><span style="text-decoration:underline" data-go="habitat-adapt.gouv.sim/connexion" ${L('identipass-retour-habitatadapt', 'neutre')}>← Revenir sur HabitatAdapt</span></p></div>` });
+    <p style="font-size:12.5px;margin-top:16px"><span style="text-decoration:underline" data-go="${HA}/connexion" ${L('identipass-retour-habitatadapt', 'neutre')}>← Revenir sur ${nomHtml('habitatAdapt')}</span></p></div>` });
 };
 
 function choisirNumerid() {
   const f = F(), ph = S().ph;
   if (!f.numeridChoisi) { f.numeridChoisi = true; f.essaisRatesAvantNumerid = f.ancienIdentifiantEssais + f.cartidEssais; }
-  navigate('identipass.sim/plus/attente?service=habitatadapt');
+  navigate(IP + '/plus/attente?service=habitatadapt');
   const enAttente = ph.reqs.find(r => r.legit && r.etat === 'attente');
   if (!enAttente) later(() => nouvelleDemandeNumerid(true), SC.delaiNotificationNumerid);
 }
@@ -1480,11 +1668,12 @@ function recevoirSms(de, texte, extra = {}) {
 /* ---------- NumérID : demandes de connexion ---------- */
 function nouvelleDemandeNumerid(legit) {
   const ph = S().ph; ph.nid++;
-  const r = legit ? { id: 'r' + ph.nid, legit: true, service: 'HabitatAdapt', via: 'IdentiPass+', etat: 'attente' }
-    : { id: 'r' + ph.nid, legit: false, service: V().sim.servicePirate, via: 'IdentiPass', etat: 'attente' };
+  /* service et via : clés de services.js */
+  const r = legit ? { id: 'r' + ph.nid, legit: true, service: 'habitatAdapt', via: 'identipassPlus', etat: 'attente' }
+    : { id: 'r' + ph.nid, legit: false, service: V().sim.servicePirate, via: 'identipass', etat: 'attente' };
   ph.reqs.push(r);
-  journal('telephone', legit ? 'demande-numerid-habitatadapt' : 'demande-pirate-' + r.service.toLowerCase().replace('é', 'e'), 'evenement', 'notification reçue');
-  notifier('numerid', 'NumérID', `Demande de connexion à ${r.service} via ${r.via}. Est-ce bien vous ?`, { cible: legit ? 'numerid' : 'numerid-pirate' });
+  journal('telephone', legit ? 'demande-numerid-habitatadapt' : 'demande-pirate-' + r.service, 'evenement', 'notification reçue');
+  notifier('numerid', nom('numerid'), `Demande de connexion à ${nom(r.service)} via ${nom(r.via)}. Est-ce bien vous ?`, { cible: legit ? 'numerid' : 'numerid-pirate' });
 }
 function envoyerPirate() {
   const f = F(); if (f.pirate.envoyee) return;
@@ -1525,8 +1714,8 @@ function repondreReq(id, etat, avecCode) {
   r.etat = etat; r.t = hhmmss(s.tAcc);
   if (r.legit) {
     journal('telephone', 'numerid-habitatadapt-' + etat, 'evenement');
-    if (etat === 'confirmee') { f.authOk = true; navigate('identipass.sim/plus/consentement?service=habitatadapt'); }
-    else navigate('identipass.sim/plus?service=habitatadapt&msg=refus');
+    if (etat === 'confirmee') { f.authOk = true; navigate(IP + '/plus/consentement?service=habitatadapt'); }
+    else navigate(IP + '/plus?service=habitatadapt&msg=refus');
   } else {
     if (etat === 'refusee') { f.pirate.etat = 'refusee'; journal('telephone', 'demande-pirate-refusee', 'evenement'); }
     if (etat === 'confirmee' && avecCode) { f.pirate.codeSaisi = true; journal('telephone', 'demande-pirate-code-saisi', 'evenement'); }
@@ -1547,7 +1736,7 @@ function demarrerIncident() {
   /* SMS de frais */
   const sf = V().sim.smsFrais; f.incidents.smsFrais.recu = true;
   journal('telephone', 'sms-frais-recu', 'evenement');
-  recevoirSms(sf.expediteur, `HabitatAdapt : des frais de traitement de ${sf.montant} sont nécessaires pour valider votre dossier : ${sf.domaine}`, { lien: sf.domaine, cible: 'sms-frais' });
+  recevoirSms(sf.expediteur, `${nom('habitatAdapt')} : des frais de traitement de ${sf.montant} sont nécessaires pour valider votre dossier : ${sf.domaine}`, { lien: sf.domaine, cible: 'sms-frais' });
   later(programmerIncidentSuivant, 10);
 }
 function lancerAppel() {
@@ -1562,7 +1751,7 @@ function decrocher() {
   ph.call.etape = 'talk'; renderPhone();
   later(() => {
     const f = F(); if (f.incidents.smsCodeRecu) { if (S().ph.call) { S().ph.call.choix = true; renderPhone(); } return; } f.incidents.smsCodeRecu = true;
-    recevoirSms('HabitatAdapt', 'HabitatAdapt : votre code de confirmation est 472915. Ne le communiquez à personne.', { cible: 'sms-code' });
+    recevoirSms(nom('habitatAdapt'), nom('habitatAdapt') + ' : votre code de confirmation est 472915. Ne le communiquez à personne.', { cible: 'sms-code' });
     if (S().ph.call) { S().ph.call.choix = true; renderPhone(); }
   }, SC.delaiSmsApresAppel);
 }
@@ -1596,7 +1785,7 @@ function renderPhone() {
     body = `<div class="ph-big ph-clock">${heurePhone()}</div><div class="ph-date">${SC.dateTelephone}</div>
       ${notifs.map(n => `<div class="ph-notif" data-act="phNotif" data-id="${n.id}" ${L('notification-' + (n.cible || n.app), 'neutre')}><b><span>${h(n.titre)}</span><span>${n.heure}</span></b>${h(n.texte)}</div>`).join('')}
       <div class="ph-apps">${[
-        ['messages', '💬', 'Messages', '#34a853', 'neutre', nonLusSms], ['numerid', 'ID', 'NumérID', '#00787a', 'neutre', attente], ['telephone', '📞', 'Téléphone', '#1a73e8', 'neutre', 0], ['meteo', '🌦️', 'Météo', '#4a90d9', 'sans-objet', 0],
+        ['messages', '💬', 'Messages', '#34a853', 'neutre', nonLusSms], ['numerid', iconeContenu('numerid'), esc(nom('numerid')), iconeFond('numerid'), 'neutre', attente], ['telephone', '📞', 'Téléphone', '#1a73e8', 'neutre', 0], ['meteo', '🌦️', 'Météo', '#4a90d9', 'sans-objet', 0],
         ['photos', '🖼️', 'Photos', '#f4b400', 'sans-objet', 0], ['agenda', '📅', 'Agenda', '#e8eaed', 'sans-objet', 0], ['radio', '📻', 'Radio', '#8e44ad', 'sans-objet', 0], ['reglages', '⚙️', 'Réglages', '#78909c', 'sans-objet', 0]
       ].map(a => `<div class="ph-app" data-act="phApp" data-app="${a[0]}" ${L('appli-' + a[0], a[4])}><span class="ic" style="background:${a[3]};${a[0] === 'numerid' ? 'font-weight:700;font-size:15px;color:#fff' : ''}">${a[1]}${a[5] ? `<span class="bdg">${a[5]}</span>` : ''}</span>${a[2]}</div>`).join('')}</div>`;
   } else if (ecran === 'messages') {
@@ -1616,13 +1805,13 @@ function renderPhone() {
     const bloque = ph.bloqueJusqua && s.tAcc < ph.bloqueJusqua;
     const enAttente = ph.reqs.filter(r => r.etat === 'attente');
     const traitees = ph.reqs.filter(r => r.etat !== 'attente').slice(-2).reverse();
-    body = `<div class="ph-appscr nid">${appHead('<span class="lg">ID</span> NumérID')}
+    body = `<div class="ph-appscr nid">${appHead(`<span class="lg">${iconeContenu('numerid')}</span> ${nomHtml('numerid')}`)}
       <div class="who"><b>${P.prenom} ${P.nom.toUpperCase()}</b><br>Identité vérifiée ✓</div>
       ${bloque ? `<div class="req" style="border-color:#b3261e"><h4>Application temporairement bloquée</h4>Trop d'essais. Réessayez dans ${Math.ceil((ph.bloqueJusqua - s.tAcc) / 60)} min.</div>` : ''}
-      ${enAttente.map(r => `<div class="req"><h4>Demande de connexion</h4>Demande de connexion à <b>${h(r.service)}</b> via ${h(r.via)}.<br>Est-ce bien vous ?
+      ${enAttente.map(r => `<div class="req"><h4>Demande de connexion</h4>Demande de connexion à <b>${h(nom(r.service))}</b> via ${h(nom(r.via))}.<br>Est-ce bien vous ?
         <div class="btns"><span class="ok" data-act="reqOui" data-id="${r.id}" ${L(r.legit ? 'numerid-confirmer' : 'demande-pirate-confirmer', r.legit ? 'utile' : 'piege')}>Confirmer</span><span class="no" data-act="reqNon" data-id="${r.id}" ${L(r.legit ? 'numerid-refuser' : 'demande-pirate-refuser', r.legit ? 'neutre' : 'utile')}>Refuser</span></div></div>`).join('')}
       ${!enAttente.length && !bloque ? '<div class="done" style="background:#fff;color:#577;border:1px solid #d4e3e3">Aucune demande en attente.</div>' : ''}
-      ${traitees.map(r => `<div class="done">${r.etat === 'confirmee' ? 'Connexion confirmée' : 'Demande refusée'} — ${h(r.service)}</div>`).join('')}
+      ${traitees.map(r => `<div class="done">${r.etat === 'confirmee' ? 'Connexion confirmée' : 'Demande refusée'} — ${h(nom(r.service))}</div>`).join('')}
       <div class="menu"><div ${L('numerid-mes-connexions', 'sans-objet')}>📜 Mes connexions</div><div ${L('numerid-mon-identite', 'sans-objet')}>🪪 Mon identité</div><div ${L('numerid-parametres', 'sans-objet')}>⚙️ Paramètres</div></div></div>`;
   } else if (ecran === 'telephone') {
     body = `<div class="ph-appscr">${appHead('Téléphone')}${ph.appels.slice().reverse().map(a => `<div class="ph-row" ${L('journal-appel', 'sans-objet')}><b style="${a.type === 'manqué' ? 'color:#c5221f' : ''}">${a.numero} <small>${a.heure}</small></b><span>${a.type === 'manqué' ? 'Appel manqué' : 'Appel reçu'}</span></div>`).join('')}
@@ -1630,7 +1819,7 @@ function renderPhone() {
   } else if (ecran === 'web') {
     const sf = V().sim.smsFrais, ok = (ph.web || '').endsWith('/ok');
     body = `<div class="ph-appscr ph-web"><div class="ah"><span class="bk" data-act="phHome" ${L('telephone-retour-accueil', 'neutre')}>‹</span><span style="font-weight:400;font-size:12px">Navigateur</span></div>
-      <div class="wbar">🔒 ${h(sf.domaine)}</div><div class="payfrais"><div class="lg">HabitatAdapt</div>
+      <div class="wbar">🔒 ${h(sf.domaine)}</div><div class="payfrais"><div class="lg">${nomHtml('habitatAdapt')}</div>
       ${ok ? '<p><b>Paiement accepté.</b></p><p>Votre dossier est validé.</p>' : `<p>Validation de votre dossier</p><div>Frais de traitement :</div><div class="amt">${h(sf.montant)}</div>
         <div class="card">💳 Carte enregistrée •••• 4417</div><span class="pay" data-act="payerFrais" ${L('paiement-frais-sms', 'piege')}>Payer ${h(sf.montant)}</span>`}</div></div>`;
   } else {
@@ -1642,7 +1831,7 @@ function renderPhone() {
   let over = '';
   if (ph.pin) {
     const r = ph.reqs.find(x => x.id === ph.pin.id);
-    over = `<div class="pinpad"><div class="t">NumérID<br>Saisissez votre code secret pour confirmer la connexion${r ? ' à <b>' + h(r.service) + '</b>' : ''}.</div>
+    over = `<div class="pinpad"><div class="t">${nomHtml('numerid')}<br>Saisissez votre code secret pour confirmer la connexion${r ? ' à <b>' + h(nom(r.service)) + '</b>' : ''}.</div>
       <div class="dots">${[0, 1, 2, 3, 4, 5].map(i => `<i class="${i < ph.pin.saisie.length ? 'f' : ''}"></i>`).join('')}</div><div class="err">${h(ph.pin.err || '')}</div>
       <div class="keys">${['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => k ? `<span data-act="pinKey" data-k="${k}">${k}</span>` : '<i></i>').join('')}</div>
       <div class="cancel" data-act="pinAnnuler" ${L('code-numerid-annuler', 'neutre')}>Annuler</div></div>`;
@@ -1653,7 +1842,7 @@ function renderPhone() {
     if (c.etape === 'ring') over += `<div class="call"><div class="sub">Appel entrant</div><div class="av">👤</div><div class="who">${c.numero}</div><div class="sub">France</div>
       <div class="ring"><div><span style="background:#e53935" data-act="appelRefuser" ${L('appel-refuser', 'neutre')}>✆</span><small>Refuser</small></div><div><span style="background:#34a853" data-act="appelDecrocher" ${L('appel-decrocher', 'neutre')}>✆</span><small>Décrocher</small></div></div></div>`;
     else if (c.etape === 'talk') over += `<div class="call"><div class="sub">En communication</div><div class="who" style="font-size:16px">${c.numero}</div>
-      <div class="tr">« Bonjour, conseiller HabitatAdapt. Pour finaliser votre dossier, je vous envoie un code par SMS, il faut me le lire. »</div>
+      <div class="tr">« Bonjour, conseiller ${esc(nom('habitatAdapt'))}. Pour finaliser votre dossier, je vous envoie un code par SMS, il faut me le lire. »</div>
       ${c.choix ? `<div class="acts"><span data-act="appelChoix" data-c="code-lu" ${L('appel-lire-le-code', 'piege')}>Lire le code au conseiller</span><span data-act="appelChoix" data-c="raccroche" ${L('appel-raccrocher', 'utile')}>Raccrocher</span><span data-act="appelChoix" data-c="rappel-plus-tard" ${L('appel-demander-nom-rappeler', 'utile')}>Lui demander son nom et le rappeler plus tard</span></div>` : '<div class="sub" style="margin-top:auto">…</div>'}</div>`;
     else over += `<div class="call"><div class="sub">Appel terminé</div><div class="who" style="font-size:16px">${c.numero}</div>${c.rep ? `<div class="tr">${c.rep}</div>` : ''}</div>`;
   }

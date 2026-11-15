@@ -4,13 +4,13 @@
    ===================================================================== */
 const PARTIES = ['1A', '1B', '2A', '2B', '2C', '2D', 'fin'];
 const NOMS_PARTIES = {
-  '1A': 'Partie 1A — Site officiel ou site à éviter ?',
-  '1B': 'Partie 1B — Que dire à la personne ?',
-  '2A': 'Partie 2A — Gérer ses mots de passe',
-  '2B': 'Partie 2B — La double authentification',
-  '2C': 'Partie 2C — Est-ce de la double authentification ?',
-  '2D': 'Partie 2D — Une démarche avec IdentiPass+',
-  fin: 'Fin — Enregistrer ma copie'
+  '1A': 'Site officiel ou site à éviter ?',
+  '1B': 'Que dire à la personne ?',
+  '2A': 'Gérer ses mots de passe',
+  '2B': 'La double authentification',
+  '2C': 'Est-ce de la double authentification ?',
+  '2D': 'Une démarche avec le simulateur',
+  fin: 'Enregistrer ma copie'
 };
 
 let E = null;            // état de la copie (sauvegardé dans localStorage)
@@ -41,9 +41,9 @@ function nouvelleCopie(variante) {
       '2C': shuffle(v.situations2C.map(c => c.id))
     },
     reponses: {
-      '1A': {}, '1B': { s1: { dire: '', questions: '', ensuite: '' }, flash: '', s3: { dire: '', questions: '', ensuite: '' } },
+      '1A': {}, '1B': { s1: { dire: '', questions: ['', ''], ensuite: '' }, flash: '', s3: { dire: '', questions: ['', ''], ensuite: '' } },
       '2A': { justification: '' }, '2B': '', '2C': {},
-      '2D': { prediction: '', predictionValidee: false, formulaire: {}, questionsFin: { q1: '', q2: '', q3IdentiPassPlus: '', q3NumerID: '', q3CartID: '' }, etape: 'prediction' }
+      '2D': { prediction: '', predictionValidee: false, formulaire: {}, questionsFin: { q1: '', q2: '', q3: {} }, etape: 'prediction' }
     },
     sim: null
   };
@@ -65,21 +65,34 @@ setInterval(() => { sauver(); }, 5000);
 
 function totalSecondes() { return Object.values(E.durees).reduce((a, b) => a + b, 0); }
 
-/* ---------- En-tête ---------- */
+/* ---------- En-tête : progression + temps ---------- */
 function majEnTete() {
   const top = $('#evtop'); if (!top || !E) return;
   const p = E.partie, conseil = CONFIG.tempsConseilles[p];
   const ecoule = E.durees[p] || 0;
-  $('.partname', top).textContent = NOMS_PARTIES[p];
-  $('.steps', top).innerHTML = PARTIES.filter(x => x !== 'fin').map(x => `<span class="${E.valides[x] ? 'done' : x === p ? 'cur' : ''}">${x}</span>`).join('');
-  $('.timers', top).innerHTML = (conseil ? `<span class="${ecoule > conseil * 60 ? 'over' : ''}">Temps conseillé : <b>${conseil} min</b> · passé : <b>${mmss(ecoule)}</b></span>` : '') +
-    `<span>Total : <b>${mmss(totalSecondes())}</b></span><span class="idc">${E.idCopie}</span>`;
+  const liste = PARTIES.filter(x => x !== 'fin'), rang = liste.indexOf(p);
+  $('.partname', top).innerHTML = p === 'fin' ? `<small>C'est fini !</small>${h(NOMS_PARTIES[p])}`
+    : `<small>Partie ${rang + 1} sur ${liste.length} · ${p}</small>${h(NOMS_PARTIES[p])}`;
+  $('.steps', top).innerHTML = liste.map(x => `<span class="${E.valides[x] ? 'done' : x === p ? 'cur' : ''}">${E.valides[x] ? '✓ ' : ''}${x}</span>`).join('');
+  // Chronomètre de la partie : temps restant (compte à rebours), puis dépassement
+  const chrono = $('.chrono', top);
+  if (conseil) {
+    const total = conseil * 60, reste = total - ecoule;
+    const etat = reste < 0 ? 'over' : reste < 60 ? 'last' : '';
+    chrono.className = 'chrono ' + etat;
+    chrono.innerHTML = reste >= 0
+      ? `<span class="lbl">Temps restant pour cette partie</span><span class="val">${mmss(reste)}</span><span class="sur">sur ${conseil} min</span><i style="width:${Math.min(100, 100 * ecoule / total).toFixed(1)}%"></i>`
+      : `<span class="lbl">Temps conseillé dépassé de</span><span class="val">+${mmss(-reste)}</span><span class="sur">passez à la suite</span><i style="width:100%"></i>`;
+  } else { chrono.className = 'chrono hidden'; chrono.innerHTML = ''; }
+  const totConseil = Object.values(CONFIG.tempsConseilles).reduce((a, b) => a + b, 0);
+  $('.total', top).innerHTML = `Temps total<b>${Math.floor(totalSecondes() / 60)} min</b><small>sur ${totConseil} min</small>`;
+  $('.idc', top).textContent = E.idCopie;
 }
 
 function montrerEnTete() {
   if ($('#evtop')) return;
   const d = document.createElement('div'); d.id = 'evtop';
-  d.innerHTML = `<span class="simlabel">Évaluation — les sites du simulateur sont fictifs</span><span class="steps"></span><span class="partname"></span><span class="timers"></span>`;
+  d.innerHTML = `<span class="partname"></span><span class="steps"></span><span class="chrono"></span><span class="total"></span><span class="idc" title="Numéro de copie"></span>`;
   document.body.appendChild(d);
   const m = document.createElement('div'); m.id = 'evmain'; document.body.appendChild(m);
 }
@@ -144,7 +157,7 @@ function construireExport() {
       '1A': E.ordres['1A'].map((id, i) => { const c = v.cartes1A.find(x => x.id === id); const r = R['1A'][id] || {};
         return { item: id, ordreAffiche: i + 1, support: c.type, adresseOuLien: adresseCarte(c), choix: r.choix || null, justification: r.justification || '' }; }),
       '1B': { situation1: R['1B'].s1, questionFlash: R['1B'].flash, situation2: R['1B'].s3 },
-      '2A': { classement: (R['2A'].classement || E.ordres['2A']).map((id, i) => ({ rang: i + 1, item: id, texte: CONFIG.motsDePasse.find(m => m.id === id).texte })),
+      '2A': { classement: (R['2A'].classement || E.ordres['2A']).map((id, i) => ({ rang: i + 1, item: id, lettre: lettre2A(id), texte: CONFIG.motsDePasse.find(m => m.id === id).texte })),
         classementModifie: !!R['2A'].modifie, justification: R['2A'].justification },
       '2B': R['2B'],
       '2C': E.ordres['2C'].map((id, i) => { const s = v.situations2C.find(x => x.id === id); const r = R['2C'][id] || {};
@@ -191,7 +204,7 @@ function afficherAccueil() {
       <ul>
         <li>L'évaluation a deux parties : <b>1. Sites officiels et conseils</b>, puis <b>2. Identité numérique</b>, avec un simulateur.</li>
         <li>Chaque partie se termine par le bouton <b>« Valider cette partie »</b>. Ensuite, <b>on ne peut plus revenir en arrière</b>.</li>
-        <li>En haut de l'écran : le <b>temps conseillé</b> pour chaque partie. C'est une indication, rien ne se bloque.</li>
+        <li>En haut de l'écran : <b>le temps qu'il reste</b> pour la partie en cours. C'est une indication, rien ne se bloque. Si le temps est dépassé, passez à la suite.</li>
         <li>Répondez avec vos mots, en phrases courtes. <b>N'écrivez pas votre nom.</b></li>
         <li>À la fin, vous enregistrerez votre copie avec le nom donné par le professeur.</li>
       </ul>

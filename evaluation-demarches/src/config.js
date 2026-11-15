@@ -5,7 +5,7 @@
    ===================================================================== */
 const CONFIG = {
   evaluation: 'demarches-identite-1SAPAT',
-  version: '1.0',
+  version: '1.1',
 
   // Code de séance donné au tableau → variante
   codesSeance: { '4172': 'A', '8395': 'B' },
@@ -16,11 +16,12 @@ const CONFIG = {
   // Temps conseillés, en minutes (indicatifs, aucun blocage)
   tempsConseilles: { '1A': 10, '1B': 12, '2A': 4, '2B': 3, '2C': 5, '2D': 20, fin: 2 },
 
-  // Réglages du simulateur IdentiPass+ (durées en secondes)
+  // Réglages du simulateur (durées en secondes). Noms des services : voir services.js
+  // Dans les textes ci-dessous, {fiscalis}, {numerid}… sont remplacés par le nom du service.
   simulateur: {
-    delaiNotificationNumerid: 2,   // après le choix de NumérID dans IdentiPass+
+    delaiNotificationNumerid: 2,   // après le choix de l'identité numérique
     essaisCodeAvantBlocage: 3,
-    dureeBlocageNumerid: 120,      // appli NumérID bloquée après 3 codes faux
+    dureeBlocageNumerid: 120,      // appli d'identité bloquée après 3 codes faux
     delaiDemandePirate: 8,         // après l'arrivée sur l'écran de consentement
     delaiPremierIncident: 5,       // après l'enregistrement de la demande
     delaiEntreIncidents: 6,        // après la fin du premier incident
@@ -46,15 +47,24 @@ const CONFIG = {
     ]
   },
 
-  /* ---------- 2A : façons de gérer ses mots de passe (identiques A et B) ---------- */
+  /* ---------- 2A : façons de gérer ses mots de passe (identiques A et B) ----------
+     Version 1.1 : quatre propositions (m3 « recette » et m4 « fichier mdp.txt » retirées).
+     Les identifiants restent ceux de la version 1.0. Chaque proposition reçoit une lettre
+     (A, B, C, D) et une couleur selon l'ordre de départ, tiré au hasard pour chaque copie. */
   motsDePasse: [
     { id: 'm1', texte: 'Des mots de passe différents, notés dans un carnet rangé à la maison' },
     { id: 'm2', texte: 'Le prénom de son enfant suivi de son année de naissance, sur tous les sites' },
-    { id: 'm3', texte: 'Une recette : une racine + des lettres tirées du nom du site' },
-    { id: 'm4', texte: 'Des mots de passe différents, dans un fichier « mdp.txt » sur le bureau de l\'ordinateur' },
     { id: 'm5', texte: 'Un gestionnaire de mots de passe, protégé par un compte Google ou Apple avec une phrase de passe et la double authentification' },
     { id: 'm6', texte: 'Le même mot de passe, long et compliqué, sur tous les sites' }
   ],
+  couleursLettres2A: ['#2f6fd0', '#d9731a', '#23935f', '#9c45bd'],
+
+  /* ---------- 2D, question 3 : noms réels (menu déroulant) ----------
+     Services demandés (clés de services.js) et choix proposés dans chaque menu, dans cet ordre. */
+  question3: {
+    services: ['numerid', 'cartid'],
+    choix: ['Aidants Connect', 'Ameli', 'France Identité', 'France Travail', 'FranceConnect', 'FranceConnect+', 'L\'Identité Numérique La Poste', 'Mon espace santé', 'Service-public.gouv.fr']
+  },
 
   /* ---------- Contenus des deux variantes ---------- */
   variantes: {
@@ -85,17 +95,17 @@ const CONFIG = {
         { id: 'c2', texte: 'Mot de passe + question secrète (« nom de votre premier animal »)' },
         { id: 'c3', texte: 'Mot de passe + case « Je ne suis pas un robot »' },
         { id: 'c4', texte: 'Mot de passe + code à 6 chiffres reçu par SMS' },
-        { id: 'c5', texte: 'Payer en magasin avec sa carte bancaire et son code', etoile: true },
-        { id: 'c6', texte: 'Paiement sans contact, sans code' },
+        { id: 'c5', texte: 'Payer en magasin avec sa carte bancaire, en tapant le code de la carte (4 chiffres) sur le terminal de paiement', etoile: true },
+        { id: 'c6', texte: 'Payer en magasin sans contact : on approche la carte du terminal, sans taper de code' },
         { id: 'c7', texte: 'Déverrouiller son téléphone avec son empreinte' },
         { id: 'c8', texte: 'Identité numérique : confirmer dans l\'appli du téléphone avec un code secret' }
       ],
       sim: {
-        servicePirate: 'Fiscalis',
+        servicePirate: 'fiscalis',     // clé de services.js
         ordreIncidents: ['appel', 'sms'],
         smsFrais: { montant: '12,90 €', domaine: 'habitat-adapt-frais.com', expediteur: '06 39 98 70 05' },
-        q1: 'Son voisin, M. Le Bris, n\'a qu\'un compte Fiscalis. Il veut faire la même demande. Que lui dites-vous ?',
-        q2: 'Laura, l\'aide à domicile, propose : « Donnez-moi votre code secret NumérID, je ferai vos démarches quand vous n\'êtes pas là. » Que répondez-vous ?'
+        q1: 'Son voisin, M. Le Bris, n\'a qu\'un compte {fiscalis}. Il veut faire la même demande. Que lui dites-vous ?',
+        q2: 'Laura, l\'aide à domicile, propose : « Donnez-moi votre code secret {numerid}, je ferai vos démarches quand vous n\'êtes pas là. » Que répondez-vous ?'
       }
     },
     B: {
@@ -125,17 +135,17 @@ const CONFIG = {
         { id: 'c2', texte: 'Mot de passe + date de naissance' },
         { id: 'c3', texte: 'Mot de passe + case « Je ne suis pas un robot »' },
         { id: 'c4', texte: 'Mot de passe + validation dans l\'appli de la banque sur le téléphone' },
-        { id: 'c5', texte: 'Retirer de l\'argent au distributeur avec sa carte et son code', etoile: true },
-        { id: 'c6', texte: 'Paiement sans contact, sans code' },
+        { id: 'c5', texte: 'Retirer de l\'argent au distributeur : on insère sa carte bancaire et on tape le code de la carte (4 chiffres)', etoile: true },
+        { id: 'c6', texte: 'Payer en magasin sans contact : on approche la carte du terminal, sans taper de code' },
         { id: 'c7', texte: 'Déverrouiller son téléphone avec son visage' },
         { id: 'c8', texte: 'Identité numérique : confirmer dans l\'appli du téléphone avec son empreinte' }
       ],
       sim: {
-        servicePirate: 'Santéa',
+        servicePirate: 'santea',       // clé de services.js
         ordreIncidents: ['sms', 'appel'],
         smsFrais: { montant: '14,50 €', domaine: 'habitatadapt-validation.net', expediteur: '06 39 98 70 05' },
-        q1: 'Sa sœur, Mme Tanguy, n\'a qu\'un compte Santéa. Elle veut faire la même demande. Que lui dites-vous ?',
-        q2: 'Sophie, sa fille, propose : « Installe ton identité NumérID sur mon téléphone, comme ça je ferai tes démarches. » Que répondez-vous ?'
+        q1: 'Sa sœur, Mme Tanguy, n\'a qu\'un compte {santea}. Elle veut faire la même demande. Que lui dites-vous ?',
+        q2: 'Sophie, sa fille, propose : « Installe ton identité {numerid} sur mon téléphone, comme ça je ferai tes démarches. » Que répondez-vous ?'
       }
     }
   }
