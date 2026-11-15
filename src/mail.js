@@ -14,7 +14,7 @@ function renderMail() {
   const M = S.maboite;
   const el = $('#mail');
   if (!el) return;
-  const head = `<div class="mhead"><span class="logo">Ma<span>Boîte</span></span><span class="sp"></span>
+  const head = `<div class="mhead"><span class="logo">${logo('maboite', deuxTons('MaBoîte'), 30)}</span><span class="sp"></span>
     ${M.loggedIn ? `<span class="who" title="${h(P.mail)}">${h(P.mail)}</span><span class="mi" data-m="settings" title="Paramètres">⚙</span>` : ''}
     <span class="mi" data-m="wide" title="Agrandir / réduire">⤢</span></div>`;
   if (!M.loggedIn) { el.innerHTML = head + mailLoginView(); return; }

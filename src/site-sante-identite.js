@@ -1,11 +1,11 @@
 /* =====================================================================
    SANTÉA — santea.gouv.sim (rôle réel : ameli.fr)
    ===================================================================== */
-const ipButton = (go, sub = 'S\'identifier avec') => `<button type="button" class="ip-button" data-go="${go}"><span class="k">🔑</span><span class="l"><small>${sub}</small><b>IdentiPass</b></span></button>`;
+const ipButton = (go, sub = 'S\'identifier avec') => `<button type="button" class="ip-button" data-go="${go}"><span class="k">${iconeContenu('identipass', '🔑')}</span><span class="l"><small>${sub}</small><b>IdentiPass</b></span></button>`;
 
 function saHeader() {
   return `<div class="sa-pub"><div class="in"><span class="on">Assuré</span><span>Professionnel de santé</span><span>Employeur</span><span class="sp"></span><span>Accessibilité</span><span>Aide</span></div></div>
-    <div class="sa-head"><div class="in"><div class="sa-logo" data-go="/"><div class="m">S</div><div><b>Santéa</b><small>L'assurance maladie — site fictif</small></div></div>
+    <div class="sa-head"><div class="in"><div class="sa-logo" data-go="/">${logo('santea', `<div class="m">${initiale('Santéa')}</div><div><b>Santéa</b><small>L'assurance maladie — site fictif</small></div>`, 44)}</div>
       <form class="search" data-form="search"><input name="q" placeholder="Une question ? Ex : attestation, carte, remboursement"><button>🔍</button></form>
       <div class="sa-acc"><span class="other" data-go="/page?t=Trouver un professionnel de santé">📍 Adresses et tarifs</span><span class="mon" data-go="${S.santea.loggedIn ? '/espace' : '/connexion'}">👤 Mon compte</span></div></div></div>
     <div class="sa-nav"><div class="in">${['Droits et démarches', 'Remboursements', 'Santé et prévention', 'Adresses et tarifs', 'Nous contacter'].map(x => `<span data-go="/page?t=${encodeURIComponent(x)}">${x} ▾</span>`).join('')}</div></div>`;
@@ -20,7 +20,7 @@ const saPage = inner => saHeader() + inner + saFooter();
 function saErr(root, html, kind = 'err') { const z = $('#sa-msg', root); z.innerHTML = html ? `<div class="sa-${kind}">${html}</div>` : ''; }
 
 SITES['santea.gouv.sim'] = {
-  name: 'Santéa', cls: 'sa', fav: { bg: '#5b2a6e', t: 'S' },
+  name: 'Santéa', cls: 'sa', fav: favIco('santea', '#5b2a6e', initiale('Santéa')),
   envrai: ctx => ctx.path.startsWith('/connexion') ? null : 'le compte ameli de l\'Assurance Maladie',
   cookie: () => cookieBar('santea.gouv.sim', 'background:#3d1a4b;color:#fff', 'Santéa'),
   render(ctx) {
@@ -84,7 +84,7 @@ SITES['santea.gouv.sim'] = {
     };
     if (p.startsWith('/espace')) {
       if (!S.santea.loggedIn) return SITES['santea.gouv.sim'].render(Object.assign({}, ctx, { path: '/connexion' }));
-      const head = `<div class="sa-head" style="border-bottom:3px solid #5b2a6e"><div class="in"><div class="sa-logo" data-go="/espace"><div class="m">S</div><div><b>Santéa</b><small>Mon compte</small></div></div><span style="flex:1"></span>
+      const head = `<div class="sa-head" style="border-bottom:3px solid #5b2a6e"><div class="in"><div class="sa-logo" data-go="/espace">${logo('santea', `<div class="m">${initiale('Santéa')}</div><div><b>Santéa</b><small>Mon compte</small></div>`, 44)}</div><span style="flex:1"></span>
           <span style="font-size:12.5px">${P.prenom} ${P.nomUsage.toUpperCase()} — connectée via <b>IdentiPass</b></span><span class="sa-btn ghost" data-act="logout" style="padding:6px 14px;font-size:12px">Me déconnecter</span></div></div>`;
       const crumb = t => `<p style="font-size:12px;color:#777;margin:0 0 12px"><span data-go="/espace" style="text-decoration:underline">Mon compte</span> › ${t}</p>`;
       if (p === '/espace/attestations') return {
@@ -169,17 +169,17 @@ SITES['santea.gouv.sim'] = {
    ===================================================================== */
 const SERVICES = { santea: { nom: 'Santéa', host: 'santea.gouv.sim' } };
 const IP_ACCOUNTS = [
-  { id: 'fiscalis', nom: 'Fiscalis', sous: 'impôts', bg: '#1f4d3a', t: 'F', off: true },
-  { id: 'santea', nom: 'Santéa', sous: 'assurance maladie', bg: '#5b2a6e', t: 'S' },
+  { id: 'fiscalis', nom: 'Fiscalis', sous: 'impôts', bg: '#1f4d3a', t: initiale('Fiscalis'), off: true },
+  { id: 'santea', nom: 'Santéa', sous: 'assurance maladie', bg: '#5b2a6e', t: initiale('Santéa') },
   { id: 'numerid', nom: 'NumérID', sous: 'identité numérique', bg: '#00787a', t: 'ID' },
-  { id: 'agrimut', nom: 'Agrimut', sous: 'mutualité agricole', bg: '#6a8a1f', t: 'A' },
-  { id: 'idnomade', nom: 'IdNomade', sous: 'identité sur mobile', bg: '#3c5aa6', t: 'N' }
+  { id: 'agrimut', nom: 'Agrimut', sous: 'mutualité agricole', bg: '#6a8a1f', t: initiale('Agrimut'), host: 'agrimut.sim' },
+  { id: 'idnomade', nom: 'IdNomade', sous: 'identité sur mobile', bg: '#3c5aa6', t: initiale('IdNomade'), host: 'idnomade.sim' }
 ];
 function ipTop() {
-  return `<div class="ip-top"><div class="in"><div class="ip-logo" data-go="identipass.sim"><span class="k">🔑</span>IdentiPass</div><span style="font-size:12px;opacity:.75">La connexion unique aux services publics (fictive)</span><span class="sp"></span><span class="lnk" data-go="identipass.sim/historique">Mon historique de connexions</span></div></div>`;
+  return `<div class="ip-top"><div class="in"><div class="ip-logo" data-go="identipass.sim">${logo('identipass', `<span class="k">🔑</span>IdentiPass`, 30)}</div><span style="font-size:12px;opacity:.75">La connexion unique aux services publics (fictive)</span><span class="sp"></span><span class="lnk" data-go="identipass.sim/historique">Mon historique de connexions</span></div></div>`;
 }
 SITES['identipass.sim'] = {
-  name: 'IdentiPass', cls: 'ip', fav: { bg: '#2b3440', t: '🔑' },
+  name: 'IdentiPass', cls: 'ip', fav: favIco('identipass', '#2b3440', '🔑'),
   envrai: ctx => ctx.path.startsWith('/consentement') ? null : 'ce bouton s\'appelle FranceConnect. Regardez sa forme sur votre fiche.',
   render(ctx) {
     const svc = SERVICES[ctx.params.service] || SERVICES.santea;
@@ -187,7 +187,7 @@ SITES['identipass.sim'] = {
     if (p === '/choix') return {
       title: 'IdentiPass — Choix du compte',
       html: ipTop() + `<div class="ip-main"><h1>Je choisis un compte pour me connecter</h1><div class="svc">Vous souhaitez accéder à : <b>${svc.nom}</b></div><div id="ip-msg"></div>
-        <div class="ip-grid">${IP_ACCOUNTS.map(a => `<div class="ip-acc ${a.off ? 'off' : ''}" ${a.off ? '' : `data-act="acc" data-id="${a.id}"`}><span class="lg" style="background:${a.bg}">${a.t}</span><b>${a.nom}</b><small>${a.sous}</small>
+        <div class="ip-grid">${IP_ACCOUNTS.map(a => `<div class="ip-acc ${a.off ? 'off' : ''}" ${a.off ? '' : `data-act="acc" data-id="${a.id}"`}><span class="lg" style="background:${iconeFond(a.id, a.bg)}">${iconeContenu(a.id, a.t)}</span><b>${a.nom}</b><small>${a.sous}</small>
           ${a.off ? '<span class="why">Ce compte ne peut pas être utilisé pour se connecter à ce service.</span>' : ''}</div>`).join('')}</div>
         <p style="margin-top:22px;font-size:12.5px;color:#555">Vous n'avez aucun de ces comptes ? <span style="text-decoration:underline;cursor:pointer" data-go="identipass.sim">En savoir plus sur IdentiPass</span></p>
         <p style="font-size:12.5px"><span style="text-decoration:underline;cursor:pointer" data-go="${svc.host}/connexion">← Revenir sur ${svc.nom}</span></p></div>`
@@ -225,7 +225,7 @@ SITES['identipass.sim'] = {
       const id = el.dataset.id;
       if (id === 'santea') { $('#ip-msg', root).innerHTML = '<div class="ip-alert"><b>Vous n\'avez pas de compte Santéa.</b> Choisissez un autre compte.</div>'; return; }
       if (id === 'numerid') { navigate('numerid.sim/connexion?service=' + (ctx.params.service || 'santea')); return; }
-      navigate(id + '.sim/?service=' + (ctx.params.service || 'santea'));
+      navigate(IP_ACCOUNTS.find(a => a.id === id).host + '/?service=' + (ctx.params.service || 'santea'));
     }
     if (name === 'consent') { S.santea.loggedIn = true; S.numerid.authOk = false; navigate(svc.host + '/espace'); }
     if (name === 'cancel') { S.numerid.authOk = false; navigate(svc.host + '/connexion'); }
@@ -236,7 +236,7 @@ SITES['identipass.sim'] = {
    NumérID — numerid.sim (rôle réel : L'Identité Numérique La Poste)
    ===================================================================== */
 function niTop() {
-  return `<div class="ni-top"><div class="in"><div class="ni-logo" data-go="numerid.sim"><span class="d"></span><b>NumérID</b></div>
+  return `<div class="ni-top"><div class="in"><div class="ni-logo" data-go="numerid.sim">${logo('numerid', `<span class="d"></span><b>NumérID</b>`, 32)}</div>
     <nav><span data-go="numerid.sim/page?t=Découvrir">Découvrir</span><span data-go="numerid.sim/page?t=Créer mon identité">Créer mon identité</span><span data-go="numerid.sim/page?t=Services partenaires">Services partenaires</span><span data-go="numerid.sim/page?t=Aide">Aide</span></nav>
     <span class="sp"></span><span class="conn" data-go="numerid.sim/connexion">Se connecter</span></div></div>`;
 }
@@ -251,7 +251,7 @@ function sendNumeridCode() {
 }
 function niErr(root, html, kind = 'err') { const z = $('#ni-msg', root); z.innerHTML = html ? `<div class="ni-${kind}">${html}</div>` : ''; }
 SITES['numerid.sim'] = {
-  name: 'NumérID', cls: 'ni', fav: { bg: '#00787a', t: 'ID' },
+  name: 'NumérID', cls: 'ni', fav: favIco('numerid', '#00787a', 'ID'),
   envrai: 'L\'Identité Numérique La Poste',
   cookie: () => cookieBar('numerid.sim', 'background:#00585a;color:#fff', 'NumérID'),
   render(ctx) {
@@ -321,16 +321,16 @@ SITES['numerid.sim'] = {
 };
 
 /* Deux autres fournisseurs fictifs, où Martine n'a pas de compte */
-function otherIdp(nom, color, label) {
+function otherIdp(cle, nom, color, label) {
   return {
-    name: nom, cls: 'ox', fav: { bg: color, t: nom[0] },
+    name: nom, cls: 'ox', fav: favIco(cle, color, initiale(nom)),
     render(ctx) {
-      return { title: 'Connexion — ' + nom, html: `<div class="bar" style="background:${color}">${nom} <span style="font-size:12px;font-weight:400;opacity:.85">${label}</span></div>
+      return { title: 'Connexion — ' + nom, html: `<div class="bar" style="background:${color}">${logo(cle, nom, 28)} <span style="font-size:12px;font-weight:400;opacity:.85">${label}</span></div>
         <div class="box"><h3 style="margin-top:0">Identification</h3><div id="ox-msg"></div><form data-form="l" autocomplete="off"><label>Identifiant</label><input name="u"><label>Mot de passe</label><input name="p" type="password">
         <button style="background:${color}">Valider</button></form><p style="font-size:12px;margin-top:16px"><span data-go="identipass.sim/choix?service=${ctx.params.service || 'santea'}" style="text-decoration:underline;cursor:pointer">← Choisir un autre compte</span></p></div>` };
     },
     submit(name, f, ctx, root) { $('#ox-msg', root).innerHTML = '<p style="color:#b3261e;font-size:13px">Identifiant inconnu.</p>'; }
   };
 }
-SITES['agrimut.sim'] = otherIdp('Agrimut', '#6a8a1f', 'Mutualité agricole (fictive)');
-SITES['idnomade.sim'] = otherIdp('IdNomade', '#3c5aa6', 'Identité sur mobile (fictive)');
+SITES['agrimut.sim'] = otherIdp('agrimut', 'Agrimut', '#6a8a1f', 'Mutualité agricole (fictive)');
+SITES['idnomade.sim'] = otherIdp('idnomade', 'IdNomade', '#3c5aa6', 'Identité sur mobile (fictive)');

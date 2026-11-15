@@ -114,7 +114,7 @@ function fxHeader() {
       <span data-go="/page?t=Accessibilité">Accessibilité : partiellement conforme</span><span data-go="/page?t=Plan du site">Plan du site</span>
       <span data-go="/page?t=Contact et rendez-vous">Contact</span><span data-go="/page?t=English version">English</span></div></div>
     <div class="fx-head"><div class="in">
-      <div class="fx-logo" data-go="/"><div class="em">F</div><div class="t"><b>Fiscalis</b><small>Le site officiel des impôts et des finances publiques — simulation</small></div></div>
+      <div class="fx-logo" data-go="/">${logo('fiscalis', `<div class="em">${initiale('Fiscalis')}</div><div class="t"><b>Fiscalis</b><small>Le site officiel des impôts et des finances publiques — simulation</small></div>`, 48)}</div>
       <form class="fx-search" data-form="search"><input name="q" placeholder="Rechercher (ex. : taux de prélèvement, taxe foncière…)"><button>🔍</button></form>
       <div class="fx-espaces"><span data-go="${F.loggedIn ? '/espace' : '/connexion'}" title="Votre espace particulier">👤 ${F.loggedIn ? 'Mon espace' : 'Votre espace particulier'}</span><span class="pro" data-go="/page?t=Espace professionnel">Espace professionnel</span></div>
     </div></div>
@@ -265,7 +265,7 @@ const fxDocRow = d => `<div data-go="/espace/document?id=${d.id}"><span>📄 ${d
 function fxEspaceHead(tab) {
   const F = S.fiscalis;
   const tabs = [['Accueil', '/espace'], ['Documents', '/espace/documents'], ['Paiements'], ['Prélèvement à la source'], ['Messagerie sécurisée'], ['Mon profil']];
-  return `<div class="fx-espace-head"><div class="in"><div class="fx-logo" data-go="/"><div class="em" style="width:40px;height:40px;font-size:21px">F</div><div class="t"><b style="font-size:20px">Fiscalis</b><small>Espace particulier</small></div></div>
+  return `<div class="fx-espace-head"><div class="in"><div class="fx-logo" data-go="/">${logo('fiscalis', `<div class="em" style="width:40px;height:40px;font-size:21px">${initiale('Fiscalis')}</div><div class="t"><b style="font-size:20px">Fiscalis</b><small>Espace particulier</small></div>`, 40)}</div>
         <span style="flex:1"></span><span style="font-size:13px">👤 <b>${P.prenom} ${P.nomUsage.toUpperCase()}</b> — n° fiscal ${fmtNF(F.account.numero)}</span>
         <button class="fx-btn sec" data-act="logout" style="padding:6px 14px;font-size:12.5px">Se déconnecter</button></div></div>
       <div class="fx-tabs"><div class="in">${tabs.map(([x, go]) => `<span class="${x === tab ? 'on' : ''}" ${go ? `data-go="${go}"` : 'data-act="nope"'}>${x}</span>`).join('')}</div></div>`;
@@ -317,7 +317,7 @@ function fxEspace() {
 
 /* ---------- Déclaration du site ---------- */
 SITES['fiscalis.gouv.sim'] = {
-  name: 'Fiscalis', cls: 'fx', fav: { bg: '#1f4d3a', t: 'F' },
+  name: 'Fiscalis', cls: 'fx', fav: favIco('fiscalis', '#1f4d3a', initiale('Fiscalis')),
   envrai: 'impots.gouv.fr, votre espace Particulier',
   cookie: () => cookieBar('fiscalis.gouv.sim', 'background:#183d2e;color:#fff', 'Fiscalis'),
   render(ctx) {
@@ -552,12 +552,12 @@ SITES['fiscalis.gouv.sim'] = {
    FAUX SITE — fiscalis-gouv-sim.com (hameçonnage)
    ===================================================================== */
 SITES['fiscalis-gouv-sim.com'] = {
-  name: 'Fiscalis', cls: 'fx', insecure: true, fav: { bg: '#1f4d3a', t: 'F' },
+  name: 'Fiscalis', cls: 'fx', insecure: true, fav: favIco('fiscalis', '#1f4d3a', initiale('Fiscalis')),
   render(ctx) {
     S.incidents.fauxOuvert = true;
     return {
       title: 'Fiscalis - Vérification de sécurité',
-      html: `<div style="background:#1f4d3a;color:#fff;padding:14px 30px;display:flex;align-items:center;gap:12px"><div class="fx-logo"><div class="em" style="width:44px;height:44px;font-size:22px">F</div></div>
+      html: `<div style="background:#1f4d3a;color:#fff;padding:14px 30px;display:flex;align-items:center;gap:12px"><div class="fx-logo">${logo('fiscalis', `<div class="em" style="width:44px;height:44px;font-size:22px">${initiale('Fiscalis')}</div>`, 44)}</div>
         <div><b style="font-family:Georgia;font-size:24px">Fiscalis</b><div style="font-size:11px;opacity:.8">Espace sécurisé - Vérification d'identité</div></div></div>
         <div style="background:#b3261e;color:#fff;padding:8px 30px;font-size:13px">⚠ Votre compte fait l'objet d'une procédure de suspension. Confirmez vos identifiants pour la stopper.</div>
         <div class="fx-wrap" style="max-width:560px"><div class="fx-card" style="margin-top:20px"><h2>Confirmation de vos identifiants</h2>
