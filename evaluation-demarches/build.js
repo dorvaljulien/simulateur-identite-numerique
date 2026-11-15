@@ -22,7 +22,9 @@ const cles = Object.keys(logos);
 const logosJs = `/* Logos inlinés par build.js depuis logos/ : ${cles.length ? cles.join(', ') : 'aucun'} */\nconst LOGOS_IMAGES = ${JSON.stringify(logos)};`;
 
 // config.js en premier : CONFIG reste en tête du code, modifiable sans toucher à la logique
-const js = [src('config.js'), logosJs, ...['services.js', 'core.js', 'parties.js', 'simulateur.js'].map(src)].join('\n\n');
+// Noms et adresses des services inventés : remplacés selon ../noms-services.js (commun avec le simulateur)
+const noms = require('../outils/remplacer-noms').creer();
+const js = noms.remplacer([src('config.js'), logosJs, ...['services.js', 'core.js', 'parties.js', 'simulateur.js'].map(src)].join('\n\n'));
 const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -42,4 +44,4 @@ ${js}
 `;
 const out = path.join(__dirname, 'evaluation-demarches.html');
 fs.writeFileSync(out, html, 'utf8');
-console.log('OK :', out, Math.round(html.length / 1024) + ' Ko', cles.length ? '— logos : ' + cles.join(', ') : '— aucun logo image (logos dessinés)');
+console.log('OK :', out, Math.round(html.length / 1024) + ' Ko', noms.change ? '— noms remplacés selon noms-services.js' : '— noms d\'origine', cles.length ? '— logos : ' + cles.join(', ') : '— logos dessinés');

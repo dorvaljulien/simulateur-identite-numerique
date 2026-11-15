@@ -4,6 +4,8 @@ Simulateur pédagogique : création de compte, double authentification, mot de p
 
 - Cahier des charges : `cahier-des-charges-simulateur-identite-numerique.md`
 - Livrable : `simulateur-identite-numerique.html`, un seul fichier autonome, sans ressource externe. **Il est généré** : ne pas le modifier à la main.
+- **Noms et adresses des services inventés** : `noms-services.js` (racine, commun avec l'évaluation). Les sources gardent les noms d'origine ; `build.js` les remplace via `outils/remplacer-noms.js`. Dans le code, écrire toujours le nom d'origine (« Fiscalis », « fiscalis.gouv.sim ») ; pour une initiale, `initiale('Fiscalis')`, jamais une lettre en dur. Ne jamais construire une adresse par concaténation (`id + '.sim'`).
+- **Logos** (images facultatives) : dossier `logos/`, intégré par `build.js` ; helpers `logo()`, `ico()`, `favIco()`, `iconeContenu()` dans `src/logos.js`.
 - Sources dans `src/`, assemblées par `node build.js` (à relancer après chaque modification) :
   - `config.js` : `PERSONNAGES` et `CONFIG` (codes de passage, durées, missions, mails, documents du trieur). Tout réglage du professeur va ici.
   - `core.js` : état, horloge fictive, navigateur fictif (onglets, barre d'adresse, routage `SITES[hôte].render/after/action/submit`), étapes et codes de passage.

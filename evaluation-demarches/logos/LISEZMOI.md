@@ -17,4 +17,4 @@ Petites icônes carrées (onglet du navigateur, appli du téléphone, pastilles)
 
 Conseils : logo horizontal sur fond transparent (hauteur affichée 30 à 70 px) ; icône carrée d'au moins 64 × 64 px.
 
-Sans image ici, les logos dessinés d'origine sont utilisés. Pour changer un **nom**, une **adresse** ou une **couleur** : `src/services.js`.
+Sans image ici, les logos dessinés d'origine sont utilisés. Pour changer un **nom** ou une **adresse** : `noms-services.js` à la racine du dépôt. Pour une **couleur** : `src/services.js`.

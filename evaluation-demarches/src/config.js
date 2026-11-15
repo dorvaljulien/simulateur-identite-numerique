@@ -48,16 +48,17 @@ const CONFIG = {
   },
 
   /* ---------- 2A : façons de gérer ses mots de passe (identiques A et B) ----------
-     Version 1.1 : quatre propositions (m3 « recette » et m4 « fichier mdp.txt » retirées).
+     Version 1.1 : cinq propositions (m4 « fichier mdp.txt » retirée).
      Les identifiants restent ceux de la version 1.0. Chaque proposition reçoit une lettre
-     (A, B, C, D) et une couleur selon l'ordre de départ, tiré au hasard pour chaque copie. */
+     (A, B, C, D, E) et une couleur selon l'ordre de départ, tiré au hasard pour chaque copie. */
   motsDePasse: [
     { id: 'm1', texte: 'Des mots de passe différents, notés dans un carnet rangé à la maison' },
     { id: 'm2', texte: 'Le prénom de son enfant suivi de son année de naissance, sur tous les sites' },
+    { id: 'm3', texte: 'Une recette : une racine + des lettres tirées du nom du site' },
     { id: 'm5', texte: 'Un gestionnaire de mots de passe, protégé par un compte Google ou Apple avec une phrase de passe et la double authentification' },
     { id: 'm6', texte: 'Le même mot de passe, long et compliqué, sur tous les sites' }
   ],
-  couleursLettres2A: ['#2f6fd0', '#d9731a', '#23935f', '#9c45bd'],
+  couleursLettres2A: ['#2f6fd0', '#d9731a', '#23935f', '#9c45bd', '#c23a5b'],
 
   /* ---------- 2D, question 3 : noms réels (menu déroulant) ----------
      Services demandés (clés de services.js) et choix proposés dans chaque menu, dans cet ordre. */

@@ -1,14 +1,14 @@
 /* =====================================================================
-   SERVICES FICTIFS : noms, adresses, couleurs et logos
+   SERVICES FICTIFS DE L'ÉVALUATION : adresses, couleurs, icônes, logos
    ---------------------------------------------------------------------
-   Tout ce qui identifie un service inventé est ici, et nulle part ailleurs.
+   Les NOMS et les ADRESSES se changent dans noms-services.js, à la racine
+   du dépôt (commun au simulateur et à l'évaluation), PAS ICI : au moment de
+   node build.js, chaque nom d'origine écrit ci-dessous est remplacé par le
+   nouveau nom choisi là-bas.
 
-   Pour RENOMMER un service : changer `nom` (et `nomHtml` s'il existe,
-   c'est la version mise en forme du nom, avec des balises HTML).
-   Pour changer son ADRESSE : changer `domaine`.
-   Pour changer sa PETITE ICÔNE dessinée (onglet, appli, pastille) :
-   changer `lettre` (1 ou 2 caractères) et `couleur`.
-   Pour mettre un vrai LOGO (image) : voir le README (dossier logos/).
+   Ici, on peut changer : `couleur` et `lettre` des petites icônes (sans
+   `lettre`, c'est la première lettre du nom), `slogan`, `description`.
+   Pour mettre un vrai LOGO (image) : dossier logos/ (voir logos/LISEZMOI.md).
 
    Ne pas changer les clés (trouvo, habitatAdapt…) : le code, l'export
    des copies et le corrigé s'en servent.
@@ -20,12 +20,12 @@
    ===================================================================== */
 const SERVICES = {
   trouvo: {
-    nom: 'Trouvo', domaine: 'trouvo.sim', lettre: 'T', couleur: '#e8590c',
+    nom: 'Trouvo', domaine: 'trouvo.sim', couleur: '#e8590c',
     // couleurs des lettres du logo dessiné (une par lettre, reprises en boucle)
     couleursLogo: ['#e8590c', '#0c8599', '#e8590c', '#5c940d', '#0c8599', '#862e9c']
   },
   habitatAdapt: {
-    nom: 'HabitatAdapt', domaine: 'habitat-adapt.gouv.sim', lettre: 'H', couleur: '#24506b',
+    nom: 'HabitatAdapt', domaine: 'habitat-adapt.gouv.sim', couleur: '#24506b',
     slogan: 'Adapter son logement pour bien vieillir',
     prefixeDossier: 'HA'          // numéro de demande : HA-12345
   },
@@ -38,15 +38,15 @@ const SERVICES = {
     nom: 'IdentiPass', domaine: 'identipass.sim', lettre: '🔑', couleur: '#2b3440'
   },
   numerid: { nom: 'NumérID', lettre: 'ID', couleur: '#00787a', description: 'identité numérique' },
-  cartid: { nom: 'CartID', lettre: 'C', couleur: '#7a3f8f', description: 'identité numérique avec carte d\'identité' },
-  fiscalis: { nom: 'Fiscalis', lettre: 'F', couleur: '#1f4e79' },
-  santea: { nom: 'Santéa', lettre: 'S', couleur: '#0b7a75' },
+  cartid: { nom: 'CartID', couleur: '#7a3f8f', description: 'identité numérique avec carte d\'identité' },
+  fiscalis: { nom: 'Fiscalis', couleur: '#1f4e79' },
+  santea: { nom: 'Santéa', couleur: '#0b7a75' },
   adaptSenior: {                  // intermédiaire payant (résultat sponsorisé)
-    nom: 'Adapt\'Senior Dossier', nomHtml: 'Adapt\'<span>Senior</span> Dossier', domaine: 'adapt-senior-dossier.fr',
-    lettre: 'A', couleur: '#0f6e5e', lettreResultat: '⓪', couleurResultat: '#999'
+    nom: 'Adapt\'Senior Dossier', domaine: 'adapt-senior-dossier.fr',
+    couleur: '#0f6e5e', lettreResultat: '⓪', couleurResultat: '#999'
   },
-  maisonConfort: { nom: 'Maison & Confort', domaine: 'maison-confort-blog.fr', lettre: 'M', couleur: '#c2410c' },
-  forumSeniors: { nom: 'Forum Seniors Bretagne', domaine: 'forum-seniors-bzh.fr', lettre: 'F', couleur: '#5b7a3a' }
+  maisonConfort: { nom: 'Maison & Confort', domaine: 'maison-confort-blog.fr', couleur: '#c2410c' },
+  forumSeniors: { nom: 'Forum Seniors Bretagne', domaine: 'forum-seniors-bzh.fr', couleur: '#5b7a3a' }
 };
 
 /* ---------- Outils (rien à modifier en dessous) ---------- */
@@ -55,6 +55,8 @@ const SV = SERVICES;
 const LOGOS = (typeof LOGOS_IMAGES !== 'undefined') ? LOGOS_IMAGES : {};
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* Première lettre d'un nom */
+function initiale(n) { const m = String(n).match(/[\p{L}\p{N}]/u); return m ? m[0].toUpperCase() : '?'; }
 /* Nom affiché (texte brut) / mis en forme (HTML) */
 function nom(cle) { return SV[cle].nom; }
 function nomHtml(cle) { return SV[cle].nomHtml || esc(SV[cle].nom); }
@@ -69,7 +71,7 @@ function logo(cle, dessine, hauteur) {
 /* Contenu d'une petite icône carrée (onglet, appli, pastille) : image <cle>-icone, sinon image <cle>, sinon la lettre */
 function iconeContenu(cle, lettre) {
   const img = LOGOS[cle + '-icone'] || LOGOS[cle];
-  return img ? `<img class="ico-img" src="${img}" alt="">` : esc(lettre != null ? lettre : SV[cle].lettre);
+  return img ? `<img class="ico-img" src="${img}" alt="">` : esc(lettre != null ? lettre : (SV[cle].lettre || initiale(SV[cle].nom)));
 }
 /* Fond de cette icône : blanc s'il y a une image */
 function iconeFond(cle, couleur) { return (LOGOS[cle + '-icone'] || LOGOS[cle]) ? '#fff' : (couleur || SV[cle].couleur); }

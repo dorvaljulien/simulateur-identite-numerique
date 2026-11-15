@@ -5,7 +5,7 @@
 ## 0. Mode d'emploi pour la correction
 
 - Chaque copie est un fichier JSON. Champs utiles : `variante` (A ou B), `idCopie`, `reponses` (parties 1A à 2D), `simulateur.resultats` (réflexes du 2D, déjà calculés), `simulateur.evenements` (frise des clics), `simulateur.compteurs`.
-- Les items sont repérés par un identifiant stable (`A1`…`A7`, `B1`…`B7`, `m1`, `m2`, `m5`, `m6`, `c1`…`c8`). L'ordre d'affichage (`ordreAffiche`) change d'une copie à l'autre et ne compte pas.
+- Les items sont repérés par un identifiant stable (`A1`…`A7`, `B1`…`B7`, `m1`, `m2`, `m3`, `m5`, `m6`, `c1`…`c8`). L'ordre d'affichage (`ordreAffiche`) change d'une copie à l'autre et ne compte pas.
 - Réponse vide = 0. On ne pénalise pas l'orthographe. Une justification juste mais maladroite compte, à condition qu'elle s'appuie sur un indice ou une idée du cours.
 - Barème sur 20 : 1A 3,5 · 1B 4,5 · 2A 1,5 · 2B 1,5 · 2C 2 · 2D 7.
 
@@ -19,10 +19,10 @@
 
 - **En-tête** : progression plus lisible (« Partie 3 sur 6 », étapes cochées) et **compte à rebours** de la partie en gros (vert, orange la dernière minute, puis « dépassé de + mm:ss »). Temps total en minutes.
 - **1B** : la ligne « questions » est reformulée (« Avant de la conseiller, il me manque des informations. Je lui pose deux questions ») avec **deux champs séparés** « Question 1 » / « Question 2 ». Dans l'export, `questions` est une liste de deux textes.
-- **2A** : **quatre propositions** au lieu de six (`m3` recette et `m4` fichier mdp.txt retirées), classement par **glisser-déposer** (plus de flèches), chaque proposition repérée par une **lettre de couleur** (A à D, tirée au hasard pour chaque copie ; la lettre est dans l'export).
+- **2A** : **cinq propositions** au lieu de six (`m4` fichier mdp.txt retirée), classement par **glisser-déposer** (plus de flèches), chaque proposition repérée par une **lettre de couleur** (A à E, tirée au hasard pour chaque copie ; la lettre est dans l'export).
 - **2C** : la question « Est-ce de la double authentification ? » est écrite en toutes lettres dans un encadré et rappelée au-dessus de la colonne Oui/Non (bandeau qui reste visible). `c5` précise le **code de la carte à 4 chiffres tapé sur le terminal de paiement** (A) ou sur le distributeur (B) ; `c6` précise « on approche la carte du terminal, sans taper de code ».
 - **2D** : il est écrit aux élèves qu'**IdentiPass+ correspond à FranceConnect+** (prédiction et bandeau du simulateur). La question 3 ne porte plus que sur NumérID et CartID, avec un **menu déroulant**.
-- **Noms et logos des services inventés** regroupés dans `src/services.js` et le dossier `logos/` (voir le README) pour pouvoir les remplacer sans toucher au reste. Dans l'export, `demandePirate.service` vaut la clé du service (`fiscalis` ou `santea`).
+- **Noms et adresses des services inventés** regroupés dans `noms-services.js` (racine du dépôt, commun avec le simulateur), logos dans le dossier `logos/` (voir le README) pour pouvoir les remplacer sans toucher au reste. Dans l'export, `demandePirate.service` vaut la clé du service (`fiscalis` ou `santea`).
 
 ## 2. Partie 1A — Site officiel ou site à éviter ? (3,5 pts)
 
@@ -89,14 +89,16 @@ Faits utiles : le changement de titulaire d'une carte grise est soumis à une ta
 
 ## 4. Partie 2A — Mots de passe (1,5 pt)
 
-Quatre propositions (version 1.1). Identifiants : `m5` gestionnaire de mots de passe · `m1` carnet à la maison · `m6` même mot de passe long partout · `m2` prénom de l'enfant + année partout. Ordre attendu : **m5 > m1 > m6 > m2**. La lettre (A à D) vue par l'élève change d'une copie à l'autre : se fier à `item`, pas à `lettre`.
+Cinq propositions (version 1.1). Identifiants : `m5` gestionnaire de mots de passe · `m3` recette · `m1` carnet à la maison · `m6` même mot de passe long partout · `m2` prénom de l'enfant + année partout. La lettre (A à E) vue par l'élève change d'une copie à l'autre : se fier à `item`, pas à `lettre`.
 
-Classement (1 pt, 0,25 par ligne) :
+Seules les paires solides sont notées (1 pt, 0,25 chacune) :
 
 - `m5` (gestionnaire) classé **1er** ;
 - `m2` (prénom + année) classé **dernier** ;
-- `m6` (même mot de passe partout) classé **sous** `m1` (carnet) ;
-- ordre complet exact (m5, m1, m6, m2).
+- `m6` (même mot de passe partout) classé **sous** `m3` (recette) ;
+- `m6` classé **sous** `m1` (carnet).
+
+L'ordre entre `m3` et `m1` est libre.
 
 Le champ `classementModifie: false` signale un élève qui n'a pas touché à l'ordre de départ (aléatoire).
 
@@ -139,7 +141,7 @@ Dans l'export, `reponse` vaut `"oui"` ou `"non"`.
 
 ### Correspondances (non affichées aux élèves, sauf IdentiPass+ = FranceConnect+)
 
-Noms, adresses et logos de ces services : `src/services.js` et `logos/`. Si un nom est remplacé, mettre ce tableau à jour.
+Noms et adresses de ces services : `noms-services.js` (racine du dépôt) ; logos : `logos/`. Si un nom est remplacé, mettre ce tableau à jour.
 
 | Fictif | Rôle réel |
 |---|---|
