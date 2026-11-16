@@ -34,14 +34,16 @@ function freshState() {
       revealed: [],           // règles de mot de passe déjà révélées
       phishSent: false
     },
-    numerid: { code: null, stageUser: false, failures: 0 },
+    numerid: { status: null, authOk: null, session: false },
     santea: { loggedIn: false },
+    forma: { loggedIn: false, dossiers: [] },
     idp: { service: 'santea' },
     maboite: { loggedIn: true, passkey: false, view: 'list', folder: 'inbox', openId: null, settings: null, search: '' },
     browser: { saved: {}, never: {}, cookies: {}, envraiClosed: {} },
     tabs: [], activeTab: null,
     mails: [], notifs: [],
-    incidents: { refus: 0, enregistre: null, codeExpire: false, bloque: false, fauxLu: false, fauxOuvert: false, fauxIdentifiants: false, avisAnDernier: false, avisConjoint: false }
+    incidents: { refus: 0, enregistre: null, codeExpire: false, bloque: false, fauxLu: false, fauxOuvert: false, fauxIdentifiants: false, avisAnDernier: false, avisConjoint: false,
+      codeSecretFaux: false, refusPlus: false, fausseDemande: null, etape4: false }
   };
 }
 
@@ -102,6 +104,9 @@ function mailTime(m) {
 }
 
 /* ---------- Téléphone ---------- */
+// pinRequest : demande affichée sur le téléphone.
+//   stage 'confirm' : une application demande « Est-ce bien vous ? » (Non / Oui)
+//   stage 'pin'     : saisie d'un code à 4 chiffres (code du téléphone, ou code secret d'une application)
 let pinRequest = null;
 function pushNotif(app, title, text) {
   S.notifs.unshift({ app, title, text, at: Date.now() });
@@ -114,28 +119,58 @@ function renderPhone() {
   const notifs = S.notifs.slice(0, 3).map(n =>
     `<div class="notif ${Date.now() - n.at < 6000 ? 'fresh' : ''}"><b>${h(n.app)} · maintenant</b>${h(n.title)}<br>${h(n.text).slice(0, 60)}</div>`).join('');
   let pin = '';
-  if (pinRequest) {
-    const dots = [0, 1, 2, 3].map(i => `<i class="${i < pinRequest.typed.length ? 'f' : ''}"></i>`).join('');
-    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => `<span data-k="${k}">${k}</span>`).join('');
-    pin = `<div class="pinpad"><div class="t">${h(pinRequest.text)}</div><div class="dots">${dots}</div><div class="err">${pinRequest.err || ''}</div><div class="keys">${keys}</div></div>`;
+  const R = pinRequest;
+  if (R) {
+    const app = R.app ? `<div class="app"><i></i>${h(R.app)}</div>` : '';
+    if (R.stage === 'confirm') {
+      pin = `<div class="pinpad">${app}<div class="t ask">${R.html}</div><div class="yn"><span data-pk="no">Non, refuser</span><span data-pk="yes" class="y">Oui, c'est moi</span></div></div>`;
+    } else {
+      const dots = [0, 1, 2, 3].map(i => `<i class="${i < R.typed.length ? 'f' : ''}"></i>`).join('');
+      const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', R.app ? '✕' : '', '0', '⌫'].map(k => `<span data-k="${k}">${k}</span>`).join('');
+      pin = `<div class="pinpad">${app}<div class="t">${h(R.text)}</div><div class="dots">${dots}</div><div class="err">${R.err || ''}</div><div class="keys">${keys}</div></div>`;
+    }
   }
+  $('#phone').classList.toggle('active', !!R);
   $('#phone').innerHTML = `<div class="scr"><div class="sbar"><span>${hhmm(d)}</span><span>📶 4G ▮▮▮▯</span></div>
     <div class="big">${hhmm(d)}</div><div class="date">${longDate(d)}</div>${notifs}${pin}</div>
     ${unread ? `<span class="badge">${unread}</span>` : ''}`;
   $('#deskclock').textContent = longDate(d) + ' — ' + hhmm(d);
 }
+function phoneShow(req) {
+  // Une demande inattendue en cours passe d'abord : il faut y répondre avant de voir la suivante
+  if (pinRequest && pinRequest.fake) { pinRequest.next = req; return; }
+  pinRequest = req; renderPhone();
+}
+function phoneDone() {
+  const next = pinRequest && pinRequest.next;
+  pinRequest = next || null; renderPhone();
+}
 function phoneAskPin(text, onOk, onCancel) {
-  pinRequest = { text, typed: '', onOk, onCancel, err: '' };
-  renderPhone();
+  phoneShow({ stage: 'pin', text, typed: '', onOk, onCancel, err: '', expect: P.pinTelephone });
+}
+/* Demande de confirmation d'une application (identité numérique) : « Est-ce bien vous ? » puis code secret */
+function phoneAskConfirm(o) {
+  phoneShow(Object.assign({ stage: 'confirm', typed: '', err: '', tries: 0 }, o));
+}
+function phoneCancel(id) { if (pinRequest && pinRequest.id === id) phoneDone(); else if (pinRequest && pinRequest.next && pinRequest.next.id === id) pinRequest.next = null; }
+function phoneChoice(v) {
+  const R = pinRequest;
+  if (!R || R.stage !== 'confirm') return;
+  if (v === 'yes') { R.stage = 'pin'; renderPhone(); return; }
+  phoneDone(); R.onRefuse && R.onRefuse();
 }
 function phoneKey(k) {
-  if (!pinRequest) return;
-  if (k === '⌫') pinRequest.typed = pinRequest.typed.slice(0, -1);
-  else if (k && pinRequest.typed.length < 4) pinRequest.typed += k;
-  pinRequest.err = '';
-  if (pinRequest.typed.length === 4) {
-    if (pinRequest.typed === P.pinTelephone) { const ok = pinRequest.onOk; pinRequest = null; renderPhone(); ok && ok(); return; }
-    pinRequest.typed = ''; pinRequest.err = 'Code incorrect';
+  const R = pinRequest;
+  if (!R || R.stage !== 'pin') return;
+  if (k === '✕') { phoneDone(); (R.onRefuse || R.onCancel || (() => {}))(); return; }
+  if (k === '⌫') R.typed = R.typed.slice(0, -1);
+  else if (k && R.typed.length < 4) R.typed += k;
+  R.err = '';
+  if (R.typed.length === 4) {
+    if (R.typed === R.expect) { phoneDone(); R.onOk && R.onOk(); return; }
+    R.typed = ''; R.err = 'Code incorrect'; R.tries = (R.tries || 0) + 1;
+    R.onWrong && R.onWrong(R);
+    if (R.maxTries && R.tries >= R.maxTries) { phoneDone(); R.onBlocked && R.onBlocked(); return; }
   }
   renderPhone();
 }
@@ -274,7 +309,9 @@ function cookieBar(host, style, policyName) {
 function setMission() {
   const key = S.step === 2 && S.phase2 === 'apres' ? '2b' : S.step;
   const txt = CONFIG.missions[key] || '';
-  $('#mission').innerHTML = S.step ? `<b>${S.step >= 4 ? 'Fin' : 'Étape ' + S.step}</b>${h(txt)}` : '';
+  $('#mission').title = txt;
+  $('#restartbtn').style.display = S.step >= 1 && S.step <= 4 ? '' : 'none';
+  $('#mission').innerHTML = S.step ? `<b>${S.step >= 5 ? 'Fin' : 'Étape ' + S.step}</b>${h(txt)}` : '';
 }
 function completeStep(n) {
   if (S.waitingCode >= n) return;
@@ -290,6 +327,14 @@ function renderGate() {
     <p>Levez la main : le professeur vous donnera le <b>code de passage</b> pour continuer.</p>
     <p class="arrow">Le code se saisit en haut à droite, dans « Code de passage ».</p></div>`;
 }
+/* Bouton « Recommencer l'étape » : remet le simulateur au début de l'étape en cours.
+   Les incidents déjà relevés pour le récapitulatif sont conservés. */
+function restartStep() {
+  if (S.step < 1 || S.step > 4) return;
+  if (!confirm('Recommencer l\'étape ' + S.step + ' depuis le début ?\n\nCe que vous avez fait dans cette étape sera effacé.')) return;
+  if (S.step === 1) { const inc = S.incidents; resetAll(); $$('.fullscreen.welcome').forEach(o => o.remove()); S.incidents = inc; S.step = 1; setMission(); renderBrowser(); return; }
+  gotoStep(S.step);
+}
 function enterCode(raw) {
   const c = digits(raw);
   const box = $('#codebox');
@@ -299,12 +344,14 @@ function enterCode(raw) {
   if (c === CONFIG.codes.reinitialisation) { if (confirm('Tout remettre à zéro ?')) resetAll(); return; }
   if (c === CONFIG.codes.etape2) return gotoStep(2);
   if (c === CONFIG.codes.etape3) return gotoStep(3);
-  if (c === CONFIG.codes.recap) return gotoStep(4);
+  if (c === CONFIG.codes.etape4) return gotoStep(4);
+  if (c === CONFIG.codes.recap) return gotoStep(5);
   fail();
 }
 
 /* Met le simulateur dans l'état attendu au début de l'étape n */
 function gotoStep(n) {
+  const prev = S.step;
   S.waitingCode = 0;
   $$('.overlay').forEach(o => o.remove());
   // On retire les mails produits pendant cette étape et les suivantes
@@ -338,15 +385,23 @@ function gotoStep(n) {
   if (n >= 3) {
     S.phase2 = 'apres';
     if (F.oldPasswords.length === 0) { F.oldPasswords.push(F.account.password); F.account.password = CONFIG.motDePasseChangeTelephone; }
-    setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 20 }));
+    if (n === 3 || prev < 3) setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 20 }));
     if (!S.mails.some(m => m.tag === 'inter')) addIntermediateMails(true);
-    S.santea.loggedIn = false; S.numerid = { code: null, stageUser: false, failures: 0 };
+    if (n < 5) { S.santea.loggedIn = false; S.numerid = { status: null, authOk: null, session: false }; S.forma = { loggedIn: false, dossiers: [] }; }
   }
   if (n === 3) {
     S.step = 3;
     S.tabs = []; openTab('trouvo.sim');
   }
-  if (n === 4) { S.step = 4; showRecap(); }
+  if (n === 4) {
+    S.step = 4;
+    setClock(Object.assign({}, CONFIG.horloge.apresSaut, { minute: CONFIG.horloge.apresSaut.minute + 45 }));
+    S.tabs = []; openTab('trouvo.sim');
+    const m = CONFIG.mailEtape4;
+    if (m) deliverMail({ fromName: m.de, fromAddr: m.adresse, subject: m.objet, html: m.corps, etape: 4 }, { delay: 1500 });
+    if (CONFIG.fausseDemande.active && !S.incidents.fausseDemande) later(fakeRequest, CONFIG.durees.delaiFausseDemande * 1000);
+  }
+  if (n === 5) { S.step = 5; showRecap(); }
   setMission(); renderMail(); renderPhone(); renderBrowser();
   if (notice) openModal('Reprise', `<div style="font-size:15px;line-height:1.6;max-width:420px">${notice}</div>`);
 }
@@ -426,6 +481,7 @@ function buildShell() {
     <div id="topbar">
       <span class="simlabel" id="simlabel" title="">Simulation pédagogique — aucun site réel</span>
       <span class="mission" id="mission"></span>
+      <button id="restartbtn" title="Recommencer l'étape en cours depuis le début">↺ Recommencer l'étape</button>
       <span class="codebox" id="codebox">Code de passage <input id="codeinput" maxlength="3" inputmode="numeric" autocomplete="off"><button id="codeok">OK</button></span>
     </div>
     <div id="main">
@@ -460,6 +516,7 @@ function buildShell() {
   </div>`;
 
   $('#codeok').onclick = () => enterCode($('#codeinput').value);
+  $('#restartbtn').onclick = restartStep;
   $('#codeinput').addEventListener('keydown', e => { if (e.key === 'Enter') enterCode(e.target.value); });
   $('#btnback').onclick = goBack; $('#btnfwd').onclick = goFwd; $('#btnreload').onclick = reload;
   $('#urlinput').addEventListener('keydown', e => { if (e.key === 'Enter') { omniboxGo(e.target.value); e.target.blur(); } });
@@ -511,7 +568,7 @@ function buildShell() {
   });
   vp.addEventListener('mouseleave', () => status.style.display = 'none');
 
-  $('#phone').addEventListener('click', e => { const k = e.target.closest('[data-k]'); if (k) phoneKey(k.dataset.k); });
+  $('#phone').addEventListener('click', e => { const k = e.target.closest('[data-k]'); if (k) { phoneKey(k.dataset.k); return; } const c = e.target.closest('[data-pk]'); if (c) phoneChoice(c.dataset.pk); });
   $('#btnpapiers').onclick = openTrieur;
   $('#btncarte').onclick = () => openModal('Ma carte', carteHtml(false), 'carte');
   // Fonctions professeur

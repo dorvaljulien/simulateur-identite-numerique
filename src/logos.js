@@ -3,8 +3,8 @@
    Images facultatives : dossier logos/ à la racine (voir logos/LISEZMOI.md),
    intégrées par build.js. Sans image, on garde les logos dessinés en CSS.
    Les NOMS se changent dans noms-services.js (racine), pas ici.
-   Clés : fiscalis, santea, identipass, numerid, agrimut, idnomade, trouvo,
-   maboite, aideDemarches, infoPratique.
+   Clés : fiscalis, santea, identipass, numerid, cartid, formacompte, agrimut,
+   idnomade, trouvo, maboite, aideDemarches, infoPratique.
    ===================================================================== */
 const LOGOS = (typeof LOGOS_IMAGES !== 'undefined') ? LOGOS_IMAGES : {};
 

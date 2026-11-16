@@ -20,4 +20,4 @@ Formats acceptés : `.png`, `.svg`, `.jpg`, `.webp`, `.gif`.
 - `<clé>.png` : logo de l'en-tête du site (horizontal, fond transparent, affiché sur 30 à 74 px de haut).
 - `<clé>-icone.png` : petite icône carrée (onglet du navigateur, résultats de recherche, choix du compte). Sans elle, on reprend `<clé>.png`.
 
-Les **noms** et les **adresses** se changent dans `noms-services.js`, à la racine du dépôt. Les logos de l'évaluation sont dans `evaluation-demarches/logos/`.
+Les **noms** et les **adresses** se changent dans `noms-services.js`, à la racine du dépôt.
