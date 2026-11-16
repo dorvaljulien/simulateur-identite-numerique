@@ -9,7 +9,7 @@ const logos = require('./outils/logos-images')(path.join(__dirname, 'logos'));
 
 const css = ['app.css', 'fiscalis.css', 'sites2.css'].map(src).join('\n');
 // config.js en premier : CONFIG reste en tête du code, modifiable sans toucher à la logique
-const js = noms.remplacer([src('config.js'), logos.js, ...['logos.js', 'core.js', 'mail.js', 'docs.js', 'site-fiscalis.js', 'site-sante-identite.js', 'site-trouvo.js', 'teacher.js'].map(src)].join('\n\n'));
+const js = noms.remplacer([src('config.js'), logos.js, ...['logos.js', 'core.js', 'mail.js', 'docs.js', 'site-fiscalis.js', 'site-sante-identite.js', 'site-formacompte.js', 'site-trouvo.js', 'teacher.js'].map(src)].join('\n\n'));
 
 const html = `<!DOCTYPE html>
 <html lang="fr">

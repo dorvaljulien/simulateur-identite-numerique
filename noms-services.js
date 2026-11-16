@@ -1,14 +1,12 @@
 /* =====================================================================
    NOMS ET ADRESSES DES SERVICES INVENTÉS
-   Simulateur « Identité numérique » ET évaluation « Démarches en ligne »
+   Simulateur « Identité numérique »
    ---------------------------------------------------------------------
    MODE D'EMPLOI
    1. Changer UNIQUEMENT le texte de DROITE (le nouveau nom).
       Le texte de gauche est le nom d'origine, tel qu'il est écrit dans le code : ne pas le toucher.
-   2. Lancer, dans le dossier du dépôt :
-        node build.js                          (simulateur)
-        node evaluation-demarches/build.js     (évaluation)
-   3. Ouvrir les fichiers HTML et vérifier.
+   2. Lancer, dans le dossier du dépôt :  node build.js
+   3. Ouvrir simulateur-identite-numerique.html et vérifier.
 
    Le remplacement est fait partout : pages des sites, mails, documents,
    fiche professeur, mots-clés du moteur de recherche. Les versions en
@@ -18,8 +16,7 @@
    acceptée, elle devient ’). Pour une adresse : lettres minuscules sans
    accent, chiffres, points et tirets seulement.
 
-   Logos (images) : dossier logos/ (simulateur) et evaluation-demarches/logos/
-   (évaluation), voir les fichiers LISEZMOI.md de ces dossiers.
+   Logos (images) : dossier logos/, voir logos/LISEZMOI.md.
    ===================================================================== */
 module.exports = {
 
@@ -30,20 +27,20 @@ module.exports = {
     'Santéa': 'Santéa',                     // assurance maladie (ameli.fr)
     'IdentiPass': 'IdentiPass',             // connexion unique (FranceConnect) ; « IdentiPass+ » suit tout seul
     'NumérID': 'NumérID',                   // identité numérique (L'Identité Numérique La Poste)
-    'CartID': 'CartID',                     // identité avec la carte d'identité (France Identité) — évaluation
+    'CartID': 'CartID',                     // identité avec la carte d'identité (France Identité)
+    'FormaCompte': 'FormaCompte',           // droits à la formation (Mon Compte Formation)
+    'Aidants Relais': 'Aidants Relais',     // aidants professionnels (Aidants Connect)
     'Agrimut': 'Agrimut',                   // mutualité agricole (MSA)
     'IdNomade': 'IdNomade',                 // identité sur mobile
-    'HabitatAdapt': 'HabitatAdapt',         // aide pour adapter son logement (MaPrimeAdapt') — évaluation
 
     // Outils du quotidien
     'Trouvo': 'Trouvo',                     // moteur de recherche
     'MaBoîte': 'MaBoîte',                   // messagerie (webmail)
 
     // Sites à éviter / intermédiaires
-    'Aide Démarches Express': 'Aide Démarches Express',   // intermédiaire payant (simulateur)
-    'Adapt\'Senior Dossier': 'Adapt\'Senior Dossier',     // intermédiaire payant (évaluation)
+    'Aide Démarches Express': 'Aide Démarches Express',   // intermédiaire payant
 
-    // Expéditeurs des mails de la boîte de réception (simulateur)
+    // Expéditeurs des mails de la boîte de réception
     'Crédit Breizh': 'Crédit Breizh',
     'Le Bon Coin Coin': 'Le Bon Coin Coin',
     'Mutuelle Armorique Santé': 'Mutuelle Armorique Santé',
@@ -53,9 +50,7 @@ module.exports = {
     'Pharma-Discount': 'Pharma-Discount',
 
     // Sites annexes des résultats de recherche
-    'Info Pratique': 'Info Pratique',
-    'Maison & Confort': 'Maison & Confort',               // évaluation
-    'Forum Seniors Bretagne': 'Forum Seniors Bretagne'    // évaluation
+    'Info Pratique': 'Info Pratique'
   },
 
   /* ---------- ADRESSES (barre d'adresse, liens, adresses mail) ---------- */
@@ -67,6 +62,8 @@ module.exports = {
     'numerid.sim': 'numerid.sim',
     'agrimut.sim': 'agrimut.sim',
     'idnomade.sim': 'idnomade.sim',
+    'cartid.gouv.sim': 'cartid.gouv.sim',
+    'formacompte.gouv.sim': 'formacompte.gouv.sim',
     'trouvo.sim': 'trouvo.sim',
     'maboite.fr': 'maboite.fr',                           // adresses mail : martine.legall@maboite.fr…
     'aide-demarches-express.sim': 'aide-demarches-express.sim',
@@ -77,13 +74,6 @@ module.exports = {
     'facebouc.sim': 'facebouc.sim',
     'elecarmor.sim': 'elecarmor.sim',
     'colisexpress.sim': 'colisexpress.sim',
-    'pharma-dsc0unt.sim': 'pharma-dsc0unt.sim',
-    // évaluation
-    'habitat-adapt.gouv.sim': 'habitat-adapt.gouv.sim',
-    'habitat-adapt-frais.com': 'habitat-adapt-frais.com',        // faux SMS (variante A) : imiter la vraie adresse
-    'habitatadapt-validation.net': 'habitatadapt-validation.net', // faux SMS (variante B)
-    'adapt-senior-dossier.fr': 'adapt-senior-dossier.fr',
-    'maison-confort-blog.fr': 'maison-confort-blog.fr',
-    'forum-seniors-bzh.fr': 'forum-seniors-bzh.fr'
+    'pharma-dsc0unt.sim': 'pharma-dsc0unt.sim'
   }
 };

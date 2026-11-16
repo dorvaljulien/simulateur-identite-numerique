@@ -4,7 +4,15 @@
    ===================================================================== */
 const K_FISC = ['IMPOT', 'FISCALIS', 'FISC', 'TAXE', 'AVIS', 'DECLAR', 'PRELEVEMENT', 'FINANCESPUBLIQUES'];
 const K_SANTE = ['SANTE', 'SANTEA', 'ASSURANCEMALADIE', 'AMELI', 'CARTEVITALE', 'ATTESTATION', 'REMBOURSEMENT', 'SECU', 'MEDECIN', 'CPAM'];
+const K_FORM = ['FORMATION', 'FORMACOMPTE', 'FORMER', 'CPF', 'COMPTEFORMATION', 'GERONTOLOGIE', 'ASSISTANTEDESOINS', 'STAGE'];
 const TV_INDEX = [
+  { k: K_FORM, url: 'formacompte.gouv.sim', nm: 'FormaCompte', f: ico('formacompte', '#8a4b08', '▲'), title: 'FormaCompte — Mes droits à la formation',
+    desc: 'Consultez vos droits à la formation, recherchez une formation et inscrivez-vous en ligne. Site officiel (fictif) du service public de la formation.',
+    links: [['Mon espace', 'formacompte.gouv.sim/connexion'], ['Comprendre mes droits', 'formacompte.gouv.sim/page?t=Comprendre mes droits'], ['Reconnaître une arnaque', 'formacompte.gouv.sim/page?t=Reconnaître une arnaque']] },
+  { k: K_FORM.concat(['METIER', 'SOIN']), url: 'info-pratique.sim/article?t=' + encodeURIComponent('Droits à la formation : attention aux démarcheurs'), nm: 'Info Pratique', f: ico('infoPratique', '#e8590c', 'iP'),
+    title: 'Droits à la formation : attention aux démarcheurs', desc: 'Appels, SMS, faux conseillers : les escrocs veulent vos identifiants pour vider votre compte formation. Les bons réflexes.' },
+  { k: ['CARTID', 'CARTEDIDENTITE', 'CARTEIDENTITE', 'FRANCEIDENTITE'], url: 'cartid.gouv.sim', nm: 'CartID', f: ico('cartid', '#7d5a1c', initiale('CartID')), title: 'CartID — Votre carte d\'identité dans votre téléphone',
+    desc: 'L\'application de l\'État (fictive) pour prouver votre identité en ligne avec votre carte d\'identité à puce.' },
   { k: K_FISC, url: 'fiscalis.gouv.sim', nm: 'Fiscalis', f: ico('fiscalis', '#1f4d3a', initiale('Fiscalis')), title: 'Fiscalis | Le site officiel des impôts',
     desc: 'Déclarer, payer, gérer votre prélèvement à la source, consulter vos avis : accédez à votre espace particulier et à tous les services en ligne des finances publiques.',
     links: [['Votre espace particulier', 'fiscalis.gouv.sim/connexion'], ['Payer en ligne', 'fiscalis.gouv.sim/page?t=Payer'], ['Questions fréquentes', 'fiscalis.gouv.sim/page?t=Questions fréquentes']] },
@@ -15,10 +23,10 @@ const TV_INDEX = [
     links: [['Mon compte', 'santea.gouv.sim/connexion'], ['Attestation de droits', 'santea.gouv.sim/page?t=Obtenir une attestation de droits'], ['Nous contacter', 'santea.gouv.sim/page?t=Nous contacter']] },
   { k: K_SANTE.concat(['COMPTE', 'CONNEXION', 'CONNECTER']), url: 'santea.gouv.sim/connexion', nm: 'Santéa', f: ico('santea', '#5b2a6e', initiale('Santéa')), title: 'Se connecter à mon compte Santéa',
     desc: 'Accédez à votre compte Santéa pour suivre vos remboursements, télécharger vos attestations et échanger avec un conseiller.' },
-  { k: ['IDENTIPASS', 'FRANCECONNECT', 'CONNEXIONUNIQUE', 'IDENTIFIANTUNIQUE'], url: 'identipass.sim', nm: 'IdentiPass', f: ico('identipass', '#2b3440', '🔑'), title: 'IdentiPass — La connexion unique aux services publics',
+  { k: ['IDENTIPASS', 'IDENTIPASS+', 'FRANCECONNECT', 'CONNEXIONUNIQUE', 'IDENTIFIANTUNIQUE'], url: 'identipass.sim', nm: 'IdentiPass', f: ico('identipass', '#2b3440', '🔑'), title: 'IdentiPass — La connexion unique aux services publics',
     desc: 'Connectez-vous à plus de 1 400 services en ligne avec un compte que vous possédez déjà. Simple, sécurisé, gratuit.' },
   { k: ['NUMERID', 'IDENTITENUMERIQUE', 'LAPOSTE', 'IDENTITE'], url: 'numerid.sim', nm: 'NumérID', f: ico('numerid', '#00787a', 'ID'), title: 'NumérID — Votre identité numérique, simple et sécurisée',
-    desc: 'Créez gratuitement votre identité numérique et connectez-vous à de nombreux services via IdentiPass.' },
+    desc: 'Créez gratuitement votre identité numérique et connectez-vous à de nombreux services via IdentiPass et IdentiPass+, sans mot de passe.' },
   { k: K_FISC.concat(['ESPACE', 'NUMERO', 'CREER']), url: 'info-pratique.sim/article?t=' + encodeURIComponent('Impôts en ligne : 7 questions que tout le monde se pose'), nm: 'Info Pratique', f: ico('infoPratique', '#e8590c', 'iP'),
     title: 'Impôts en ligne : 7 questions que tout le monde se pose', desc: 'Numéro fiscal, numéro d\'accès en ligne, code par mail… Le point sur les démarches qui posent le plus de problèmes. Publié le 2 nov. 2026.' },
   { k: ['MOTDEPASSE', 'OUBLIE', 'BLOQUE', 'CODE', 'MAIL', 'ARNAQUE', 'PIRATE', 'HAMECON'], url: 'info-pratique.sim/article?t=' + encodeURIComponent('Arnaques par mail : les nouvelles techniques des escrocs'), nm: 'Info Pratique', f: ico('infoPratique', '#e8590c', 'iP'),
@@ -30,7 +38,9 @@ const TV_ADS = [
   { k: K_FISC, url: 'aide-demarches-express.sim', nm: 'Aide Démarches Express', title: 'Créez votre compte impôts en 5 min - Assistance démarches officielles',
     desc: 'Évitez les erreurs ! Nos experts créent votre espace pour vous. Service rapide, satisfait ou remboursé. Plus de 50 000 clients.' },
   { k: K_SANTE, url: 'aide-demarches-express.sim/?d=sante', nm: 'Aide Démarches Express', title: 'Compte assurance maladie - Démarche simplifiée en ligne',
-    desc: 'Attestation, carte, compte : nous nous occupons de tout. Réponse en 24 h.' }
+    desc: 'Attestation, carte, compte : nous nous occupons de tout. Réponse en 24 h.' },
+  { k: K_FORM, url: 'aide-demarches-express.sim/?d=formation', nm: 'Aide Démarches Express', title: 'Vos droits formation expirent bientôt ! Inscription rapide par nos conseillers',
+    desc: 'Ne perdez pas vos droits : un conseiller vous inscrit à votre formation par téléphone. Tablette offerte.' }
 ];
 const tvLogo = h => logo('trouvo', `<div class="tv-logo">${lettresCouleurs('Trouvo')}</div>`, h);
 
@@ -102,7 +112,7 @@ SITES['aide-demarches-express.sim'] = {
       title: 'Aide Démarches Express - Vos démarches sans stress',
       html: `<div style="background:#fff;border-bottom:1px solid #eee;padding:14px 30px;display:flex;align-items:center;gap:10px">${logo('aideDemarches', `<span style="background:#d6336c;color:#fff;font-weight:900;padding:6px 10px;border-radius:6px">${sigle('Aide Démarches Express')}</span>`, 34)}<b style="font-size:20px">Aide Démarches Express</b><span style="flex:1"></span><span style="font-size:13px">⭐⭐⭐⭐⭐ 4,9/5 (12 482 avis)</span></div>
         <div style="background:linear-gradient(120deg,#d6336c,#f76707);color:#fff;padding:40px 30px;text-align:center"><h1 style="font-size:32px;margin:0 0 10px">Vos démarches administratives, sans stress</h1>
-          <p style="font-size:17px">Compte impôts, assurance maladie, carte grise… Nos experts s'occupent de tout pour vous.</p>
+          <p style="font-size:17px">Compte impôts, assurance maladie, formation, carte grise… Nos experts s'occupent de tout pour vous.</p>
           <p style="font-size:44px;font-weight:900;margin:14px 0">39,90 €<span style="font-size:14px;font-weight:400"> seulement</span></p>
           <span data-act="go" style="display:inline-block;background:#fff;color:#d6336c;font-weight:700;padding:14px 34px;border-radius:30px;font-size:17px;cursor:pointer">Commencer ma démarche</span></div>
         <div style="max-width:900px;margin:30px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 20px">${['✅ Traitement en 24 h', '✅ Experts certifiés', '✅ Satisfait ou remboursé'].map(x => `<div style="border:1px solid #eee;border-radius:10px;padding:18px;text-align:center;font-weight:700">${x}</div>`).join('')}</div>
